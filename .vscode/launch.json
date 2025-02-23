@@ -38,7 +38,7 @@
             "type": "cppdbg",
             "request": "launch",
             "envFile": "${workspaceFolder}/.env",
-            "preLaunchTask": "Qlocky: Publish App",
+            "preLaunchTask": "Qlocky: Prepare Target",
             "program": "${workspaceRoot}/build/QlockyApp",
             "stopAtEntry": true,
             "stopAtConnect": false,
