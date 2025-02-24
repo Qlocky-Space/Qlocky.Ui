@@ -15,10 +15,10 @@
 			]
 		}
 	},
-	"postCreateCommand": "cat /opt/poky/5.0/environment-setup-cortexa72-poky-linux >> ~/.bashrc",
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind,consistency=cached",
 	"workspaceFolder": "/workspaces",
 	"mounts": [
-		"source=/opt/poky,target=/opt/poky,type=bind,consistency=delegated"
+		"source=/opt/poky,target=/opt/poky,type=bind,consistency=delegated",
+		"source=/opt/qt,target=/opt/qt,type=bind,consistency=delegated",
 	 ]
 }

@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 
 set(TARGET_NAME QlockyApp)
 
-set(CMAKE_PREFIX_PATH "$ENV{OECORE_NATIVE_SYSROOT}/usr/lib")
-set(QT_HOST_PATH "$ENV{OECORE_NATIVE_SYSROOT}/usr/lib")
-set(QT_HOST_PATH_CMAKE_DIR "$ENV{OECORE_NATIVE_SYSROOT}/usr/lib/cmake")
-
-
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 

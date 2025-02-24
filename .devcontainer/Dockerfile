@@ -9,4 +9,4 @@ RUN apt update
 RUN apt -y install \
     clang-format clang-tidy \
     wget git-core build-essential ninja-build \
-    gdb-multiarch
+    qt6-base-dev libgl1-mesa-dev gdb
