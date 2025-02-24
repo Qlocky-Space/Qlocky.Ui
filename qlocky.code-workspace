@@ -12,7 +12,6 @@
         "cmake.autoSelectActiveFolder": false,
         "cmake.configureOnOpen": false,
         "cmake.showSystemKits": false,
-        "cmake.cmakePath": "/opt/poky/5.0/sysroots/x86_64-pokysdk-linux/usr/bin/cmake",
         "editor.insertSpaces": true,
         "editor.tabSize": 4,
         "explorer.autoReveal": true,
