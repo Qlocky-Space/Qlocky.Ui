@@ -1,0 +1,21 @@
+{
+    "folders": [
+        {
+            "path": ".",
+            "name": "Qlocky.Ui"
+        }
+    ],
+    "settings": {
+        "search.exclude": {
+            "**/build": true,
+        },
+        "cmake.autoSelectActiveFolder": false,
+        "cmake.configureOnOpen": false,
+        "cmake.showSystemKits": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "explorer.autoReveal": true,
+        "editor.formatOnSave": true,
+        "C_Cpp.autoAddFileAssociations": false
+    }
+}

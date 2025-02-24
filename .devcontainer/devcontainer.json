@@ -1,0 +1,24 @@
+{
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "..",
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools",
+				"ms-azuretools.vscode-docker",
+				"ms-vscode.cpptools-extension-pack",
+				"theqtcompany.qt-qml",
+				"jkiviluoto.tws"
+			]
+		}
+	},
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind,consistency=cached",
+	"workspaceFolder": "/workspaces",
+	"mounts": [
+		"source=/opt/poky,target=/opt/poky,type=bind,consistency=delegated",
+		"source=/opt/qt,target=/opt/qt,type=bind,consistency=delegated",
+	 ]
+}
