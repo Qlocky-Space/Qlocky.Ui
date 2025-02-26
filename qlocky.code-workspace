@@ -12,6 +12,7 @@
         "cmake.autoSelectActiveFolder": false,
         "cmake.configureOnOpen": false,
         "cmake.showSystemKits": false,
+        "cmake.ctest.testExplorerIntegrationEnabled": false,
         "editor.insertSpaces": true,
         "editor.tabSize": 4,
         "explorer.autoReveal": true,
