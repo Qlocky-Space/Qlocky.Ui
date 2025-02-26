@@ -5,8 +5,12 @@ FROM ubuntu:plucky
 # for a default confirmation [Y/n] at some configurations.
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update
-RUN apt -y install \
+# tools for generic development
+RUN apt update && apt -y install \
     clang-format clang-tidy \
     wget git-core build-essential ninja-build \
-    qt6-base-dev libgl1-mesa-dev gdb
+    gdb cmake
+
+# tools for application
+RUN apt update && apt -y install \
+    qt6-base-dev libgl1-mesa-dev
