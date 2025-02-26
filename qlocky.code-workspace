@@ -5,6 +5,37 @@
             "name": "Qlocky.Ui"
         }
     ],
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "type": "shell",
+                "label": "CMake List Generation - App",
+                "command": "python3 Tools/CMake/source_collector.py --directory=../../src --cmake-file=../../src/CMakeLists.txt --target-name=\\$\\{TARGET_NAME\\}",
+                "group": {
+                    "kind": "build",
+                    "isDefault": false
+                },
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "shared"
+                }
+            },
+            {
+                "type": "shell",
+                "label": "CMake List Generation - Test",
+                "command": "python3 Tools/CMake/source_collector.py --directory=../../tests --cmake-file=../../tests/CMakeLists.txt --target-name=\\$\\{TARGET_NAME\\}Test",
+                "group": {
+                    "kind": "build",
+                    "isDefault": false
+                },
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "shared"
+                }
+            },
+        ]
+    },
     "settings": {
         "search.exclude": {
             "**/build": true,
