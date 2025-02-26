@@ -17,7 +17,7 @@
 		}
 	},
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind,consistency=cached",
-	"workspaceFolder": "/workspaces",
+	"workspaceFolder": "/workspaces/qlocky.code-workspace",
 	"mounts": [
 		"source=/opt/poky,target=/opt/poky,type=bind,consistency=delegated",
 		"source=/opt/qt,target=/opt/qt,type=bind,consistency=delegated",

@@ -1,18 +1,16 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(TARGET_NAME QlockyApp)
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
-
-
 find_package(Qt6 COMPONENTS Core Gui Qml Quick REQUIRED)
 qt_standard_project_setup()
 
 # Generated with VSCode Task
 add_executable(${TARGET_NAME}
-    # 
+    #
     main.cpp
+)
+
+target_include_directories(${TARGET_NAME} PRIVATE
+    .
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE
