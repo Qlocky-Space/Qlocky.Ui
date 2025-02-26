@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt -y install \
     clang-format clang-tidy \
     wget git-core build-essential ninja-build \
-    gdb cmake
+    gdb cmake python3
 
 # tools for application
 RUN apt update && apt -y install \

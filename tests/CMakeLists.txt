@@ -12,7 +12,9 @@ if(NOT googletest_POPULATED)
     FetchContent_MakeAvailable(googletest)
 endif()
 
+# Generated with VSCode Task
 add_executable(${TARGET_NAME}Test
+    # 
     demo.cpp
 )
 
