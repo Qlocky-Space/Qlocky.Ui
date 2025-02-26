@@ -14,3 +14,7 @@ RUN apt update && apt -y install \
 # tools for application
 RUN apt update && apt -y install \
     qt6-base-dev libgl1-mesa-dev
+
+
+# Git configuration
+RUN git config --global --add safe.directory /workspaces/build/_deps/*
