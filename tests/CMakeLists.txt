@@ -1,4 +1,4 @@
-add_definitions(-DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+cmake_minimum_required(VERSION 3.16)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -14,8 +14,12 @@ endif()
 
 # Generated with VSCode Task
 add_executable(${TARGET_NAME}Test
-    # 
+    #
     demo.cpp
+)
+
+target_include_directories(${TARGET_NAME}Test PRIVATE
+    .
 )
 
 target_link_libraries(${TARGET_NAME}Test PRIVATE
