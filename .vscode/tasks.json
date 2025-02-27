@@ -41,17 +41,6 @@
             "isBackground": true,
         },
         {
-            "label": "CMake: Build",
-            "hide": true,
-            "type": "cmake",
-            "command": "build",
-            "targets": [
-                "ALL_BUILD"
-            ],
-            "group": "build",
-            "problemMatcher": [],
-        },
-        {
             "label": "Qlocky: Prepare Target",
             "hide": true,
             "detail": "Build & Run application on Target",

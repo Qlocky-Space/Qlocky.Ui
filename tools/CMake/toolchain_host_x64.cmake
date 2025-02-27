@@ -20,7 +20,7 @@ set(CMAKE_INSTALL_RPATH "${QT_INST_DIR}/lib")
 # Custopm VSCode launch
 set(VSCODE_LAUNCH_COMMANDS [[
     "linux": {
-        "preLaunchTask": "CMake: Build",
+        "preLaunchTask": "CMake: build",
         "MIMode": "gdb",
         "miDebuggerPath": "gdb"
     }
