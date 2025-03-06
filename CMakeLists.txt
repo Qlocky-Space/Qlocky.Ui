@@ -1,24 +1,49 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.27)
 
 set(TARGET_NAME QlockyApp)
-project(${TARGET_NAME} VERSION 0.1 LANGUAGES CXX)
+project(${TARGET_NAME} LANGUAGES CXX)
 
-# Project Configurations
+set(CMAKE_MODULE_PATH
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/tools/CMake
+    ${CMAKE_MODULE_PATH}
+)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
 
-# The main application
+set(QLOCKY_LIBS_PATH "${CMAKE_CURRENT_LIST_DIR}/libs")
+set(QLOCKY_SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src")
+
+###########################################
+# Application Options
+###########################################
+# Example option(QLOCKY_BUILD_APPSHELL_MODULE "Build appshell module" ON)
+
+###########################################
+# Setup compiler and build environment
+###########################################
+include(Version)
+include(GetPlatformInfo)
+include(SetupConfigure)
+# TODO Enable CCache
+
+###########################################
+# Setup external dependencies
+###########################################
+include(SetupQt6)
+include(SetupBoostDi)
+include(DeclareModuleSetup)
+
+###########################################
+# Add source tree
+###########################################
 add_subdirectory(src)
 
-# The test application
-# Only enable test when building for host
-if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")
-    message(STATUS "UnitTests enabled for AMD64 Target")
-
+if (OS_IS_LIN)
     enable_testing()
     add_subdirectory(tests)
 endif()

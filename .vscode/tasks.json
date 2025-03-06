@@ -15,7 +15,6 @@
                 "instanceLimit": 1
             },
             "problemMatcher": {
-                // https://stackoverflow.com/questions/68169916/vs-code-start-gdbserver
                 "pattern": [
                     {
                         "regexp": ".",
@@ -38,7 +37,7 @@
                 "showReuseMessage": true,
                 "clear": true
             },
-            "isBackground": true,
+            "isBackground": true
         },
         {
             "label": "Qlocky: Prepare Target",
