@@ -74,4 +74,7 @@ CMakeUserPresets.json
 .history
 .ionide
 
+### QT ###
+.qmlls.ini
+
 # End of https://www.toptal.com/developers/gitignore/api/cmake,c++,visualstudiocode

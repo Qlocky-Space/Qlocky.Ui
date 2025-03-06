@@ -48,6 +48,7 @@
         "editor.tabSize": 4,
         "explorer.autoReveal": true,
         "editor.formatOnSave": true,
-        "C_Cpp.autoAddFileAssociations": false
+        "C_Cpp.autoAddFileAssociations": false,
+        "cmake.options.statusBarVisibility": "hidden"
     }
 }
