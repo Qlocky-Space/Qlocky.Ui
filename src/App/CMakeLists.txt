@@ -12,6 +12,7 @@ set(LINK_LIB
 )
 foreach(_module ${QLOCKY_MODULES})
     list(APPEND LINK_LIB qlocky::${_module})
+    list(APPEND LINK_LIB ${_module}Plugin)
 endforeach()
 
 ###########################################
@@ -40,7 +41,7 @@ target_include_directories(QlockyApp PRIVATE
 ###########################################
 # Link
 ###########################################
-target_link_libraries(QlockyApp ${EXTERN_LIBRARIES} ${LINK_LIB})
+target_link_libraries(QlockyApp PRIVATE ${EXTERN_LIBRARIES} ${LINK_LIB})
 
 ###########################################
 # INSTALL

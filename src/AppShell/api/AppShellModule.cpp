@@ -10,5 +10,5 @@ void AppShellModule::registerExports(Injector& container) {
 }
 
 void AppShellModule::registerQmlTypes() {
-    qmlRegisterType<MainWindowViewModel>("Qlocky.Components", 1, 0, "MainWindowViewModel");
+    // qmlRegisterType<MainWindowViewModel>("Qlocky.Components", 1, 0, "MainWindowViewModel");
 }

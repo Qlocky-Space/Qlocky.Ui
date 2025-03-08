@@ -2,14 +2,14 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import Qlocky.Components 1.0
+import AppShell 1.0
 
 ApplicationWindow {
     id: root
     visible: true
     color: 'black'
-    width: 500
-    height: 500
+    width: 1920
+    height: 1080
 
     property MainWindowViewModel mainWindowViewModel
 

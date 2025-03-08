@@ -10,14 +10,14 @@ QlockyApp::QlockyApp() :
     m_container {} {
 }
 
-void QlockyApp::addModule(std::unique_ptr<ModuleIfc> module) {
+void QlockyApp::addModule(std::unique_ptr<ModuleBase> module) {
     m_modules.push_back(std::move(module));
 }
 
 void QlockyApp::perform(std::shared_ptr<Injector> container) {
     m_container = container;
 
-    for (std::unique_ptr<ModuleIfc>& module : m_modules) {
+    for (std::unique_ptr<ModuleBase>& module : m_modules) {
         module->initialize(*m_container);
     }
 
@@ -51,4 +51,5 @@ void QlockyApp::finish() {
     // }
 
     // TODO remove IOC
+    m_modules.clear();
 }

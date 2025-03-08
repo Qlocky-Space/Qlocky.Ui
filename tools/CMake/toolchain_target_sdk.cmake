@@ -2,7 +2,6 @@ set(CMAKE_SYSTEM_NAME Qlocky)
 
 include($ENV{OECORE_NATIVE_SYSROOT}/usr/share/cmake/OEToolchainConfig.cmake)
 
-
 # Read the contents of the file
 file(STRINGS /workspaces/.env ENV_FILE)
 foreach(VAR ${ENV_FILE})

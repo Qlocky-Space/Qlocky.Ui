@@ -18,6 +18,7 @@
 macro(declare_module name)
     set(MODULE ${name})
     set(MODULE_ALIAS qlocky::${name})
+    set(MODULE_QML_IMPORT ${CMAKE_CURRENT_LIST_DIR}/qml)
 
     # just reset all settings
     unset(MODULE_INCLUDE)
@@ -25,18 +26,14 @@ macro(declare_module name)
     unset(MODULE_SRC)
     unset(MODULE_LINK)
     unset(MODULE_QRC)
-    unset(MODULE_QML_IMPORT)
     unset(MODULE_INCLUDE_API)
 endmacro()
 
 macro(add_qml_import_path input_var)
-    if (NOT ${input_var} STREQUAL "")
-        set(QML_IMPORT_PATH "$CACHE{QML_IMPORT_PATH}")
-        list(APPEND QML_IMPORT_PATH ${input_var})
-        list(REMOVE_DUPLICATES QML_IMPORT_PATH)
-        set(QML_IMPORT_PATH "${QML_IMPORT_PATH}" CACHE STRING
-            "QtCreator extra import paths for QML modules" FORCE)
-    endif()
+    set(QML_IMPORT_PATH "$CACHE{QML_IMPORT_PATH}")
+    list(APPEND QML_IMPORT_PATH ${input_var})
+    list(REMOVE_DUPLICATES QML_IMPORT_PATH)
+    set(QML_IMPORT_PATH "${QML_IMPORT_PATH}")
 endmacro()
 
 macro(setup_module)
@@ -46,19 +43,23 @@ macro(setup_module)
         qt_add_library(${MODULE} STATIC)
         qt6_add_qml_module(${MODULE}
             URI ${MODULE}
+            PLUGIN_TARGET ${MODULE}Plugin
+            VERSION 1.0
             RESOURCE_PREFIX  "/qt/qml"
+            IMPORTS ${MODULE_QML_IMPORTS}
             QML_FILES ${MODULE_QML_SRC}
+            SOURCES ${MODULE_SRC}
         )
-        add_qml_import_path(${CMAKE_CURRENT_LIST_DIR}/qml)
+        # add_qml_import_path(MODULE_QML_IMPORT)
     else()
         add_library(${MODULE})
+        target_sources(${MODULE} PRIVATE ${MODULE_SRC})
     endif()
 
     if (MODULE_ALIAS)
         add_library(${MODULE_ALIAS} ALIAS ${MODULE})
     endif()
 
-    target_sources(${MODULE} PRIVATE ${MODULE_SRC})
 
     target_include_directories(${MODULE} PUBLIC
         # Default include folder for all modules
@@ -76,12 +77,13 @@ macro(setup_module)
         ${MODULE_INCLUDE}
 
         ${CMAKE_CURRENT_SOURCE_DIR}    # Include the current module source directory
+        ${CMAKE_CURRENT_LIST_DIR}/view
     )
 
     string(TOUPPER ${MODULE} MODULE_UPPERCASE)
     target_compile_definitions(${MODULE} PUBLIC
         ${MODULE_DEF}
-        # ${MODULE_UPPERCASE}_QML_IMPORT="${MODULE_QML_IMPORT}"
+        ${MODULE_UPPERCASE}_QML_IMPORT="${MODULE_QML_IMPORT}"
     )
 
     list(APPEND MODULE_LINK ${EXTERN_LIBRARIES})

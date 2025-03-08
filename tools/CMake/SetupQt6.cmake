@@ -13,7 +13,7 @@ set(_components
 
 set(QT_QML_GENERATE_QMLLS_INI ON)
 set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml)
-# set(QML_IMPORT_PATH ${QT_QML_OUTPUT_DIRECTORY} CACHE STRING "Import paths for Qt Creator's code model" FORCE)
+set(QML_IMPORT_PATH ${QT_QML_OUTPUT_DIRECTORY} CACHE PATH "Extra QML import paths to make Qt Creator happy")
 
 foreach(_component ${_components})
     find_package(Qt6${_component} REQUIRED)

@@ -5,7 +5,7 @@
 #include "api/ApplicationIfc.h"
 #include "AppShellModule.h"
 #include "internal/QlockyApp.h"
-#include "ModuleIfc.h"
+#include "ModuleBase.h"
 #include "QlockyConfig.h"
 #include "UiEngineIfc.h"
 

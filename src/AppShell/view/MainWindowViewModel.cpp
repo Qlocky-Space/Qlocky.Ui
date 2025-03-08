@@ -16,5 +16,8 @@ void MainWindowViewModel::setWindow(QWindow* window) {
     }
 
     m_window = window;
+
+#ifndef OS_IS_LINUX
     window->showFullScreen();
+#endif
 }
