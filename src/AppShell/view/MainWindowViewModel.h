@@ -2,12 +2,13 @@
 #define QLOCKY_MAIN_WINDOW_VIEW_H
 
 #include <QObject>
-#include <QQmlEngine>
+#include <QtQml/qqmlregistration.h>
 #include <QWindow>
 
 class MainWindowViewModel : public QObject {
     Q_OBJECT
     Q_PROPERTY(QWindow* window READ getWindow WRITE setWindow)
+    QML_ELEMENT
 
 public:
 

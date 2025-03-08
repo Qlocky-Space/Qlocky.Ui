@@ -2,21 +2,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import Alarm
+
 RowLayout {
     anchors.fill: parent
     spacing: 10
 
-    Button {
-        id: button
-        text: "Example 10"
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-        background: Rectangle {
-            color: button.down ? "#173ebd" : "#3700ff"
-            implicitWidth: 300
-            implicitHeight: 80
-        }
-    }
+    Alarm {}
 
     Button {
         id: button1
