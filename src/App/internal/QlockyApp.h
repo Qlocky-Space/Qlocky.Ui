@@ -21,7 +21,7 @@ public:
 
     void addModule(std::unique_ptr<ModuleBase> module);
 
-    void perform(std::shared_ptr<Injector> container);
+    void perform(Injector& container);
     void finish();
 
 private:
@@ -30,12 +30,13 @@ private:
     std::shared_ptr<T> resolve();
 
     std::vector<std::unique_ptr<ModuleBase>> m_modules {};
-    std::shared_ptr<Injector> m_container {};
+    Injector* m_container {};
 };
 
 #endif
 
 template<class T>
 inline std::shared_ptr<T> QlockyApp::resolve() {
+    assert(m_container != nullptr);
     return m_container->create<std::shared_ptr<T>>();
 }
