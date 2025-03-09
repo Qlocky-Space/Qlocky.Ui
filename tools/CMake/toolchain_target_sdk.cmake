@@ -1,4 +1,4 @@
-set(CMAKE_SYSTEM_NAME Qlocky)
+set(CMAKE_TARGET_SDK Qlocky)
 
 include($ENV{OECORE_NATIVE_SYSROOT}/usr/share/cmake/OEToolchainConfig.cmake)
 
