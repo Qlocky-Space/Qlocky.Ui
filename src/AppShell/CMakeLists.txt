@@ -17,7 +17,9 @@ set(MODULE_SRC
 
 set(MODULE_QML_SRC
     qml/AppWindow.qml
-    qml/MyScreen.qml
+    qml/WindowContent.qml
+    qml/StatusBar.qml
+    qml/Card.qml
 )
 
 setup_module()

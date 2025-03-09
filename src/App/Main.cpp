@@ -2,13 +2,13 @@
 #include <boost/di/extension/injector.hpp>
 #include <QGuiApplication>
 
+#include "AlarmModule.h"
 #include "api/ApplicationIfc.h"
 #include "AppShellModule.h"
 #include "internal/QlockyApp.h"
-#include "ModuleBase.h"
 #include "QlockyConfig.h"
-#include "UiEngineIfc.h"
 
+// required for boost container creation at compile time
 namespace di = boost::di;
 
 /**
@@ -16,7 +16,7 @@ namespace di = boost::di;
  */
 template<class T>
 std::shared_ptr<T> createApplication(Injector& container) {
-    container.install(di::bind<ApplicationIfc>().to<T>().in(di::singleton));
+    container.install(di::bind<ApplicationIfc>().to<T>().in(boost::di::singleton));
 
     return std::static_pointer_cast<T>(container.create<std::shared_ptr<ApplicationIfc>>());
 }
@@ -30,11 +30,12 @@ int main(int argc, char* argv[]) {
     coreApp->setApplicationVersion(QLOCKY_APP_VERSION);
 
     // Setup main application
-    Injector globalContainer {di::make_injector()};
+    Injector globalContainer {boost::di::make_injector()};
     auto app {createApplication<QlockyApp>(globalContainer)};
     app->addModule<AppShellModule>();
+    app->addModule<AlarmModule>();
 
-    app->perform(globalContainer);
+    app->start(globalContainer);
 
     // Provide an main application loop
     int const errorCode {coreApp->exec()};

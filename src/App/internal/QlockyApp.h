@@ -7,11 +7,17 @@
 #include "api/ApplicationIfc.h"
 #include "api/ModuleBase.h"
 
-class QlockyApp : public ApplicationIfc {
+/**
+ * The main application where all sub modules are registered.
+ *
+ * Contains the global container to resolve all registered components.
+ */
+class QlockyApp final : public ApplicationIfc {
 public:
 
-    QlockyApp();
-
+    /**
+     * Register a module with template
+     */
     template<class T>
     void addModule() {
         static_assert(std::is_base_of_v<ModuleBase, T>, "Module does not inherit from ModuleBase");
@@ -19,24 +25,36 @@ public:
         addModule(std::move(module));
     }
 
+    /**
+     * Register a module with instance
+     * @param module module base to register
+     */
     void addModule(std::unique_ptr<ModuleBase> module);
 
-    void perform(Injector& container);
+    /**
+     * Start the application.
+     * @param container the global container
+     */
+    void start(Injector& container);
+
+    /**
+     * Cleanup the application before application ends
+     */
     void finish();
+
+    QlockyApp() = default;
+    ~QlockyApp() final = default;
 
 private:
 
     template<class T>
-    std::shared_ptr<T> resolve();
+    std::shared_ptr<T> resolve() {
+        assert(m_container != nullptr);
+        return m_container->create<std::shared_ptr<T>>();
+    }
 
     std::vector<std::unique_ptr<ModuleBase>> m_modules {};
     Injector* m_container {};
 };
 
 #endif
-
-template<class T>
-inline std::shared_ptr<T> QlockyApp::resolve() {
-    assert(m_container != nullptr);
-    return m_container->create<std::shared_ptr<T>>();
-}

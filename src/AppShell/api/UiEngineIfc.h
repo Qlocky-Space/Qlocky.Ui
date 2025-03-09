@@ -5,17 +5,18 @@
 
 class QQmlApplicationEngine;
 
-#define QLOCKY_QML_LIB_1_0 "QlockyUiLib", 1U, 0U
-
 /**
- * TODO
+ * A User Interface QML engine interface
+ *
+ * Bridge to QML related AppEngine
  */
 class UiEngineIfc {
 public:
 
+    /**
+     * Get the QML application engine
+     */
     virtual QQmlApplicationEngine& getAppEngine() = 0;
-
-    virtual void addSourceImportPath(QString const& path) = 0;
 
     virtual ~UiEngineIfc() = default;
 };

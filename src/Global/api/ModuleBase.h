@@ -39,6 +39,7 @@ public:
         return m_container->create<std::shared_ptr<T>>();
     }
 
+    ModuleBase() = default;
     virtual ~ModuleBase() = default;
 
 protected:
@@ -47,12 +48,13 @@ protected:
      * Register all components which must be exported for other modules.
      * @param container the container where the compoents must be registered to.
      */
-    virtual void registerExports(Injector& container) = 0;
+    virtual void registerExports(Injector& container) {
+    }
 
     /**
      * Register all QML types and make it available in *.qml file.
      */
-    virtual void registerQmlTypes() = 0;
+    virtual void registerQmlTypes() { };
 
 private:
 

@@ -6,12 +6,16 @@
 /**
  * AppShell module contains functionality for
  */
-class AppShellModule : public ModuleBase {
+class AppShellModule final : public ModuleBase {
 public:
 
+    /**
+     * @see ModuleBase::registerExports
+     */
     void registerExports(Injector& container) final;
 
-    void registerQmlTypes() final;
+    AppShellModule() = default;
+    ~AppShellModule() final = default;
 };
 
 #endif
