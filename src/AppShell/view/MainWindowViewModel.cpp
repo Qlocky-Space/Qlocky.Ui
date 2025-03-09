@@ -7,9 +7,6 @@ MainWindowViewModel::MainWindowViewModel(QObject* parent) :
     m_window {} {
 }
 
-MainWindowViewModel::~MainWindowViewModel() {
-}
-
 void MainWindowViewModel::setWindow(QWindow* window) {
     if (m_window != nullptr) {
         return;

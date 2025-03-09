@@ -9,12 +9,11 @@ class UiEngine final : public UiEngineIfc {
 public:
 
     UiEngine() = default;
+    ~UiEngine() final = default;
 
     QQmlApplicationEngine& getAppEngine() final {
         return m_engine;
     }
-
-    void addSourceImportPath(QString const& path) final;
 
 private:
 

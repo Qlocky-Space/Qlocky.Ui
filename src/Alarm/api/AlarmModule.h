@@ -6,12 +6,16 @@
 /**
  * Alarm module contains functionality for
  */
-class AlarmModule : public ModuleBase {
+class AlarmModule final : public ModuleBase {
 public:
 
+    /**
+     * @see ModuleBase::registerExports
+     */
     void registerExports(Injector& container) final;
 
-    void registerQmlTypes() final;
+    AlarmModule() = default;
+    ~AlarmModule() final = default;
 
 private:
 };

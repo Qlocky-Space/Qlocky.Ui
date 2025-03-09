@@ -13,7 +13,6 @@ class MainWindowViewModel : public QObject {
 public:
 
     explicit MainWindowViewModel(QObject* parent = nullptr);
-    ~MainWindowViewModel();
 
     QWindow* getWindow() const {
         return m_window;

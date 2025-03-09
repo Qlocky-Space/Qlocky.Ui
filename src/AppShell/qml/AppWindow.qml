@@ -7,16 +7,18 @@ import AppShell 1.0
 ApplicationWindow {
     id: root
     visible: true
-    color: 'black'
+    color: "#16171A"
     width: 1920
     height: 1080
 
     property MainWindowViewModel mainWindowViewModel
+
+    menuBar: StatusBar {}
 
     MainWindowViewModel {
         id: viewModel
         window: root
     }
 
-    MyScreen {}
+    WindowContent {}
 }
