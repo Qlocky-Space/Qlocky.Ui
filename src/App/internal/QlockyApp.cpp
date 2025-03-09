@@ -14,11 +14,11 @@ void QlockyApp::addModule(std::unique_ptr<ModuleBase> module) {
     m_modules.push_back(std::move(module));
 }
 
-void QlockyApp::perform(std::shared_ptr<Injector> container) {
-    m_container = container;
+void QlockyApp::perform(Injector& container) {
+    m_container = &container;
 
     for (std::unique_ptr<ModuleBase>& module : m_modules) {
-        module->initialize(*m_container);
+        module->initialize(container);
     }
 
     auto& engine {resolve<UiEngineIfc>()->getAppEngine()};

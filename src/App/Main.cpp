@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     auto app {createApplication<QlockyApp>(globalContainer)};
     app->addModule<AppShellModule>();
 
-    app->perform(std::shared_ptr<Injector> {&globalContainer});
+    app->perform(globalContainer);
 
     // Provide an main application loop
     int const errorCode {coreApp->exec()};
