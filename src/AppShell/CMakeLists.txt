@@ -20,6 +20,7 @@ set(MODULE_QML_SRC
     qml/WindowContent.qml
     qml/StatusBar.qml
     qml/Card.qml
+    qml/WidgetLayout.qml
 )
 
 setup_module()
