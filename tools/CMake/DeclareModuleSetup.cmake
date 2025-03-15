@@ -27,6 +27,8 @@ macro(declare_module name)
     unset(MODULE_LINK)
     unset(MODULE_QRC)
     unset(MODULE_INCLUDE_API)
+    unset(MODULE_QML_SRC)
+    unset(MODULE_QML_RESOURCES)
 endmacro()
 
 macro(add_qml_import_path input_var)
@@ -49,6 +51,10 @@ macro(setup_module)
             IMPORTS ${MODULE_QML_IMPORTS}
             QML_FILES ${MODULE_QML_SRC}
             SOURCES ${MODULE_SRC}
+        )
+        qt6_add_resources(${MODULE} "resources"
+            PREFIX ${MODULE}
+            FILES ${MODULE_QML_RESOURCES}
         )
         # add_qml_import_path(MODULE_QML_IMPORT)
     else()
