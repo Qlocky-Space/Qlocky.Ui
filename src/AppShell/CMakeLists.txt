@@ -36,6 +36,9 @@ set(MODULE_QML_RESOURCES
     resources/snow.png
     resources/settings.png
     resources/signal.png
+    resources/previous.png
+    resources/play.png
+    resources/skip.png
 
     resources/fonts/DS-DIGI.TTF
 )
