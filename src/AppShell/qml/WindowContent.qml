@@ -1,8 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 
-import "Demo"
-
 WidgetLayout {
     // Columns
     columns: 5
@@ -14,20 +12,50 @@ WidgetLayout {
     anchors.fill: parent
     anchors.margins: 20
 
-    // TODO Move to Weather Widget
-    WeatherCard {}
-    WeatherPredictionCard {}
-
-    Card {
-        cardColor: "#202226"
-
-        Layout.row: 2
-        Layout.rowSpan: 1
-        Layout.column: 1
-        Layout.columnSpan: 1
+    // TODO Move model to viewmodel where a module itself
+    // could register its own cards.
+    ListModel {
+        id: loaderModel
+        ListElement {
+            source: "qrc:/qt/qml/Weather/qml/WeatherCard.qml"
+            row: 0
+            rowSpan: 2
+            column: 0
+            columnSpan: 2
+        }
+        ListElement {
+            source: "qrc:/qt/qml/Weather/qml/WeatherPredictionCard.qml"
+            row: 2
+            rowSpan: 1
+            column: 0
+            columnSpan: 1
+        }
+        ListElement {
+            source: "qrc:/qt/qml/Alarm/qml/ClockCard.qml"
+            row: 0
+            rowSpan: 2
+            column: 2
+            columnSpan: 3
+        }
+        ListElement {
+            source: "qrc:/qt/qml/Radio/qml/RadioCard.qml"
+            row: 2
+            rowSpan: 1
+            column: 2
+            columnSpan: 3
+        }
     }
 
-    // TODO Move to Alarm Widget
-    ClockCard {}
-    RadioCard {}
+    Repeater {
+        model: loaderModel
+
+        Loader {
+            source: model.source
+
+            Layout.row: model.row
+            Layout.rowSpan: model.rowSpan
+            Layout.column: model.column
+            Layout.columnSpan: model.columnSpan
+        }
+    }
 }

@@ -1,15 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 
-import ".."
+import AppShell
 
 Card {
     cardColor: "#202226"
-
-    Layout.row: 2
-    Layout.rowSpan: 1
-    Layout.column: 0
-    Layout.columnSpan: 1
 
     Grid {
         anchors.centerIn: parent
@@ -23,7 +18,7 @@ Card {
             color: "white"
         }
         Image {
-            source: "/AppShell/resources/sun.png"
+            source: "/Weather/resources/sun.png"
 
             width: 40
             height: 40
@@ -35,7 +30,7 @@ Card {
             color: "white"
         }
         Image {
-            source: "/AppShell/resources/cloudy.png"
+            source: "/Weather/resources/cloudy.png"
 
             width: 40
             height: 40
@@ -47,7 +42,7 @@ Card {
             color: "white"
         }
         Image {
-            source: "/AppShell/resources/cloudy-sun-rain.png"
+            source: "/Weather/resources/cloudy-sun-rain.png"
 
             width: 40
             height: 40
@@ -59,7 +54,7 @@ Card {
             color: "white"
         }
         Image {
-            source: "/AppShell/resources/snow.png"
+            source: "/Weather/resources/snow.png"
 
             width: 40
             height: 40

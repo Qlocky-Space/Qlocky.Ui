@@ -52,14 +52,16 @@ macro(setup_module)
             QML_FILES ${MODULE_QML_SRC}
             SOURCES ${MODULE_SRC}
         )
-        qt6_add_resources(${MODULE} "resources"
-            PREFIX ${MODULE}
-            FILES ${MODULE_QML_RESOURCES}
-        )
-        # add_qml_import_path(MODULE_QML_IMPORT)
     else()
         add_library(${MODULE})
         target_sources(${MODULE} PRIVATE ${MODULE_SRC})
+    endif()
+
+    if (MODULE_QML_RESOURCES)
+        qt6_add_resources(${MODULE} "${MODULE}-resources"
+            PREFIX ${MODULE}
+            FILES ${MODULE_QML_RESOURCES}
+        )
     endif()
 
     if (MODULE_ALIAS)

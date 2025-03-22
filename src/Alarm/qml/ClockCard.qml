@@ -1,19 +1,14 @@
 import QtQuick
 import QtQuick.Layouts
 
-import ".."
+import AppShell
 
 Card {
     cardColor: "#202226"
 
-    Layout.row: 0
-    Layout.rowSpan: 2
-    Layout.column: 2
-    Layout.columnSpan: 3
-
     FontLoader {
         id: digiFont
-        source: "/AppShell/resources/fonts/DS-DIGI.TTF"
+        source: "/Alarm/resources/fonts/DS-DIGI.TTF"
     }
 
     Grid {
