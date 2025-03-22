@@ -5,6 +5,7 @@ import QtQuick.Controls
 import ".."
 
 Card {
+    id: card
     cardColor: "#202226"
 
     Layout.row: 2
@@ -12,45 +13,112 @@ Card {
     Layout.column: 2
     Layout.columnSpan: 3
 
-    ScrollView {
-        anchors.centerIn: parent
-        anchors.fill: parent
-        anchors.margins: 40
+    Row {
+        id: metadata
+        spacing: 10
+        anchors.top: card.top
+        anchors.topMargin: 30
+
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        Rectangle {
+            color: "#5197de"
+            width: 70
+            height: 70
+
+            anchors.right: infos.left
+            anchors.rightMargin: 25
+        }
 
         Column {
-            width: parent.width
-            spacing: 10
+            id: infos
 
             Text {
-                text: "Line 1"
-                font.pixelSize: 32
+                text: "Song Name"
                 color: "white"
+                font.pixelSize: 32
             }
+
             Text {
-                text: "Line 2"
-                font.pixelSize: 32
+                text: "Album Name"
                 color: "white"
-            }
-            Text {
-                text: "Line 3"
                 font.pixelSize: 32
-                color: "white"
             }
-            Text {
-                text: "Line 4"
-                font.pixelSize: 32
-                color: "white"
-            }
-            Text {
-                text: "Line 5"
-                font.pixelSize: 32
-                color: "white"
-            }
-            Text {
-                text: "Line 6"
-                font.pixelSize: 32
-                color: "white"
-            }
+        }
+    }
+
+    Column {
+        id: radio
+
+        anchors.top: metadata.bottom
+        anchors.topMargin: 110
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        function formatTime(ms) {
+            let totalSeconds = Math.floor(ms / 1000);
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+
+            return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        }
+
+        Slider {
+            id: slider
+            orientation: Qt.Horizontal
+            from: 0
+            to: 100
+            value: 40
+            width: card.width * 0.7
+            snapMode: Slider.NoSnap
+            height: 20
+
+            anchors.centerIn: radio
+        }
+
+        Text {
+            anchors.top: slider.bottom
+            anchors.left: slider.left
+            text: radio.formatTime(slider.value / 100 * 221000)
+            color: "white"
+            font.pixelSize: 24
+        }
+
+        Text {
+            anchors.top: slider.bottom
+            anchors.right: slider.right
+            text: radio.formatTime((100 - slider.value) / 100 * 221000)
+            color: "white"
+            font.pixelSize: 24
+        }
+    }
+
+    Row {
+        id: controls
+        spacing: 10
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: radio.bottom
+        anchors.topMargin: 30
+
+        Image {
+            source: "/AppShell/resources/previous.png"
+
+            width: 80
+            height: 80
+        }
+
+        Image {
+            source: "/AppShell/resources/play.png"
+
+            width: 80
+            height: 80
+        }
+
+        Image {
+            source: "/AppShell/resources/skip.png"
+
+            width: 80
+            height: 80
         }
     }
 }
