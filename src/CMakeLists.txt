@@ -2,6 +2,8 @@
 set(QLOCKY_MODULES
     AppShell
     Alarm
+    Weather
+    Radio
 )
 
 add_subdirectory(Global)

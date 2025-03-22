@@ -21,25 +21,10 @@ set(MODULE_QML_SRC
     qml/StatusBar.qml
     qml/Card.qml
     qml/WidgetLayout.qml
-
-    qml/Demo/WeatherCard.qml
-    qml/Demo/WeatherPredictionCard.qml
-    qml/Demo/ClockCard.qml
-    qml/Demo/RadioCard.qml
 )
 
 set(MODULE_QML_RESOURCES
-    resources/cloudy.png
-    resources/cloudy-sun.png
-    resources/cloudy-sun-rain.png
-    resources/sun.png
-    resources/snow.png
     resources/settings.png
     resources/signal.png
-    resources/previous.png
-    resources/play.png
-    resources/skip.png
-
-    resources/fonts/DS-DIGI.TTF
 )
 setup_module()

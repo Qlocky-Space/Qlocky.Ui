@@ -2,16 +2,11 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import ".."
+import AppShell
 
 Card {
     id: card
     cardColor: "#202226"
-
-    Layout.row: 2
-    Layout.rowSpan: 1
-    Layout.column: 2
-    Layout.columnSpan: 3
 
     Row {
         id: metadata
@@ -101,21 +96,21 @@ Card {
         anchors.topMargin: 30
 
         Image {
-            source: "/AppShell/resources/previous.png"
+            source: "/Alarm/resources/previous.png"
 
             width: 80
             height: 80
         }
 
         Image {
-            source: "/AppShell/resources/play.png"
+            source: "/Alarm/resources/play.png"
 
             width: 80
             height: 80
         }
 
         Image {
-            source: "/AppShell/resources/skip.png"
+            source: "/Alarm/resources/skip.png"
 
             width: 80
             height: 80

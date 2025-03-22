@@ -1,18 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
 
-import ".."
+import AppShell
 
 Card {
     cardColor: "#202226"
 
-    Layout.row: 0
-    Layout.rowSpan: 2
-    Layout.column: 0
-    Layout.columnSpan: 2
-
     Image {
-        source: "/AppShell/resources/cloudy-sun.png"
+        source: "/Weather/resources/cloudy-sun.png"
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top

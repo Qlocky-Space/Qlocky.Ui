@@ -8,6 +8,8 @@
 class MainWindow final : public MainWindowIfc {
 public:
 
+    void registerCard(CardInfo const& card) final;
+
     MainWindow() = default;
     ~MainWindow() final = default;
 
