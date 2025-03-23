@@ -1,7 +1,6 @@
-set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_TARGET_SDK Qlocky)
 
 include($ENV{OECORE_NATIVE_SYSROOT}/usr/share/cmake/OEToolchainConfig.cmake)
-
 
 # Read the contents of the file
 file(STRINGS /workspaces/.env ENV_FILE)

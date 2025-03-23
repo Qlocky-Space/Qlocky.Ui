@@ -1,0 +1,10 @@
+/* ============================================== */
+/* App                                            */
+/* ============================================== */
+
+#cmakedefine QLOCKY_APP_REVISION "${QLOCKY_APP_REVISION}"
+#cmakedefine QLOCKY_APP_BUILD_NUMBER "${QLOCKY_APP_BUILD_NUMBER}"
+#cmakedefine QLOCKY_APP_VERSION "${QLOCKY_APP_VERSION}"
+#cmakedefine QLOCKY_APP_VERSION_MAJOR "${QLOCKY_APP_VERSION_MAJOR}"
+#cmakedefine QLOCKY_APP_VERSION_MINOR "${QLOCKY_APP_VERSION_MINOR}"
+#cmakedefine QLOCKY_APP_VERSION_PATCH "${QLOCKY_APP_VERSION_PATCH}"

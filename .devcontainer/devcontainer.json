@@ -11,15 +11,20 @@
 				"ms-azuretools.vscode-docker",
 				"ms-vscode.cpptools-extension-pack",
 				"matepek.vscode-catch2-test-adapter",
-				"theqtcompany.qt-qml",
+				"theqtcompany.qt",
 				"jkiviluoto.tws"
-			]
+			],
+			"settings": {
+				"qt-qml.qmlls.enabled": true,
+				"qt-qml.qmlls.customExePath": "qmlls",
+				"qt-core.qtInstallationRoot": "/opt/qt"
+			}
 		}
 	},
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind,consistency=cached",
 	"workspaceFolder": "/workspaces/qlocky.code-workspace",
 	"mounts": [
-		"source=/opt/poky,target=/opt/poky,type=bind,consistency=delegated",
+		"source=/opt/qlocky,target=/opt/qlocky,type=bind,consistency=delegated",
 		"source=/opt/qt,target=/opt/qt,type=bind,consistency=delegated",
-	 ]
+	]
 }
