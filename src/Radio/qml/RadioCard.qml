@@ -96,21 +96,21 @@ Card {
         anchors.topMargin: 30
 
         Image {
-            source: "/Alarm/resources/previous.png"
+            source: "/Radio/resources/previous.png"
 
             width: 80
             height: 80
         }
 
         Image {
-            source: "/Alarm/resources/play.png"
+            source: "/Radio/resources/play.png"
 
             width: 80
             height: 80
         }
 
         Image {
-            source: "/Alarm/resources/skip.png"
+            source: "/Radio/resources/skip.png"
 
             width: 80
             height: 80

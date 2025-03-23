@@ -20,6 +20,5 @@ ApplicationWindow {
         window: root
     }
 
-    WindowContent {
-    }
+    WindowContent {}
 }
