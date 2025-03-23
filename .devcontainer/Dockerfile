@@ -13,8 +13,12 @@ RUN apt update && apt -y install \
 
 # tools for application
 RUN apt update && apt -y install \
-    qt6-base-dev libgl1-mesa-dev
+    qt6-base-dev qt6-declarative-dev-tools \
+    libgl1-mesa-dev libboost-all-dev
 
 
 # Git configuration
 RUN git config --global --add safe.directory /workspaces/build/_deps/*
+
+# Update Path for QT dev tool applications
+ENV PATH="$PATH:/opt/qt/6.8.1/gcc_64/bin"
