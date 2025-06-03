@@ -5,8 +5,7 @@
 include(FetchContent)
 FetchContent_Declare(
   boost_di
-  GIT_REPOSITORY https://github.com/boost-ext/di.git
-  GIT_TAG        cpp14
+  URL      https://github.com/boost-ext/di/archive/refs/tags/v1.3.2.zip
 )
 FetchContent_GetProperties(boost_di)
 
