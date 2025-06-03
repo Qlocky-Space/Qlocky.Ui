@@ -43,7 +43,7 @@ include(DeclareModuleSetup)
 ###########################################
 add_subdirectory(src)
 
-if (OS_IS_LIN)
+if (OS_IS_LINUX)
     enable_testing()
     add_subdirectory(tests)
 endif()
