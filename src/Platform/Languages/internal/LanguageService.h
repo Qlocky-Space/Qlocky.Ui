@@ -4,10 +4,18 @@
 #include <QTranslator>
 #include <set>
 
-#include "api/LanguageServiceIfc.h"
+#include "LanguageServiceIfc.h"
+#include "UiEngineIfc.h"
 
 class LanguageService final : public LanguageServiceIfc {
 public:
+
+    /**
+     * Constructor for LanguageService.
+     *
+     * @param uiEngine Reference to the UI engine interface.
+     */
+    LanguageService(UiEngineIfc& uiEngine);
 
     /**
      * @see LanguageServiceIfc::loadLanguage
@@ -17,6 +25,7 @@ public:
 private:
 
     QTranslator m_translator {};
+    UiEngineIfc& m_uiEngine;
 };
 
 #endif

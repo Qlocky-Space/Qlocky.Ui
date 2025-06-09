@@ -1,10 +1,11 @@
 #include "LanguageService.h"
 
-#include "QCoreApplication"
-#include "QLocale"
-#include "QTranslator"
+LanguageService::LanguageService(UiEngineIfc& uiEngine) :
+    m_uiEngine {uiEngine} {
+}
 
 void LanguageService::loadLanguage(LanguageTypes languageType) {
+    // TODO this is a temporary solution, the language files should be loaded from a configurable path
     QString const languageFilePath {"/workspaces/build/share/i18n"};
 
     QString languageFile {languageFilePath};
@@ -22,10 +23,10 @@ void LanguageService::loadLanguage(LanguageTypes languageType) {
             break;
     }
 
-    qApp->removeTranslator(&m_translator);
+    m_uiEngine.removeTranslator(&m_translator);
 
     if (m_translator.load(languageFile)) {
-        qApp->installTranslator(&m_translator);
+        m_uiEngine.installTranslator(&m_translator);
     }
     else {
         qWarning("Failed to load language file: %s", qPrintable(languageFile));
