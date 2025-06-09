@@ -17,7 +17,7 @@ void QlockyApp::start(Injector& container) {
         module->initialize(container);
     }
 
-    QUrl const url("qrc:/qt/qml/AppShell/qml/AppWindow.qml");
+    QUrl const url("qrc:/qt/qml/AppShell/qml/Main.qml");
     auto& engine {resolve<UiEngineIfc>()->getAppEngine()};
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, qApp, [this, url](QObject* obj, QUrl const& objUrl) {
         if (!obj && url == objUrl) {

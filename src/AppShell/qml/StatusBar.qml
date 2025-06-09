@@ -5,7 +5,6 @@ import QtQuick.Layouts
 Item {
     id: titlebar
     width: parent.width
-    height: 50
 
     Rectangle {
         id: statusBar
