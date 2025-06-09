@@ -8,4 +8,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/LanguageService.h
 )
 
+set(MODULE_LINK
+    qlocky::Ui
+)
+
 setup_module()
