@@ -10,15 +10,13 @@
  */
 struct Language {
 
-    Language(QString file, QString langCode, Qt::LayoutDirection dir = Qt::LayoutDirection::LeftToRight) :
+    Language(QString file, QString langCode) :
         fileName {std::move(file)},
-        code {std::move(langCode)},
-        direction {dir} {
+        code {std::move(langCode)} {
     }
 
     QString fileName;
     QString code;
-    Qt::LayoutDirection direction;
 };
 
 #endif

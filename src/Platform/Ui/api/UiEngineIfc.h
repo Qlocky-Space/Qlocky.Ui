@@ -37,6 +37,12 @@ public:
      */
     virtual bool removeTranslator(QTranslator* messageFile) = 0;
 
+    /**
+     * Sets the layout direction for the application.
+     * @param direction The layout direction to set (LeftToRight, RightToLeft, or LayoutDirectionAuto).
+     */
+    virtual void setLayoutDirection(Qt::LayoutDirection direction) = 0;
+
     virtual ~UiEngineIfc() = default;
 };
 

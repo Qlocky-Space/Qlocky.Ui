@@ -1,6 +1,6 @@
 #include "UiEngine.h"
 
-#include <QCoreApplication>
+#include <QGuiApplication>
 
 bool UiEngine::installTranslator(QTranslator* messageFile) {
     if (messageFile) {
@@ -16,4 +16,8 @@ bool UiEngine::removeTranslator(QTranslator* messageFile) {
         return true;
     }
     return false;
+}
+
+void UiEngine::setLayoutDirection(Qt::LayoutDirection direction) {
+    qApp->setLayoutDirection(direction);
 }
