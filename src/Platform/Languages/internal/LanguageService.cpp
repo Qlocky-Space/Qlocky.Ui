@@ -1,33 +1,42 @@
 #include "LanguageService.h"
 
-#include "QCoreApplication"
-#include "QLocale"
-#include "QTranslator"
+#include <QDir>
+#include <QLocale>
 
-void LanguageService::loadLanguage(LanguageTypes languageType) {
-    QString const languageFilePath {"/workspaces/build/share/i18n"};
+LanguageService::LanguageTypes const LanguageService::SupportedLanguages {
+    {LanguageCode::DE_CH, Language("QlockyApp_de.qm", "de_CH")},
+    {LanguageCode::EN_US, Language("QlockyApp_en.qm", "en_US")},
+};
 
-    QString languageFile {languageFilePath};
+LanguageService::LanguageService(UiEngineIfc& uiEngine) :
+    m_uiEngine {uiEngine} {
+}
 
-    switch (languageType) {
-        case LanguageTypes::DE_CH:
-            languageFile += "/QlockyApp_de.qm";
-            break;
-        case LanguageTypes::EN_US:
-            languageFile += "/QlockyApp_en.qm";
-            break;
-        default:
-            // Handle unsupported languages or set a default
-            languageFile += "/QlockyApp_de.qm";
-            break;
+void LanguageService::loadLanguage(LanguageCode language) {
+    if (SupportedLanguages.find(language) == SupportedLanguages.end()) {
+        qWarning("Unsupported language code: %d", static_cast<int>(language));
+        return;
     }
 
-    qApp->removeTranslator(&m_translator);
+    Language const& languageInfo = SupportedLanguages.at(language);
+    loadLanguage(languageInfo);
+}
 
-    if (m_translator.load(languageFile)) {
-        qApp->installTranslator(&m_translator);
+void LanguageService::loadLanguage(Language const& language) {
+    // TODO this is a temporary solution, the language files should be loaded from a configurable path
+    QDir const languageFilePath {"/workspaces/build/share/i18n"};
+    QFile const languageFile {languageFilePath.filePath(language.fileName)};
+
+    m_uiEngine.removeTranslator(&m_translator);
+
+    if (m_translator.load(languageFile.fileName())) {
+        m_uiEngine.installTranslator(&m_translator);
     }
     else {
-        qWarning("Failed to load language file: %s", qPrintable(languageFile));
+        qWarning("Failed to load language file: %s", qPrintable(languageFile.fileName()));
     }
+
+    QLocale locale {language.code};
+    QLocale::setDefault(locale);
+    m_uiEngine.setLayoutDirection(locale.textDirection());
 }

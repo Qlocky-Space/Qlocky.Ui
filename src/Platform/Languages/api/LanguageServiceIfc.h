@@ -1,7 +1,7 @@
 #ifndef QLOCKY_LANGUAGE_SERVICE_IFC_H
 #define QLOCKY_LANGUAGE_SERVICE_IFC_H
 
-#include "api/LanguageTypes.h"
+#include "api/LanguageCode.h"
 
 class LanguageServiceIfc {
 public:
@@ -12,9 +12,9 @@ public:
      * It should handle any necessary initialization or configuration
      * required to support the specified language.
      *
-     * @param languageType The type of language to load.
+     * @param language The type of language to load.
      */
-    virtual void loadLanguage(LanguageTypes languageType) = 0;
+    virtual void loadLanguage(LanguageCode language) = 0;
 
     virtual ~LanguageServiceIfc() = default;
 };
