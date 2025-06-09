@@ -71,7 +71,8 @@ macro(setup_module)
 
     target_include_directories(${MODULE} PUBLIC
         # Default include folder for all modules
-        ${QLOCKY_SRC_PATH}/Global
+        ${QLOCKY_SRC_PATH}/Platform
+        ${QLOCKY_SRC_PATH}/Platform/Global
 
         # public API interface between modules
         ${CMAKE_CURRENT_LIST_DIR}/api
