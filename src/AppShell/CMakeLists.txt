@@ -16,6 +16,7 @@ set(MODULE_SRC
 )
 
 set(MODULE_QML_SRC
+    qml/Main.qml
     qml/AppWindow.qml
     qml/WindowContent.qml
     qml/StatusBar.qml

@@ -6,19 +6,24 @@ import AppShell 1.0
 
 ApplicationWindow {
     id: root
+    objectName: "ApplicationWindow"
+
     visible: true
+
     color: "#16171A"
+
     width: 1920
     height: 1080
 
-    property MainWindowViewModel mainWindowViewModel
-
-    menuBar: StatusBar {}
+    default property alias windowContent: windowContentItem.data
 
     MainWindowViewModel {
         id: viewModel
         window: root
     }
 
-    WindowContent {}
+    Item {
+        id: windowContentItem
+        anchors.fill: parent
+    }
 }

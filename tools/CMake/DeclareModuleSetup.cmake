@@ -43,7 +43,7 @@ macro(setup_module)
 
     if (MODULE_QML_SRC)
         qt_add_library(${MODULE} STATIC)
-        qt6_add_qml_module(${MODULE}
+        qt_add_qml_module(${MODULE}
             URI ${MODULE}
             PLUGIN_TARGET ${MODULE}Plugin
             VERSION 1.0
@@ -71,7 +71,8 @@ macro(setup_module)
 
     target_include_directories(${MODULE} PUBLIC
         # Default include folder for all modules
-        ${QLOCKY_SRC_PATH}/Global
+        ${QLOCKY_SRC_PATH}/Platform
+        ${QLOCKY_SRC_PATH}/Platform/Global
 
         # public API interface between modules
         ${CMAKE_CURRENT_LIST_DIR}/api

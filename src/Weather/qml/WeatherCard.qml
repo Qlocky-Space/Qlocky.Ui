@@ -48,7 +48,7 @@ Card {
         }
 
         Text {
-            text: "Provided by manuel DEMO"
+            text: qsTr("Hint", "Provided by manuel DEMO")
             font.pixelSize: 14
             font.italic: true
             color: "white"

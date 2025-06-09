@@ -9,6 +9,7 @@ set(_components
     Gui
     Qml
     Quick
+    LinguistTools
 )
 
 set(QT_QML_GENERATE_QMLLS_INI ON)
@@ -21,6 +22,9 @@ foreach(_component ${_components})
     list(APPEND QT_INCLUDES ${Qt6${_component}_INCLUDE_DIRS})
     add_definitions(${Qt6${_component}_DEFINITIONS})
 endforeach()
+
+# Suppress warning about missing QML import paths
+qt_policy(SET QTP0004 NEW)
 
 include_directories(${QT_INCLUDES})
 
