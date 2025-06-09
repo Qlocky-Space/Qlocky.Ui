@@ -6,7 +6,7 @@ set(QLOCKY_MODULES
     Radio
 )
 
-add_subdirectory(Global)
+add_subdirectory(Platform)
 add_subdirectory(App)
 
 foreach(_module ${QLOCKY_MODULES})
