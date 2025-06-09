@@ -1,10 +1,11 @@
 #include "LanguageService.h"
 
 #include <QDir>
+#include <QLocale>
 
 LanguageService::LanguageTypes const LanguageService::SupportedLanguages {
-    {LanguageCode::DE_CH, Language("QlockyApp_de.qm", "de_CH", Qt::LayoutDirection::LeftToRight)},
-    {LanguageCode::EN_US, Language("QlockyApp_en.qm", "en_US", Qt::LayoutDirection::LeftToRight)},
+    {LanguageCode::DE_CH, Language("QlockyApp_de.qm", "de_CH")},
+    {LanguageCode::EN_US, Language("QlockyApp_en.qm", "en_US")},
 };
 
 LanguageService::LanguageService(UiEngineIfc& uiEngine) :
@@ -34,4 +35,8 @@ void LanguageService::loadLanguage(Language const& language) {
     else {
         qWarning("Failed to load language file: %s", qPrintable(languageFile.fileName()));
     }
+
+    QLocale locale {language.code};
+    QLocale::setDefault(locale);
+    m_uiEngine.setLayoutDirection(locale.textDirection());
 }

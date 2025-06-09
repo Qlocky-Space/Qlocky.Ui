@@ -28,6 +28,11 @@ public:
      */
     bool removeTranslator(QTranslator* messageFile) final;
 
+    /**
+     * @see UiEngineIfc::setLayoutDirection
+     */
+    void setLayoutDirection(Qt::LayoutDirection direction) final;
+
     UiEngine() = default;
     ~UiEngine() final = default;
 
