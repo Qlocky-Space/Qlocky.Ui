@@ -17,6 +17,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(QLOCKY_LIBS_PATH "${CMAKE_CURRENT_LIST_DIR}/libs")
 set(QLOCKY_SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src")
+set(QLOCKY_SHARE_PATH "${CMAKE_CURRENT_LIST_DIR}/share")
 
 ###########################################
 # Application Options
@@ -41,6 +42,7 @@ include(DeclareModuleSetup)
 ###########################################
 # Add source tree
 ###########################################
+add_subdirectory(share)
 add_subdirectory(src)
 
 if (OS_IS_LINUX)

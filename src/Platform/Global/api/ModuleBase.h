@@ -28,6 +28,8 @@ public:
 
         registerExports(container);
         registerQmlTypes();
+
+        onInitialize();
     }
 
     /**
@@ -55,6 +57,12 @@ protected:
      * Register all QML types and make it available in *.qml file.
      */
     virtual void registerQmlTypes() { };
+
+    /**
+     * This method is called after the module has been initialized.
+     * It can be used to perform additional initialization steps.
+     */
+    virtual void onInitialize() { };
 
 private:
 

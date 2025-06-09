@@ -49,6 +49,23 @@
                 "CMake: Build",
                 "Qlocky: Publish App"
             ]
+        },
+        {
+            "label": "CMake: Update Translations",
+            "type": "shell",
+            "detail": "Update translations for Qlocky.Ui",
+            "command": "cmake --build ${workspaceFolder}/build --target update_translations",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
         }
     ]
 }

@@ -9,6 +9,7 @@ set(_components
     Gui
     Qml
     Quick
+    LinguistTools
 )
 
 set(QT_QML_GENERATE_QMLLS_INI ON)
