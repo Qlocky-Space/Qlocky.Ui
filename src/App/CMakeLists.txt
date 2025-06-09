@@ -9,6 +9,7 @@ include(GetPlatformInfo)
 ###########################################
 set(LINK_LIB
     qlocky::Global
+    qlocky::Languages
 )
 foreach(_module ${QLOCKY_MODULES})
     list(APPEND LINK_LIB qlocky::${_module})
