@@ -4,6 +4,7 @@
 #include <QTranslator>
 #include <set>
 
+#include "Language.h"
 #include "LanguageServiceIfc.h"
 #include "UiEngineIfc.h"
 
@@ -20,9 +21,15 @@ public:
     /**
      * @see LanguageServiceIfc::loadLanguage
      */
-    void loadLanguage(LanguageTypes languageType) final;
+    void loadLanguage(LanguageCode language) final;
 
 private:
+
+    void loadLanguage(Language const& language);
+
+    using LanguageTypes = std::map<LanguageCode, Language>;
+
+    static LanguageTypes const SupportedLanguages;
 
     QTranslator m_translator {};
     UiEngineIfc& m_uiEngine;
