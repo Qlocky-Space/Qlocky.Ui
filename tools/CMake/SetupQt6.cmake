@@ -23,6 +23,9 @@ foreach(_component ${_components})
     add_definitions(${Qt6${_component}_DEFINITIONS})
 endforeach()
 
+# Suppress warning about missing QML import paths
+qt_policy(SET QTP0004 NEW)
+
 include_directories(${QT_INCLUDES})
 
 qt6_standard_project_setup()
