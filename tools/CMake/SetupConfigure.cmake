@@ -6,6 +6,13 @@ set(QLOCKY_APP_BUILD_NUMBER ${CMAKE_BUILD_NUMBER})
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 ###########################################
+# Setup paths
+###########################################
+set(QLOCKY_INSTALL_NAME  "qlocky-${QLOCKY_APP_VERSION}")
+set(QLOCKY_SHARE_NAME    "share")
+set(QLOCKY_SHARE_INSTALL_PATH "${CMAKE_INSTALL_PREFIX}/${QLOCKY_SHARE_NAME}/${QLOCKY_INSTALL_NAME}")
+
+###########################################
 # Global definitions
 ###########################################
 configure_file(${CMAKE_CURRENT_LIST_DIR}/QlockyConfig.h.in QlockyConfig.h )

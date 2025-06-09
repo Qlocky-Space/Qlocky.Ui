@@ -29,13 +29,13 @@ Card {
             id: infos
 
             Text {
-                text: "Song Name"
+                text: qsTr("SongName")
                 color: "white"
                 font.pixelSize: 32
             }
 
             Text {
-                text: "Album Name"
+                text: qsTr("AlbumName")
                 color: "white"
                 font.pixelSize: 32
             }

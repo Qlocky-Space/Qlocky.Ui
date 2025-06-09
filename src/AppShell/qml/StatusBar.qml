@@ -34,7 +34,7 @@ Item {
 
                 color: "white"
 
-                text: "Qlocky"
+                text: qsTr("Title")
                 font.pointSize: 20
             }
         }
@@ -92,7 +92,7 @@ Item {
 
             // TODO extract into sepearte component and may replace it with a Drawer?
             Text {
-                text: "Not impelemented yet"
+                text: "Not Implemented yet"
                 color: "white"
                 font.pointSize: 16
                 Layout.alignment: Qt.AlignHCenter

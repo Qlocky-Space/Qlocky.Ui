@@ -43,7 +43,7 @@ macro(setup_module)
 
     if (MODULE_QML_SRC)
         qt_add_library(${MODULE} STATIC)
-        qt6_add_qml_module(${MODULE}
+        qt_add_qml_module(${MODULE}
             URI ${MODULE}
             PLUGIN_TARGET ${MODULE}Plugin
             VERSION 1.0
