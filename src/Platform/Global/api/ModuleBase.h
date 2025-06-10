@@ -4,6 +4,9 @@
 #include <boost/di.hpp>
 #include <boost/di/extension/injector.hpp>
 
+// required for qmlRegisterType
+#include <QQmlEngine>
+
 /**
  * Short hand for IoC injector for boost::di
  * @see also boost::di reference
