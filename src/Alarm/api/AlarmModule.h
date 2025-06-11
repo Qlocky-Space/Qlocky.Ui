@@ -19,11 +19,6 @@ public:
      */
     void registerQmlTypes() final;
 
-    /**
-     * @see ModuleBase::onInitialize
-     */
-    void onInitialize() final;
-
     AlarmModule() = default;
     ~AlarmModule() final = default;
 

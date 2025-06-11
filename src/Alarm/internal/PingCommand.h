@@ -5,12 +5,11 @@
 
 #include "QmlCommandBase.h"
 
+// TODO remove this demo command
 class PingCommand final : public QmlCommandBase {
 public:
 
     void doExecute() override {
-        // Implementation of the ping command logic
-        // This could be a network ping, a system check, etc.
         qDebug() << "Ping command executed (" << m_pingCount << ")";
         m_pingCount++;
 
