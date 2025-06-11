@@ -12,7 +12,7 @@ using Injector = boost::di::extension::injector<>;
 
 /**
  * A module is a encapulation for a feature in the application.
- * This contains the UI and all it's required business logic.
+ * It provides access to dependency injection (DI) and service resolution.
  *
  * @see https://www.notion.so/qlocky/Qlocky-Ui-Design-Documentation-01e85d605d9145a1ba3d1b56f6972ba9?pvs=4#d608b9c6c30e4ee7ad7404c9fbdd3232
  */

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 
 import AppShell
 
@@ -28,6 +29,14 @@ Card {
             font.pixelSize: 220
             font.bold: true
             color: "white"
+        }
+    }
+
+    Button {
+        text: "Demo"
+        enabled: ClockCardViewModel.pingCommand.canExecute
+        onClicked: {
+            ClockCardViewModel.pingCommand.execute();
         }
     }
 }
