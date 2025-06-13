@@ -1,0 +1,19 @@
+[
+  {
+    "name": "armv7_qlocky",
+    "toolchainFile": "${workspaceFolder}/tools/CMake/toolchain_target_sdk.cmake",
+    "isTrusted": true,
+    "environmentSetupScript": "/opt/qlocky/1.0/environment-setup-cortexa72-poky-linux",
+    "preferredGenerator": {
+      "name": "Ninja Multi-Config"
+    }
+  },
+  {
+    "name": "x64_gcc",
+    "toolchainFile": "${workspaceFolder}/tools/CMake/toolchain_host_x64.cmake",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja Multi-Config"
+    }
+  }
+]
