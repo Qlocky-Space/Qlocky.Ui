@@ -7,11 +7,10 @@ include(GetPlatformInfo)
 ###########################################
 # Dependency library declaration
 ###########################################
-set(LINK_LIB
-    qlocky::Global
-    qlocky::Languages
-    qlocky::Ui
-)
+foreach(_module ${QLOCKY_MODULES_PLATFORM})
+    list(APPEND LINK_LIB qlocky::${_module})
+endforeach()
+
 foreach(_module ${QLOCKY_MODULES})
     list(APPEND LINK_LIB qlocky::${_module})
     list(APPEND LINK_LIB ${_module}Plugin)

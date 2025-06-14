@@ -62,6 +62,8 @@ CMakeUserPresets.json
 !.vscode/launch.json.in
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+!.vscode/cmake-kits.json
+!.vscode/c_cpp_properties.json
 
 # Local History for Visual Studio Code
 .history/
