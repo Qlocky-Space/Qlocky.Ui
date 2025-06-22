@@ -22,6 +22,7 @@ set(MODULE_QML_SRC
 set(MODULE_QML_RESOURCES
     resources/settings.png
     resources/signal.png
+    resources/wallpaper.jpg
 )
 
 set(MODULE_LINK
