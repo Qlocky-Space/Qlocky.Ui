@@ -2,9 +2,16 @@
 
 #include "MainWindowViewModel.h"
 
-MainWindowViewModel::MainWindowViewModel(QObject* parent) :
-    QObject {parent},
+#include "WidgetLoadedEvent.h"
+
+MainWindowViewModel::MainWindowViewModel(Mediator& mediator) :
+    QObject {nullptr},
     m_window {} {
+
+    mediator.subscribe<WidgetLoadedEvent>([this](WidgetLoadedEvent const& event) { onWidgetLoaded(event.getWidget()); });
+}
+
+void MainWindowViewModel::onWidgetLoaded(WidgetIfc& widget) {
 }
 
 void MainWindowViewModel::setWindow(QWindow* window) {

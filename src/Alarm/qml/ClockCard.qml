@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import AppShell
+import Widget
 
 Card {
     cardColor: "#202226"
