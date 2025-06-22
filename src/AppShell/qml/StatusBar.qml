@@ -9,7 +9,7 @@ Item {
     Rectangle {
         id: statusBar
         anchors.fill: parent
-        color: "#202226"
+        color: "#00000000"
 
         Item {
             anchors.left: parent.left

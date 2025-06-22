@@ -1,12 +1,30 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 
 import AppShell 1.0
 
 AppWindow {
     id: root
 
+    // Background wallpaper
+    Image {
+        id: bgImage
+        anchors.fill: parent
+        opacity: 0.5
+        source: "/AppShell/resources/wallpaper.jpg"
+        fillMode: Image.PreserveAspectCrop
+    }
+    MultiEffect {
+        source: bgImage
+        anchors.fill: bgImage
+        blurEnabled: true
+        blurMax: 12
+        blur: 50.0
+    }
+
+    // Main content area
     Item {
         id: contentArea
 
@@ -23,6 +41,7 @@ AppWindow {
         }
     }
 
+    // Status bar at the top
     StatusBar {
         id: appStatusBar
 
@@ -30,6 +49,6 @@ AppWindow {
         anchors.left: parent.left
         anchors.right: parent.right
 
-        height: 50
+        height: 80
     }
 }
