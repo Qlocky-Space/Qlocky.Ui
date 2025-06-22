@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 
+import Widget
+
 WidgetLayout {
     // Columns
     columns: 5

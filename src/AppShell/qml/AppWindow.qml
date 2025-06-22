@@ -17,9 +17,8 @@ ApplicationWindow {
 
     default property alias windowContent: windowContentItem.data
 
-    MainWindowViewModel {
-        id: viewModel
-        window: root
+    Component.onCompleted: {
+        MainWindowViewModel.window = root
     }
 
     Item {

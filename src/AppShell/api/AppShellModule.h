@@ -14,6 +14,11 @@ public:
      */
     void registerExports(Injector& container) final;
 
+    /**
+     * @see ModuleBase::registerQmlTypes
+     */
+    void registerQmlTypes() final;
+
     AppShellModule() = default;
     ~AppShellModule() final = default;
 };
