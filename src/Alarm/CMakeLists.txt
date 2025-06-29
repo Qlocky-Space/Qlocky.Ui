@@ -19,5 +19,6 @@ set(MODULE_QML_RESOURCES
 
 set(MODULE_LINK
     qlocky::Ui
+    qlocky::Widget
 )
 setup_module()
