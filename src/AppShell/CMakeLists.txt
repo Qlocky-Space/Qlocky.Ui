@@ -6,6 +6,10 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/view/MainWindowViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/MainWindowViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/WidgetModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/WidgetModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/WidgetListViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/WidgetListViewModel.h
 )
 
 set(MODULE_QML_SRC

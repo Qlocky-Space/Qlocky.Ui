@@ -4,7 +4,12 @@
 #include "WidgetMetadata.h"
 
 /**
+ * Used to register widgets within the system.
  *
+ * This interface defines the contract for registering widgets, allowing the system to recognize
+ * and manage widgets effectively.
+ * Implementations of this interface should provide the logic for registering widgets based on
+ * the provided metadata.
  */
 class WidgetRegistratorIfc {
 public:
@@ -17,7 +22,7 @@ public:
      *
      * @param metadata The metadata describing the widget to be registered.
      */
-    virtual void registerWidget(WidgetMetadata& metadata) = 0;
+    virtual void registerWidget(WidgetMetadata const& metadata) = 0;
 
     virtual ~WidgetRegistratorIfc() = default;
 };

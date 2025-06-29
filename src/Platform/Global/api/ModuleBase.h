@@ -20,15 +20,21 @@ class ModuleBase {
 public:
 
     /**
-     * Initialize the module. Must only be called once per module life time
+     * Registers the module in the container.
+     * This method must be called before the module can be used.
      * @param container The application (parent) container
      */
-    void initialize(Injector& container) {
+    void registers(Injector& container) {
         m_container = &container;
 
         registerExports(container);
         registerQmlTypes();
+    }
 
+    /**
+     * Initialize the module. Must only be called once per module life time
+     */
+    void initialize() {
         onInitialize();
     }
 

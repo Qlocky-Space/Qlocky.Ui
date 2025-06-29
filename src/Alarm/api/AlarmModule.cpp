@@ -1,5 +1,7 @@
 #include "AlarmModule.h"
 
+#include <WidgetRegistratorIfc.h>
+
 #include "internal/PingCommand.h"
 #include "QmlRegistryUtil.h"
 #include "view/ClockCardViewModel.h"
@@ -10,4 +12,10 @@ void AlarmModule::registerExports(Injector& container) {
 
 void AlarmModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<ClockCardViewModel>(*this, "ClockCardViewModel");
+}
+
+void AlarmModule::onInitialize() {
+    auto widgetRegistrator = resolve<WidgetRegistratorIfc>();
+
+    widgetRegistrator->registerWidget(WidgetMetadata("ClockCard", WidgetLayout("qrc:/qt/qml/Alarm/qml/ClockCard.qml", 0, 2, 2, 3)));
 }
