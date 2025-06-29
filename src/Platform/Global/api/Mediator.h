@@ -31,7 +31,7 @@ public:
      */
     template<typename T>
     void subscribe(std::function<void(T const&)> callback) {
-        // static_assert(std::is_base_of<EventIfc, T>::value, "Event must derive from EventIfc");
+        static_assert(std::is_base_of<EventIfc, T>::value, "Event must derive from EventIfc");
 
         auto wrapper = [cb = std::move(callback)](std::any const& event) {
             cb(std::any_cast<T const&>(event));
@@ -47,7 +47,7 @@ public:
      */
     template<typename T>
     void notify(T const& event) {
-        // static_assert(std::is_base_of<EventIfc, T>::value, "Event must derive from EventIfc");
+        static_assert(std::is_base_of<EventIfc, T>::value, "Event must derive from EventIfc");
 
         auto it = m_callbacks.find(typeid(T));
         if (it != m_callbacks.end()) {

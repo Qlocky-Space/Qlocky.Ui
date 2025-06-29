@@ -6,7 +6,8 @@
 #include <QWindow>
 
 #include "api/Mediator.h"
-#include "WidgetIfc.h"
+#include "Widget.h"
+#include "WidgetListViewModel.h"
 
 class MainWindowViewModel : public QObject {
     Q_OBJECT
@@ -14,7 +15,7 @@ class MainWindowViewModel : public QObject {
 
 public:
 
-    explicit MainWindowViewModel(Mediator& mediator);
+    explicit MainWindowViewModel(Mediator& mediator, WidgetListViewModel& widgetModel);
 
     QWindow* getWindow() const {
         return m_window;
@@ -25,9 +26,10 @@ private slots:
 
 private:
 
-    void onWidgetLoaded(WidgetIfc& widget);
+    void onWidgetLoaded(std::shared_ptr<Widget> widget);
 
     QWindow* m_window;
+    WidgetListViewModel& m_widgets;
 };
 
 #endif

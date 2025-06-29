@@ -1,7 +1,10 @@
 #ifndef WIDGET_LOADED_EVENT_H
 #define WIDGET_LOADED_EVENT_H
 
+#include <memory>
+
 #include "api/EventIfc.h"
+#include "Widget.h"
 
 class WidgetLoadedEvent : public EventIfc {
 public:
@@ -11,7 +14,7 @@ public:
      *
      * @param widget The widget that has been loaded.
      */
-    explicit WidgetLoadedEvent(WidgetIfc& widget) :
+    explicit WidgetLoadedEvent(std::shared_ptr<Widget> widget) :
         m_widget {widget} {
     }
 
@@ -20,13 +23,13 @@ public:
      *
      * @return The loaded widget.
      */
-    WidgetIfc& getWidget() const {
+    std::shared_ptr<Widget> getWidget() const {
         return m_widget;
     }
 
 private:
 
-    WidgetIfc& m_widget;
+    std::shared_ptr<Widget> m_widget;
 };
 
 #endif
