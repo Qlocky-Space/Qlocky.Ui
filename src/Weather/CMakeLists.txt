@@ -17,4 +17,10 @@ set(MODULE_QML_RESOURCES
     resources/sun.png
     resources/snow.png
 )
+
+set(MODULE_LINK
+    qlocky::Ui
+    qlocky::Widget
+)
+
 setup_module()

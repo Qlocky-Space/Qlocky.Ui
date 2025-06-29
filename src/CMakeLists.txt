@@ -3,6 +3,7 @@ set(QLOCKY_MODULES_PLATFORM
     Global
     Languages
     Ui
+    Widget
 )
 
 # A list of all used modules

@@ -8,7 +8,10 @@
 #include "internal/QlockyApp.h"
 #include "LanguageModule.h"
 #include "QlockyConfig.h"
+#include "RadioModule.h"
 #include "UiModule.h"
+#include "WeatherModule.h"
+#include "WidgetModule.h"
 
 // required for boost container creation at compile time
 namespace di = boost::di;
@@ -34,10 +37,15 @@ int main(int argc, char* argv[]) {
     // Setup main application
     Injector globalContainer {boost::di::make_injector()};
     auto app {createApplication<QlockyApp>(globalContainer)};
+    // Register Platform modules
+    app->addModule<WidgetModule>();
     app->addModule<UiModule>();
     app->addModule<LanguageModule>();
+    // Register modules
     app->addModule<AppShellModule>();
     app->addModule<AlarmModule>();
+    app->addModule<RadioModule>();
+    app->addModule<WeatherModule>();
 
     app->start(globalContainer);
 

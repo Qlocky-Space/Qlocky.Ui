@@ -12,9 +12,13 @@ void QlockyApp::addModule(std::unique_ptr<ModuleBase> module) {
 void QlockyApp::start(Injector& container) {
     m_container = &container;
 
-    // Initialize all modules
+    // Registers all modules
     for (std::unique_ptr<ModuleBase>& module : m_modules) {
-        module->initialize(container);
+        module->registers(container);
+    }
+
+    for (std::unique_ptr<ModuleBase>& module : m_modules) {
+        module->initialize();
     }
 
     QUrl const url("qrc:/qt/qml/AppShell/qml/Main.qml");

@@ -14,6 +14,11 @@ public:
      */
     void registerExports(Injector& container) final;
 
+    /**
+     * @see ModuleBase::onInitialize
+     */
+    void onInitialize() final;
+
     RadioModule() = default;
     ~RadioModule() final = default;
 

@@ -14,4 +14,10 @@ set(MODULE_QML_RESOURCES
     resources/skip.png
     resources/previous.png
 )
+
+set(MODULE_LINK
+    qlocky::Ui
+    qlocky::Widget
+)
+
 setup_module()
