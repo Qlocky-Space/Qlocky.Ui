@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import Widget
+import Ui
 
 Card {
     cardColor: "#202226"
@@ -32,11 +33,15 @@ Card {
         }
     }
 
-    Button {
-        text: "Demo"
-        enabled: ClockCardViewModel.pingCommand.canExecute
+    QButton {
+        text: "Play Test Sound"
+
+        image: "\uf1b9"
+
+        // enabled: ClockCardViewModel.pingCommand.canExecute
         onClicked: {
-            ClockCardViewModel.pingCommand.execute();
+            // ClockCardViewModel.pingCommand.execute();
+            ThemeManager.toggleTheme()
         }
     }
 }
