@@ -3,10 +3,11 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import Widget
+import Ui
 
-Card {
+Widget {
     id: card
-    cardColor: "#202226"
+    color: ThemeManager.theme.fillsSecondary
 
     Row {
         id: metadata
@@ -30,13 +31,13 @@ Card {
 
             Text {
                 text: qsTr("SongName")
-                color: "white"
+                color: ThemeManager.theme.labelPrimary
                 font.pixelSize: 32
             }
 
             Text {
                 text: qsTr("AlbumName")
-                color: "white"
+                color: ThemeManager.theme.labelPrimary
                 font.pixelSize: 32
             }
         }
@@ -74,7 +75,7 @@ Card {
             anchors.top: slider.bottom
             anchors.left: slider.left
             text: radio.formatTime(slider.value / 100 * 221000)
-            color: "white"
+            color: ThemeManager.theme.labelPrimary
             font.pixelSize: 24
         }
 
@@ -82,7 +83,7 @@ Card {
             anchors.top: slider.bottom
             anchors.right: slider.right
             text: radio.formatTime((100 - slider.value) / 100 * 221000)
-            color: "white"
+            color: ThemeManager.theme.labelPrimary
             font.pixelSize: 24
         }
     }
@@ -95,6 +96,7 @@ Card {
         anchors.top: radio.bottom
         anchors.topMargin: 30
 
+        // TODO replace images with font awesome
         Image {
             source: "/Radio/resources/previous.png"
 

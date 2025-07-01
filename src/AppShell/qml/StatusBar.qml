@@ -2,14 +2,19 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import Ui
+
 Item {
     id: titlebar
     width: parent.width
 
+    property color fontColor: ThemeManager.theme.labelPrimary
+    property bool background: false
+
     Rectangle {
         id: statusBar
         anchors.fill: parent
-        color: "#00000000"
+        color: titlebar.background ? titlebar.backgroundSecondary : "transparent"
 
         Item {
             anchors.left: parent.left
@@ -20,6 +25,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.leftMargin: 30
 
+                // TODO replace with Font Awesome
                 source: "/AppShell/resources/signal.png"
                 height: 30
                 width: 35
@@ -32,7 +38,7 @@ Item {
             Text {
                 anchors.centerIn: parent
 
-                color: "white"
+                color: titlebar.fontColor
 
                 text: qsTr("Title")
                 font.pointSize: 20
@@ -48,6 +54,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.rightMargin: 30
 
+                // TODO replace with Font Awesome
                 source: "/AppShell/resources/settings.png"
                 height: 35
                 width: 35
@@ -93,7 +100,7 @@ Item {
             // TODO extract into sepearte component and may replace it with a Drawer?
             Text {
                 text: "Not Implemented yet"
-                color: "white"
+                color: ThemeManager.theme.labelPrimary
                 font.pointSize: 16
                 Layout.alignment: Qt.AlignHCenter
             }

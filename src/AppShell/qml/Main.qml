@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Effects
 
 import AppShell 1.0
+import Ui
 
 AppWindow {
     id: root
@@ -13,7 +14,7 @@ AppWindow {
         id: bgImage
         anchors.fill: parent
         opacity: 0.5
-        source: "/AppShell/resources/wallpaper.jpg"
+        source: ThemeManager.currentTheme == ThemeManager.ThemeMode.Light ? "/AppShell/resources/wallpaper-light.jpg" : "/AppShell/resources/wallpaper-dark.png"
         fillMode: Image.PreserveAspectCrop
     }
     MultiEffect {

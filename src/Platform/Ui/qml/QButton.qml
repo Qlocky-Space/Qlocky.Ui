@@ -16,9 +16,11 @@ T.Button {
 
     font: FontStyle.caption
     padding: 10
+    clip: true
 
-    implicitHeight : 60
-    implicitWidth : 250
+    implicitHeight : 70
+    // TODO Width should be automatically adjusted based on contentItem
+    implicitWidth : 300
 
     contentItem: Item {
         width: parent.width
@@ -35,7 +37,7 @@ T.Button {
                 text: control.image
                 font.family: FontStyle.fontAwesome.family
                 font.pixelSize: Math.max(32, parent.height * 0.8)
-                color: control.textColor
+                color: control.enabled ? control.textColor : ThemeManager.theme.labelTertiary
                 visible: control.image !== "" && control.image !== null
             }
 
@@ -44,7 +46,7 @@ T.Button {
 
                 font: control.font
                 text: control.text
-                color: control.textColor
+                color: control.enabled ? control.textColor : ThemeManager.theme.labelTertiary
             }
         }
     }
@@ -53,7 +55,7 @@ T.Button {
         implicitHeight: control.implicitHeight
         implicitWidth: control.implicitWidth
 
-        color: control.backgroundColor
+        color: control.enabled ? control.backgroundColor : ThemeManager.theme.fillsTertiary
         radius: control.radius
 
         border.color: control.borderColor
@@ -116,6 +118,8 @@ T.Button {
     }
 
     onPressed: {
+        if (!control.enabled) { return; }
+
         indicator.mx = mouseArea.mouseX
         indicator.my = mouseArea.mouseY
         main.restart()

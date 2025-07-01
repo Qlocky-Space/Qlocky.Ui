@@ -11,6 +11,10 @@ QtObject {
     readonly property color fillsTertiary: "#3D787880"
     readonly property color fillsQuaternary: "#E2787880"
 
+    readonly property color backgroundPrimary: "#FF000000"
+    readonly property color backgroundSecondary: "#FF1C1C1E"
+    readonly property color backgroundTertiary: "#661C1C1E"
+
     readonly property color red: "#FF3B30"
     readonly property color orange: "#FF9500"
     readonly property color yellow: "#FFCC00"
