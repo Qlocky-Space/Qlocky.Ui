@@ -4,7 +4,7 @@ import "."
 
 QtObject {
     readonly property color labelPrimary: "#000000"
-    readonly property color labelSecondary: "#A83C3C43"
+    readonly property color labelSecondary: "#993C3C43"
     readonly property color labelTertiary: "#4D3C3C43"
 
     readonly property color fillsPrimary: "#33787880"
