@@ -5,9 +5,7 @@ import QtQuick.Controls
 import Widget
 import Ui
 
-Card {
-    cardColor: "#202226"
-
+Widget {
     FontLoader {
         id: digiFont
         source: "/Alarm/resources/fonts/DS-DIGI.TTF"
@@ -22,26 +20,36 @@ Card {
         Text {
             text: "Sonntag, 9. März 2025"
             font.pixelSize: 72
-            color: "white"
+            color: ThemeManager.theme.labelPrimary
         }
         Text {
             text: "16 : 16"
             font.family: digiFont.name
             font.pixelSize: 220
             font.bold: true
-            color: "white"
+            color: ThemeManager.theme.labelPrimary
         }
     }
 
-    QButton {
-        text: "Play Test Sound"
+    RowLayout {
+        QButton {
+            text: "Test"
+            image: "\uf1b9"
 
-        image: "\uf1b9"
-
-        // enabled: ClockCardViewModel.pingCommand.canExecute
-        onClicked: {
-            // ClockCardViewModel.pingCommand.execute();
-            ThemeManager.toggleTheme()
+            enabled: ClockCardViewModel.pingCommand.canExecute
+            onClicked: {
+                ClockCardViewModel.pingCommand.execute();
+            }
         }
+
+        QButton {
+            text: "Theme"
+            image: "\uf1b9"
+
+            onClicked: {
+                ThemeManager.toggleTheme()
+            }
+        }
+
     }
 }
