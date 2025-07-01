@@ -17,7 +17,7 @@ set(MODULE_SRC
 )
 
 set(MODULE_QML_SRC
-    qml/Card.qml
+    qml/Widget.qml
     qml/WidgetLayout.qml
 )
 
