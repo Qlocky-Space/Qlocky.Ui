@@ -10,7 +10,6 @@
 #include "QlockyConfig.h"
 #include "RadioModule.h"
 #include "UiModule.h"
-#include "WeatherModule.h"
 #include "WidgetModule.h"
 
 // required for boost container creation at compile time
@@ -45,7 +44,6 @@ int main(int argc, char* argv[]) {
     app->addModule<AppShellModule>();
     app->addModule<AlarmModule>();
     app->addModule<RadioModule>();
-    app->addModule<WeatherModule>();
 
     app->start(globalContainer);
 
