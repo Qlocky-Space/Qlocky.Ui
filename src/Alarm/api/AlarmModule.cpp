@@ -17,5 +17,5 @@ void AlarmModule::registerQmlTypes() {
 void AlarmModule::onInitialize() {
     auto widgetRegistrator = resolve<WidgetRegistratorIfc>();
 
-    widgetRegistrator->registerWidget(WidgetMetadata("ClockCard", WidgetLayout("qrc:/qt/qml/Alarm/qml/ClockCard.qml", 0, 2, 2, 3)));
+    widgetRegistrator->registerWidget(WidgetMetadata("ClockCard", WidgetLayout("qrc:/qt/qml/Alarm/qml/ClockCard.qml", 0, 2, 0, 3)));
 }

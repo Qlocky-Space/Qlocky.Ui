@@ -10,7 +10,7 @@ class PingCommand final : public QmlCommandBase {
 public:
 
     void doExecute() override {
-        qDebug() << "Ping command executed (" << m_pingCount << ")";
+        qDebug() << "Ping command executed (" << m_pingCount << "/5)";
         m_pingCount++;
 
         if (m_pingCount >= 5) {
