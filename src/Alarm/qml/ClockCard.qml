@@ -33,8 +33,7 @@ Widget {
 
     RowLayout {
         QButton {
-            text: "Test"
-            image: "\uf1b9"
+            text: "Console Print"
 
             enabled: ClockCardViewModel.pingCommand.canExecute
             onClicked: {
