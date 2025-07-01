@@ -10,7 +10,6 @@ set(QLOCKY_MODULES_PLATFORM
 set(QLOCKY_MODULES
     AppShell
     Alarm
-    Weather
     Radio
 )
 
