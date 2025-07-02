@@ -6,13 +6,34 @@ T.Button {
     id: control
 
     property color backgroundColor: ThemeManager.theme.blue
+    property color backgroundColorTinted:  Qt.alpha(backgroundColor, 0.15)
+    property color backgroundColorDisabled: ThemeManager.theme.miscellaneousButtonDisabled
+    property color fontColorDisabled: ThemeManager.theme.labelTertiary
+    property color fontColor: ThemeManager.theme.labelPrimary
+
     property real borderWidth: 0
     property color borderColor: "transparent"
+    property bool tinted: false
 
     property string image: ""
-    property color textColor: ThemeManager.theme.labelPrimary
 
     property real radius: 40
+
+    function getBackgroundColor() {
+        if (!control.enabled) {
+            return control.backgroundColorDisabled;
+        }
+
+        return control.tinted ? control.backgroundColorTinted : control.backgroundColor;
+    }
+
+    function getFontColor() {
+        if (!control.enabled) {
+            return control.fontColorDisabled;
+        }
+
+        return control.tinted ? control.backgroundColor : control.fontColor;
+    }
 
     font: FontStyle.caption
     padding: 10
@@ -34,14 +55,13 @@ T.Button {
             anchors.fill: parent
             spacing: 20
 
-            Text {
+            QIcon {
                 id: iconText
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
-                text: control.image
-                font.family: FontStyle.fontAwesome.family
-                font.pixelSize: Math.max(32, parent.height * 0.8)
-                color: control.enabled ? control.textColor : ThemeManager.theme.labelTertiary
+                icon: control.image
+                color: control.getFontColor()
+                size: Math.max(32, parent.height * 0.8)
                 visible: control.image !== "" && control.image !== null
             }
 
@@ -51,7 +71,7 @@ T.Button {
 
                 font: control.font
                 text: control.text
-                color: control.enabled ? control.textColor : ThemeManager.theme.labelTertiary
+                color: control.getFontColor()
                 visible: control.text !== "" && control.text !== null
             }
         }
@@ -64,7 +84,7 @@ T.Button {
         implicitHeight: control.implicitHeight
         implicitWidth: control.implicitWidth
 
-        color: control.enabled ? control.backgroundColor : ThemeManager.theme.fillsTertiary
+        color: control.getBackgroundColor()
         radius: control.radius
 
         border.color: control.borderColor
