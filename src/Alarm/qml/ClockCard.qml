@@ -50,5 +50,8 @@ Widget {
             }
         }
 
+        QButton {
+            image: "\uf1b9"
+        }
     }
 }
