@@ -18,9 +18,11 @@ T.Button {
     padding: 10
     clip: true
 
-    implicitHeight : 70
-    // TODO Width should be automatically adjusted based on contentItem
-    implicitWidth : 300
+    implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
+    implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding
+
+    leftPadding: 16
+    rightPadding: 16
 
     contentItem: Item {
         width: parent.width
@@ -28,10 +30,12 @@ T.Button {
         anchors.horizontalCenter: parent.horizontalCenter
 
         RowLayout {
+            id: layout
             anchors.fill: parent
             spacing: 20
 
             Text {
+                id: iconText
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
                 text: control.image
@@ -42,13 +46,18 @@ T.Button {
             }
 
             T.Label {
+                id: labelText
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
                 font: control.font
                 text: control.text
                 color: control.enabled ? control.textColor : ThemeManager.theme.labelTertiary
+                visible: control.text !== "" && control.text !== null
             }
         }
+
+        implicitWidth: layout.implicitWidth
+        implicitHeight: layout.implicitHeight
     }
 
     background: Rectangle {
@@ -62,6 +71,8 @@ T.Button {
         border.width: control.borderWidth
 
         visible: true
+        layer.enabled: true
+        layer.smooth: true
         clip: true
 
         Behavior on color {
