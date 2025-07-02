@@ -1,6 +1,7 @@
 # A list of all used platform modules
 set(QLOCKY_MODULES_PLATFORM
     Global
+    Os
     Languages
     Ui
     Widget
