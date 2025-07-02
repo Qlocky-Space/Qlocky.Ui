@@ -24,6 +24,12 @@ set(VSCODE_LAUNCH_COMMANDS [[
         "preLaunchTask": "CMake: build",
         "MIMode": "gdb",
         "miDebuggerPath": "gdb"
-    }
+    },
+    "environment": [
+        {
+            "name": "QT_SCALE_FACTOR",
+            "value": "0.4"
+        }
+    ],
 ]])
 set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES "/workspaces/tools/CMake/generate_vscode_files.cmake")
