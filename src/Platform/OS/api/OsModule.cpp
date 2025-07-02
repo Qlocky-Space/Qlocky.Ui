@@ -1,7 +1,7 @@
 #include "OsModule.h"
 
-#include "internal/TimeService.h"
+#include "internal/TimeProvider.h"
 
 void OsModule::registerExports(Injector& container) {
-    container.install(boost::di::bind<TimeServiceIfc>().to<TimeService>());
+    container.install(boost::di::bind<TimeProviderIfc>().to<TimeProvider>());
 }

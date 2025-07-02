@@ -8,7 +8,7 @@ import Ui
 Widget {
     FontLoader {
         id: digiFont
-        source: "/Alarm/resources/fonts/DS-DIGI.TTF"
+        source: "/Alarm/resources/fonts/cour.ttf"
     }
 
     Grid {
@@ -18,12 +18,12 @@ Widget {
         spacing: 10
 
         Text {
-            text: "Sonntag, 9. März 2025"
+            text: ClockCardViewModel.date
             font.pixelSize: 72
             color: ThemeManager.theme.labelPrimary
         }
         Text {
-            text: "16 : 16"
+            text: ClockCardViewModel.time
             font.family: digiFont.name
             font.pixelSize: 220
             font.bold: true

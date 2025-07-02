@@ -3,19 +3,21 @@
 
 #include <cinttypes>
 
+using DateTime = uint64_t;
+
 /**
  * Interface to get the actual time and date of underlying OS
  */
-class TimeServiceIfc {
+class TimeProviderIfc {
 public:
 
     /**
      * Gets the current unix timestamp
      * @return the unix timestamp
      */
-    virtual uint64_t getCurrentTimestamp() const = 0;
+    virtual DateTime getCurrentTimestamp() const = 0;
 
-    virtual ~TimeServiceIfc() = default;
+    virtual ~TimeProviderIfc() = default;
 };
 
 #endif
