@@ -16,6 +16,7 @@ set(MODULE_SRC
 
 set(MODULE_QML_SRC
     qml/QButton.qml
+    qml/QIcon.qml
     qml/FontStyle.qml
     qml/ThemeManager.qml
     qml/themes/DarkTheme.qml
