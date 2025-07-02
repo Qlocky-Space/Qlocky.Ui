@@ -50,5 +50,19 @@ Widget {
             }
         }
 
+        QButton {
+            image: "\uf1b9"
+        }
+
+        QButton {
+            image: "\uf1b9"
+            text: "Test"
+        }
+
+        QButton {
+            image: "\uf1b9"
+            text: "Test"
+            tinted: true
+        }
     }
 }
