@@ -23,7 +23,7 @@ void LanguageService::loadLanguage(LanguageCode language) {
 }
 
 void LanguageService::loadLanguage(Language const& language) {
-    // TODO this is a temporary solution, the language files should be loaded from a configurable path
+    // TODO [https://github.com/Qlocky-Space/Qlocky.Ui/issues/13] this is a temporary solution, the language files should be loaded from a configurable path
     QDir const languageFilePath {"/workspaces/build/share/i18n"};
     QFile const languageFile {languageFilePath.filePath(language.fileName)};
 

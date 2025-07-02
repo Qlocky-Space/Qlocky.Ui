@@ -7,6 +7,7 @@
 #include "AppShellModule.h"
 #include "internal/QlockyApp.h"
 #include "LanguageModule.h"
+#include "OsModule.h"
 #include "QlockyConfig.h"
 #include "RadioModule.h"
 #include "UiModule.h"
@@ -37,6 +38,7 @@ int main(int argc, char* argv[]) {
     Injector globalContainer {boost::di::make_injector()};
     auto app {createApplication<QlockyApp>(globalContainer)};
     // Register Platform modules
+    app->addModule<OsModule>();
     app->addModule<WidgetModule>();
     app->addModule<UiModule>();
     app->addModule<LanguageModule>();

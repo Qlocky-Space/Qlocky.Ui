@@ -2,12 +2,14 @@
 
 #include <WidgetRegistratorIfc.h>
 
+#include "internal/AlarmService.h"
 #include "internal/PingCommand.h"
 #include "QmlRegistryUtil.h"
 #include "view/ClockCardViewModel.h"
 
 void AlarmModule::registerExports(Injector& container) {
     container.install(boost::di::bind<PingCommand>());
+    container.install(boost::di::bind<AlarmServiceIfc>().to<AlarmService>());
 }
 
 void AlarmModule::registerQmlTypes() {
@@ -18,4 +20,7 @@ void AlarmModule::onInitialize() {
     auto widgetRegistrator = resolve<WidgetRegistratorIfc>();
 
     widgetRegistrator->registerWidget(WidgetMetadata("ClockCard", WidgetLayout("qrc:/qt/qml/Alarm/qml/ClockCard.qml", 0, 2, 0, 3)));
+
+    auto alarmService = resolve<AlarmServiceIfc>();
+    alarmService->initialize();
 }
