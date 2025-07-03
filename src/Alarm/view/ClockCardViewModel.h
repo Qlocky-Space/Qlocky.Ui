@@ -6,6 +6,7 @@
 #include <QString>
 
 #include "internal/PingCommand.h"
+#include "PreferencesServiceIfc.h"
 #include "QmlCommandBase.h"
 #include "TimeChangedEvent.h"
 
@@ -18,7 +19,7 @@ class ClockCardViewModel : public QObject {
 
 public:
 
-    ClockCardViewModel(Mediator& mediator, PingCommand& pingCommand);
+    ClockCardViewModel(Mediator& mediator, PingCommand& pingCommand, PreferencesServiceIfc& preferences);
 
     QmlCommandBase const* getPingCommand() const {
         return &m_pingCommand;
@@ -44,6 +45,7 @@ private:
     QmlCommandBase& m_pingCommand;
     QString m_date;
     QString m_time;
+    PreferencesServiceIfc& m_preferences;
 };
 
 #endif
