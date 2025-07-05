@@ -38,8 +38,6 @@ private slots:
 
 private:
 
-    static constexpr char const* DEFAULT_PAGE_URL {"/qt/qml/AppShell/qml/MainPage.qml"};
-
     void onPageChanged(Page const& page);
 
     QWindow* m_window;
