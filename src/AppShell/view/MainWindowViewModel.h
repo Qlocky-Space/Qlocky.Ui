@@ -2,34 +2,46 @@
 #define QLOCKY_MAIN_WINDOW_VIEW_H
 
 #include <QObject>
+#include <QString>
 #include <QtQml/qqmlregistration.h>
 #include <QWindow>
 
 #include "api/Mediator.h"
-#include "Widget.h"
-#include "WidgetListViewModel.h"
+#include "Page.h"
 
+/**
+ * MainWindowViewModel is responsible for managing the main window view model.
+ * It handles the window itself and navigation between pages
+ */
 class MainWindowViewModel : public QObject {
     Q_OBJECT
     Q_PROPERTY(QWindow* window READ getWindow WRITE setWindow)
+    Q_PROPERTY(QString pageUrl READ getPageUrl NOTIFY pageUrlChanged)
 
 public:
 
-    explicit MainWindowViewModel(Mediator& mediator, WidgetListViewModel& widgetModel);
+    explicit MainWindowViewModel(Mediator& mediator);
 
     QWindow* getWindow() const {
         return m_window;
     }
+
+    QString getPageUrl() const {
+        return m_pageUrl;
+    }
+
+signals:
+    void pageUrlChanged();
 
 private slots:
     void setWindow(QWindow* window);
 
 private:
 
-    void onWidgetLoaded(std::shared_ptr<Widget> widget);
+    void onPageChanged(Page const& page);
 
     QWindow* m_window;
-    WidgetListViewModel& m_widgets;
+    QString m_pageUrl;
 };
 
 #endif

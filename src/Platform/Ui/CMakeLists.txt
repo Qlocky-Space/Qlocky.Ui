@@ -7,11 +7,14 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/CommandIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/QmlCommandBase.h
     ${CMAKE_CURRENT_LIST_DIR}/api/QmlRegistryUtil.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/NavigatorIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/QmlCommandBase.cpp
 
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/UiEngine.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/UiEngine.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/PageNavigator.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/PageNavigator.cpp
 )
 
 set(MODULE_QML_SRC
