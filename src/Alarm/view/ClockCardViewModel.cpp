@@ -35,13 +35,12 @@ QDateTime ClockCardViewModel::getLocalTime(DateTime const timestamp) {
 }
 
 QString ClockCardViewModel::formatTime(QDateTime const& time) {
-    auto& ctx = m_preferences.getContext("Alarm");
+    auto& ctx {m_preferences.getContext("Alarm")};
     std::string const hFormat {ctx.getString("24HFormat", AlarmPreferencesDefault::DEFAULT_24H_FORMAT)};
 
-    bool const showSeperator {(time.toSecsSinceEpoch() % 2U) == 0U};
-    std::string format {};
-    format.append(hFormat);
-    format.append(showSeperator ? ':' : ' ');
+    bool const showSeparator {(time.toSecsSinceEpoch() % 2U) == 0U};
+    QString format {QString::fromStdString(hFormat)};
+    format.append(showSeparator ? ":" : " ");
     format.append("mm");
 
     return time.toString(format);
