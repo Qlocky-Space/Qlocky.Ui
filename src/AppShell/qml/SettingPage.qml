@@ -19,7 +19,7 @@ Item {
             text: "Back"
 
             onClicked: {
-                SettingPageViewModel.navigateBack.execute();
+                CommandExecutor.dispatch("nav-back")
             }
         }
 

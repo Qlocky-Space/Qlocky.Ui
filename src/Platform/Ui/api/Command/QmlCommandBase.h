@@ -25,9 +25,23 @@ public:
     ~QmlCommandBase() override = default;
 
     /**
+     * A simple way to call command from QML.
+     *
+     * command.execute({
+     *     "action": "login",
+     *     "username": "sandro",
+     *     "password": "secret"
+     * })
+     */
+    Q_INVOKABLE void execute(QVariantMap const& data = {}) {
+        CommandArgs const args {CommandArgs::fromQVariantMap(data)};
+        execute(&args);
+    }
+
+    /**
      * @see CommandIfc::execute
      */
-    Q_INVOKABLE void execute(CommandArgs const* data = nullptr) final;
+    void execute(CommandArgs const* data) final;
 
     /**
      * @see CommandIfc::canExecute

@@ -46,11 +46,10 @@ Widget {
             text: "To Settings"
 
             onClicked: {
-                var data = Qt.createQmlObject('import Ui 1.0; CommandArgs {}', parent);
-                data.set("pageName", "SettingPage");
-                data.set("pageUrl", "/qt/qml/AppShell/qml/SettingPage.qml");
-
-                ClockCardViewModel.navigateTo.execute(data);
+                CommandExecutor.dispatch("nav-to", {
+                    "pageName": "SettingPage",
+                    "pageUrl": "/qt/qml/AppShell/qml/SettingPage.qml"
+                });
             }
         }
     }
