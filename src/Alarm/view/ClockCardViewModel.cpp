@@ -25,8 +25,8 @@ void ClockCardViewModel::onTimeChanged(TimeChangedEvent const& event) {
 }
 
 QDateTime ClockCardViewModel::getLocalTime(DateTime const timestamp) {
-    auto& ctx = m_preferences.getContext("Alarm");
-    std::string const prefTimeZone {ctx.getString("TimeZone", AlarmPreferencesDefault::DEFAULT_TIMEZONE)};
+    auto& ctx = m_preferences.getContext(AlarmPreferencesDefault::ALARM_PREFERENCES_NAMESPACE);
+    std::string const prefTimeZone {ctx.getString(AlarmPreferencesDefault::PROP_TIMEZONE)};
 
     QTimeZone const timeZone {prefTimeZone.c_str()};
     QDateTime const unixTimestamp {QDateTime::fromSecsSinceEpoch(timestamp, QTimeZone::utc())};
@@ -35,8 +35,8 @@ QDateTime ClockCardViewModel::getLocalTime(DateTime const timestamp) {
 }
 
 QString ClockCardViewModel::formatTime(QDateTime const& time) {
-    auto& ctx {m_preferences.getContext("Alarm")};
-    std::string const hFormat {ctx.getString("24HFormat", AlarmPreferencesDefault::DEFAULT_24H_FORMAT)};
+    auto& ctx {m_preferences.getContext(AlarmPreferencesDefault::ALARM_PREFERENCES_NAMESPACE)};
+    std::string const hFormat {ctx.getString(AlarmPreferencesDefault::PROP_24H_FORMAT)};
 
     bool const showSeparator {(time.toSecsSinceEpoch() % 2U) == 0U};
     QString format {QString::fromStdString(hFormat)};

@@ -1,4 +1,3 @@
 #include "AlarmPreferencesDefault.h"
 
-std::string const AlarmPreferencesDefault::DEFAULT_TIMEZONE {"Europe/Zurich"};
-std::string const AlarmPreferencesDefault::DEFAULT_24H_FORMAT {"HH"};
+std::string const AlarmPreferencesDefault::ALARM_PREFERENCES_NAMESPACE {"Alarm"};
