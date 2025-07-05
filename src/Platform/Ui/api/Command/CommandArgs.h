@@ -4,17 +4,29 @@
 #include <QMap>
 #include <QObject>
 #include <QVariant>
+#include <QVariantMap>
 
 /**
  * CommandArgs is a class that holds command arguments in a key-value format.
  * It allows setting and getting arguments using QString keys and QVariant values.
  */
-class CommandArgs : public QObject {
-    Q_OBJECT
-
+class CommandArgs {
 public:
 
-    CommandArgs() = default;
+    /**
+     * Converts a QVariantMap to CommandArgs
+     */
+    static CommandArgs fromQVariantMap(QVariantMap const& data) {
+        CommandArgs args;
+
+        if (data.count() > 0) {
+            for (auto it = data.constBegin(); it != data.constEnd(); ++it) {
+                args.set(it.key(), it.value());
+            }
+        }
+
+        return args;
+    }
 
     /**
      * Sets a command argument with the specified key and value.
