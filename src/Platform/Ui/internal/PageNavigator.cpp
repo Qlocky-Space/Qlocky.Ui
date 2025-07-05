@@ -1,6 +1,6 @@
 #include "PageNavigator.h"
 
-#include "PageChangedEvent.h"
+#include "Navigation/PageChangedEvent.h"
 
 PageNavigator::PageNavigator(Mediator& mediator) :
     m_mediator {mediator},

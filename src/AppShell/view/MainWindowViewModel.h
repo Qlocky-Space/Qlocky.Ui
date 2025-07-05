@@ -7,7 +7,7 @@
 #include <QWindow>
 
 #include "api/Mediator.h"
-#include "Page.h"
+#include "Navigation/Page.h"
 
 /**
  * MainWindowViewModel is responsible for managing the main window view model.
