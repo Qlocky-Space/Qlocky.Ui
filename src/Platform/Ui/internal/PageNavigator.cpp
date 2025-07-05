@@ -9,7 +9,7 @@ PageNavigator::PageNavigator(Mediator& mediator) :
 }
 
 void PageNavigator::navigateToDefault() {
-    static constexpr Page DEFAULT_PAGE {"MainPage", "/qt/qml/AppShell/qml/MainPage.qml"};
+    static Page const DEFAULT_PAGE {"MainPage", "/qt/qml/AppShell/qml/MainPage.qml"};
 
     // Clear the page stack to ensure we start fresh
     while (!m_pageStack.empty()) {
