@@ -1,6 +1,8 @@
 #ifndef QLOCKY_UI_COMMAND_IFC_H
 #define QLOCKY_UI_COMMAND_IFC_H
 
+#include "CommandData.h"
+
 /**
  * CommandIfc is an interface for commands in the UI framework.
  */
