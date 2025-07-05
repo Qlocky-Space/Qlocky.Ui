@@ -12,6 +12,7 @@ public:
     }
 
     void doExecute() override {
+        // TODO
         Page page {};
         page.name = "Setting";
         page.url = "/qt/qml/AppShell/qml/SettingPage.qml";

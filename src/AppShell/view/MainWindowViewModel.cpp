@@ -5,7 +5,7 @@
 MainWindowViewModel::MainWindowViewModel(Mediator& mediator) :
     QObject {nullptr},
     m_window {},
-    m_pageUrl {DEFAULT_PAGE_URL} {
+    m_pageUrl {} {
     mediator.subscribe<PageChangedEvent>([this](PageChangedEvent const& event) { onPageChanged(event.getPage()); });
 }
 
