@@ -1,6 +1,6 @@
 #include "MainWindowViewModel.h"
 
-#include "PageChangedEvent.h"
+#include "Navigation/PageChangedEvent.h"
 
 MainWindowViewModel::MainWindowViewModel(Mediator& mediator) :
     QObject {nullptr},

@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-#include "QmlCommandBase.h"
+#include "Command/QmlCommandBase.h"
 
 // TODO remove this demo command
 class PingCommand final : public QmlCommandBase {

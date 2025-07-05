@@ -1,8 +1,8 @@
 #ifndef NAVIGATE_TO_PAGE_COMMAND_H
 #define NAVIGATE_TO_PAGE_COMMAND_H
 
+#include "Command/QmlCommandBase.h"
 #include "NavigatorIfc.h"
-#include "QmlCommandBase.h"
 
 /**
  * NavigateToPageCommand is a command that navigates to a specific page in the application.

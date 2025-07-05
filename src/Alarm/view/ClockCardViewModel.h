@@ -6,9 +6,9 @@
 #include <QObject>
 #include <QString>
 
-#include "NavigateToPageCommand.h"
+#include "Command/QmlCommandBase.h"
+#include "Navigation/NavigateToPageCommand.h"
 #include "PreferencesServiceIfc.h"
-#include "QmlCommandBase.h"
 #include "TimeChangedEvent.h"
 
 /**
