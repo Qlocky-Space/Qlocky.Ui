@@ -18,7 +18,13 @@
 class AlarmService : public AlarmServiceIfc {
 public:
 
-    AlarmService(Mediator& mediator, TimeProviderIfc const& timeProvider);
+    /**
+     * Constructor for AlarmService.
+     * @note use shared pointer to ensure lifetime is managed correctly.
+     * @param mediator The mediator to communicate with other components.
+     * @param timeProvider The time provider to get the current timestamp.
+     */
+    AlarmService(Mediator& mediator, std::shared_ptr<TimeProviderIfc> timeProvider);
 
     virtual ~AlarmService();
 
@@ -34,7 +40,7 @@ private:
     void checkAlarmConditions();
 
     Mediator& m_mediator;
-    TimeProviderIfc const& m_timeProvider;
+    std::shared_ptr<TimeProviderIfc> m_timeProvider;
     DateTime m_currentTimestamp;
 
     std::atomic<bool> m_timerRunning;
