@@ -27,7 +27,7 @@ public:
     /**
      * @see CommandIfc::execute
      */
-    Q_INVOKABLE void execute() final;
+    Q_INVOKABLE void execute(CommandArgs const* data = nullptr) final;
 
     /**
      * @see CommandIfc::canExecute
@@ -46,7 +46,7 @@ protected:
     /**
      * Method 'execute' can be called from QML and delegates to this method.
      */
-    virtual void doExecute() = 0;
+    virtual void doExecute(CommandArgs const& data) = 0;
 
     /**
      * Can be called to change wether the command can be executed or not.

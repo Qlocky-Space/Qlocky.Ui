@@ -1,9 +1,10 @@
 
 #include "QmlCommandBase.h"
 
-void QmlCommandBase::execute() {
+void QmlCommandBase::execute(CommandArgs const* data) {
     if (canExecute()) {
-        doExecute();
+        static CommandArgs dummy {};
+        doExecute(data ? *data : dummy);
     }
 }
 

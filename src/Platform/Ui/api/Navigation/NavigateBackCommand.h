@@ -17,7 +17,7 @@ public:
     /**
      * @see QmlCommandBase::doExecute
      */
-    void doExecute() override {
+    void doExecute(CommandArgs const& data) override {
         m_navigator.back();
     }
 
