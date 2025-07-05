@@ -23,6 +23,16 @@ public:
 
     /**
      * Subscribes a callback to a specific event type.
+     */
+    template<typename Event, typename T>
+    void subscribe(T* instance, void (T::*method)(Event const&)) {
+        subscribe<Event>([instance, method](std::any const& event) {
+            (instance->*method)(std::any_cast<Event const&>(event));
+        });
+    }
+
+    /**
+     * Subscribes a callback to a specific event type.
      * The callback will be invoked with the event data when an event of the specified type is
      * published.
      *

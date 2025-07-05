@@ -6,11 +6,11 @@ MainWindowViewModel::MainWindowViewModel(Mediator& mediator) :
     QObject {nullptr},
     m_window {},
     m_pageUrl {} {
-    mediator.subscribe<PageChangedEvent>([this](PageChangedEvent const& event) { onPageChanged(event.getPage()); });
+    mediator.subscribe<PageChangedEvent>(this, &MainWindowViewModel::onPageChanged);
 }
 
-void MainWindowViewModel::onPageChanged(Page const& page) {
-    QString url {QString::fromStdString(std::string {page.url})};
+void MainWindowViewModel::onPageChanged(PageChangedEvent const& event) {
+    QString url {QString::fromStdString(std::string {event.getPage().url})};
 
     if (m_pageUrl != url) {
         m_pageUrl = url;

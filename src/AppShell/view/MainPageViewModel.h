@@ -10,6 +10,7 @@
 #include "Navigation/NavigatorIfc.h"
 #include "Widget.h"
 #include "WidgetListModel.h"
+#include "WidgetLoadedEvent.h"
 
 /**
  * MainPageViewModel is responsible for managing the main page view model.
@@ -32,7 +33,7 @@ public:
 
 private:
 
-    void onWidgetLoaded(std::shared_ptr<Widget> widget);
+    void onWidgetLoaded(WidgetLoadedEvent const& e);
 
     WidgetListModel& m_widgets;
 };
