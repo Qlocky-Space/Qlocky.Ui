@@ -2,6 +2,7 @@
 #define CLOCK_CARD_VIEW_MODEL_H
 
 #include <api/Mediator.h>
+#include <QDateTime>
 #include <QObject>
 #include <QString>
 
@@ -41,6 +42,9 @@ signals:
 private:
 
     void onTimeChanged(TimeChangedEvent const& event);
+    QDateTime getLocalTime(DateTime const timestamp);
+    QString formatTime(QDateTime const& time);
+    QString formatDate(QDateTime const& time);
 
     QmlCommandBase& m_pingCommand;
     QString m_date;
