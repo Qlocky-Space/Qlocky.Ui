@@ -1,8 +1,8 @@
 #ifndef NAVIGATE_TO_BACK_COMMAND_H
 #define NAVIGATE_TO_BACK_COMMAND_H
 
+#include "Command/QmlCommandBase.h"
 #include "NavigatorIfc.h"
-#include "QmlCommandBase.h"
 
 /**
  * NavigateBackCommand is a command that navigates back to the previous page in the application.
@@ -17,7 +17,7 @@ public:
     /**
      * @see QmlCommandBase::doExecute
      */
-    void doExecute() override {
+    void doExecute(CommandArgs const& data) override {
         m_navigator.back();
     }
 

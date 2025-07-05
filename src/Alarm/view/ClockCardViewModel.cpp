@@ -11,7 +11,7 @@ ClockCardViewModel::ClockCardViewModel(Mediator& mediator, NavigateToPageCommand
     m_date {},
     m_time {},
     m_preferences {preferences} {
-    mediator.subscribe<TimeChangedEvent>([this](auto e) { onTimeChanged(e); });
+    mediator.subscribe<TimeChangedEvent>(this, &ClockCardViewModel::onTimeChanged);
 }
 
 void ClockCardViewModel::onTimeChanged(TimeChangedEvent const& event) {

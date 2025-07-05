@@ -4,7 +4,7 @@
 #include <api/Mediator.h>
 #include <stack>
 
-#include "NavigatorIfc.h"
+#include "Navigation/NavigatorIfc.h"
 
 /**
  * PageNavigator is responsible for navigating between pages in the application.
