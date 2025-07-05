@@ -1,5 +1,5 @@
-#ifndef WIDGET_LIST_VIEWMODEL_H
-#define WIDGET_LIST_VIEWMODEL_H
+#ifndef WIDGET_LIST_MODEL_H
+#define WIDGET_LIST_MODEL_H
 
 #include <memory>
 #include <QAbstractListModel>
@@ -13,7 +13,7 @@
  * List model representing widgets for use in QML views.
  * Provides data roles for QML Repeaters and ListViews.
  */
-class WidgetListViewModel : public QAbstractListModel {
+class WidgetListModel : public QAbstractListModel {
     Q_OBJECT
 
 public:
@@ -26,7 +26,7 @@ public:
         ColumnSpanRole
     };
 
-    WidgetListViewModel();
+    WidgetListModel();
 
     /**
      * Returns the number of widgets in the model.

@@ -5,9 +5,9 @@
 
 #include "internal/AlarmPreferencesDefault.h"
 
-ClockCardViewModel::ClockCardViewModel(Mediator& mediator, PingCommand& pingCommand, PreferencesServiceIfc& preferences) :
+ClockCardViewModel::ClockCardViewModel(Mediator& mediator, NavigateToPageCommand& navigateToCommand, PreferencesServiceIfc& preferences) :
     QObject {nullptr},
-    m_pingCommand {pingCommand},
+    m_navigateToCommand {navigateToCommand},
     m_date {},
     m_time {},
     m_preferences {preferences} {

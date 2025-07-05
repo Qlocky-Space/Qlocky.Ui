@@ -1,21 +1,21 @@
-
-
 #include "MainWindowViewModel.h"
 
-#include <iostream>
+#include "PageChangedEvent.h"
 
-#include "WidgetLoadedEvent.h"
-
-MainWindowViewModel::MainWindowViewModel(Mediator& mediator, WidgetListViewModel& widgetModel) :
+MainWindowViewModel::MainWindowViewModel(Mediator& mediator) :
     QObject {nullptr},
     m_window {},
-    m_widgets {widgetModel} {
-    // subscribe mediator callbacks
-    mediator.subscribe<WidgetLoadedEvent>([this](WidgetLoadedEvent const& event) { onWidgetLoaded(event.getWidget()); });
+    m_pageUrl {} {
+    mediator.subscribe<PageChangedEvent>([this](PageChangedEvent const& event) { onPageChanged(event.getPage()); });
 }
 
-void MainWindowViewModel::onWidgetLoaded(std::shared_ptr<Widget> widget) {
-    m_widgets.addWidget(widget->getMetadata());
+void MainWindowViewModel::onPageChanged(Page const& page) {
+    QString url {QString::fromStdString(std::string {page.url})};
+
+    if (m_pageUrl != url) {
+        m_pageUrl = url;
+        emit pageUrlChanged();
+    }
 }
 
 void MainWindowViewModel::setWindow(QWindow* window) {
