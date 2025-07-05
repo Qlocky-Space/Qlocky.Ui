@@ -31,6 +31,18 @@ struct Page {
     bool operator!=(Page const& other) const {
         return !(*this == other);
     }
+
+    // rule of five
+    Page(Page const&) = default;
+    Page(Page&&) = default;
+    Page& operator=(Page&&) = default;
+
+    // assignment operator
+    Page& operator=(Page const& page) {
+        name = page.name;
+        url = page.url;
+        return *this;
+    }
 };
 
 #endif

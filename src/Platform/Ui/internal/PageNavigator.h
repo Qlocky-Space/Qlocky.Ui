@@ -18,6 +18,11 @@ public:
     PageNavigator(Mediator& mediator);
 
     /**
+     * @see NavigatorIfc::navigateToDefault
+     */
+    void navigateToDefault() final;
+
+    /**
      * @see NavigatorIfc::navigateTo
      */
     void navigateTo(Page const& page) final;

@@ -8,6 +8,17 @@ PageNavigator::PageNavigator(Mediator& mediator) :
     m_activePage {} {
 }
 
+void PageNavigator::navigateToDefault() {
+    static constexpr Page DEFAULT_PAGE {"MainPage", "/qt/qml/AppShell/qml/MainPage.qml"};
+
+    // Clear the page stack to ensure we start fresh
+    while (!m_pageStack.empty()) {
+        m_pageStack.pop();
+    }
+
+    changePageTo(DEFAULT_PAGE);
+}
+
 void PageNavigator::navigateTo(Page const& page) {
     if (m_activePage == page) {
         return;
@@ -23,6 +34,7 @@ void PageNavigator::back() {
     }
 
     changePageTo(m_pageStack.top());
+    m_pageStack.pop();
 }
 
 Page const& PageNavigator::getActivePage() const {

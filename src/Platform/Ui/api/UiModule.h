@@ -16,6 +16,10 @@ public:
 
     UiModule() = default;
     ~UiModule() final = default;
+
+protected:
+
+    void onInitialize() final;
 };
 
 #endif
