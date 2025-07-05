@@ -14,7 +14,8 @@ RUN apt update && apt -y install \
 # tools for application
 RUN apt update && apt -y install \
     qt6-base-dev qt6-declarative-dev-tools \
-    libgl1-mesa-dev libboost-all-dev
+    libgl1-mesa-dev libboost-all-dev \
+    librocksdb-dev
 
 
 # Git configuration
