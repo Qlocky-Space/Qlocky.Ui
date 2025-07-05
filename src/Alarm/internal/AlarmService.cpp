@@ -2,7 +2,7 @@
 
 #include "TimeChangedEvent.h"
 
-AlarmService::AlarmService(Mediator& mediator, TimeProviderIfc const& timeProvider) :
+AlarmService::AlarmService(Mediator& mediator, std::shared_ptr<TimeProviderIfc> timeProvider) :
     m_mediator {mediator},
     m_timeProvider {timeProvider},
     m_currentTimestamp {0ULL},
@@ -34,7 +34,7 @@ void AlarmService::processTime() {
 }
 
 void AlarmService::updateTimestamp() {
-    m_currentTimestamp = m_timeProvider.getCurrentTimestamp();
+    m_currentTimestamp = m_timeProvider->getCurrentTimestamp();
     m_mediator.notify(TimeChangedEvent {m_currentTimestamp});
 }
 

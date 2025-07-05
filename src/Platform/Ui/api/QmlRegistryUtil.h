@@ -3,6 +3,7 @@
 
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QVariant>
 #include <string>
 
 #include "api/ModuleBase.h"
@@ -28,7 +29,16 @@ public:
     static void qmlRegisterViewModel(ModuleBase& module, std::string const& name) {
         QQmlApplicationEngine& uiEngine {module.resolve<UiEngineIfc>()->getAppEngine()};
 
-        uiEngine.rootContext()->setContextProperty(name.c_str(), module.resolve<T>().get());
+        std::shared_ptr<T> const viewModel {module.resolve<T>()};
+        uiEngine.rootContext()->setContextProperty(name.c_str(), viewModel.get());
+
+        // Because raw pointer is registered, we need to ensure
+        // that shared pointer lifetime is managed correctly.
+        QVariant const variant {QVariant::fromValue(viewModel)};
+        QString variantName {};
+        variantName.append("_");
+        variantName.append(name.c_str());
+        uiEngine.rootContext()->setContextProperty(variantName, variant);
     }
 };
 

@@ -90,11 +90,11 @@ std::string PreferencesContext::getInternalKey(PreferencesKey const& key) {
 
 bool PreferencesContext::onError(rocksdb::Status const& status) const {
     if (status.IsNotFound()) {
-        return false;
+        return true;
     }
     else if (!status.ok()) {
-        return false;
+        return true;
     }
 
-    return true;
+    return false;
 }
