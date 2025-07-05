@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QString>
 
-#include "internal/PingCommand.h"
+#include "NavigateToPageCommand.h"
 #include "PreferencesServiceIfc.h"
 #include "QmlCommandBase.h"
 #include "TimeChangedEvent.h"
@@ -18,18 +18,17 @@ class ClockCardViewModel : public QObject {
     Q_OBJECT
 
     // TODO remove demo
-    Q_PROPERTY(QmlCommandBase const* pingCommand READ getPingCommand NOTIFY pingCommandChanged)
+    Q_PROPERTY(QmlCommandBase const* navigateTo READ getNavigateToCommand CONSTANT)
 
     Q_PROPERTY(QString date READ getDate NOTIFY dateChanged)
     Q_PROPERTY(QString time READ getTime NOTIFY timeChanged)
 
 public:
 
-    ClockCardViewModel(Mediator& mediator, PingCommand& pingCommand, PreferencesServiceIfc& preferences);
+    ClockCardViewModel(Mediator& mediator, NavigateToPageCommand& navigateToCommand, PreferencesServiceIfc& preferences);
 
-    // TODO remove demo
-    QmlCommandBase const* getPingCommand() const {
-        return &m_pingCommand;
+    QmlCommandBase const* getNavigateToCommand() const {
+        return &m_navigateToCommand;
     }
 
     /**
@@ -49,7 +48,6 @@ public:
     }
 
 signals:
-    void pingCommandChanged();
     void dateChanged();
     void timeChanged();
 
@@ -60,7 +58,7 @@ private:
     QString formatTime(QDateTime const& time);
     QString formatDate(QDateTime const& time);
 
-    QmlCommandBase& m_pingCommand;
+    QmlCommandBase& m_navigateToCommand;
     QString m_date;
     QString m_time;
     PreferencesServiceIfc& m_preferences;

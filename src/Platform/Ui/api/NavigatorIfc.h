@@ -10,6 +10,11 @@ class NavigatorIfc {
 public:
 
     /**
+     * Navigates to the default page.
+     */
+    virtual void navigateToDefault() = 0;
+
+    /**
      * Navigates to the specified page.
      * @param page The page to navigate to.
      */

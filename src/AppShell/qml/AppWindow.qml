@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import AppShell 1.0
+import Ui
 
 ApplicationWindow {
     id: root
@@ -10,7 +11,7 @@ ApplicationWindow {
 
     visible: true
 
-    color: "#16171A"
+    color: ThemeManager.theme.backgroundPrimary
 
     width: 1920
     height: 1080
