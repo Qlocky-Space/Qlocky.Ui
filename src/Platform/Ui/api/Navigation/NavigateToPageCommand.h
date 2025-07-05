@@ -1,8 +1,8 @@
 #ifndef NAVIGATE_TO_PAGE_COMMAND_H
 #define NAVIGATE_TO_PAGE_COMMAND_H
 
+#include "Command/QmlCommandBase.h"
 #include "NavigatorIfc.h"
-#include "QmlCommandBase.h"
 
 /**
  * NavigateToPageCommand is a command that navigates to a specific page in the application.
@@ -17,12 +17,10 @@ public:
     /**
      * @see QmlCommandBase::doExecute
      */
-    void doExecute() override {
-        // TODO, use CommandData to pass the page name and URL
-        // For now, we just navigate to the Setting page as an example
+    void doExecute(CommandArgs const& data) override {
         Page page {};
-        page.name = "Setting";
-        page.url = "/qt/qml/AppShell/qml/SettingPage.qml";
+        page.name = data.get<QString>("pageName").toStdString();
+        page.url = data.get<QString>("pageUrl").toStdString();
 
         m_navigator.navigateTo(page);
     }

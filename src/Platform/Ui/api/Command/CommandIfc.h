@@ -1,6 +1,8 @@
 #ifndef QLOCKY_UI_COMMAND_IFC_H
 #define QLOCKY_UI_COMMAND_IFC_H
 
+#include "CommandArgs.h"
+
 /**
  * CommandIfc is an interface for commands in the UI framework.
  */
@@ -11,7 +13,7 @@ public:
      * Execute the command.
      * This method should contain the logic to perform the command's action.
      */
-    virtual void execute() = 0;
+    virtual void execute(CommandArgs const* data = nullptr) = 0;
 
     /**
      * Check if the command can be executed.

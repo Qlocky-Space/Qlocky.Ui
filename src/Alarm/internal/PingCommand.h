@@ -3,13 +3,13 @@
 
 #include <QDebug>
 
-#include "QmlCommandBase.h"
+#include "Command/QmlCommandBase.h"
 
 // TODO remove this demo command
 class PingCommand final : public QmlCommandBase {
 public:
 
-    void doExecute() override {
+    void doExecute(CommandArgs const& data) override {
         qDebug() << "Ping command executed (" << m_pingCount << "/5)";
         m_pingCount++;
 

@@ -7,7 +7,7 @@
 #include <QWindow>
 
 #include "api/Mediator.h"
-#include "Page.h"
+#include "Navigation/PageChangedEvent.h"
 
 /**
  * MainWindowViewModel is responsible for managing the main window view model.
@@ -38,7 +38,7 @@ private slots:
 
 private:
 
-    void onPageChanged(Page const& page);
+    void onPageChanged(PageChangedEvent const& event);
 
     QWindow* m_window;
     QString m_pageUrl;
