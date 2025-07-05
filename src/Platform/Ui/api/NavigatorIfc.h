@@ -25,12 +25,6 @@ public:
      */
     virtual void back() = 0;
 
-    /**
-     * Gets the currently active page.
-     * @return The currently active page.
-     */
-    virtual Page const& getActivePage() const = 0;
-
     virtual ~NavigatorIfc() = default;
 };
 

@@ -32,11 +32,6 @@ public:
      */
     void back() final;
 
-    /**
-     * @see NavigatorIfc::getActivePage
-     */
-    Page const& getActivePage() const final;
-
 private:
 
     void changePageTo(Page const& page);
