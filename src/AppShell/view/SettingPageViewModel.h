@@ -11,19 +11,12 @@
 
 class SettingPageViewModel : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QmlCommandBase* navigateBack READ getNavigateBackCommand CONSTANT)
 
 public:
 
-    explicit SettingPageViewModel(NavigateBackCommand& navigateBackCommand);
-
-    QmlCommandBase* getNavigateBackCommand() const {
-        return &m_navigateBackCommand;
-    }
+    explicit SettingPageViewModel();
 
 private:
-
-    NavigateBackCommand& m_navigateBackCommand;
 };
 
 #endif
