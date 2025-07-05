@@ -12,7 +12,7 @@ PreferencesService::PreferencesService() :
 }
 
 void PreferencesService::initialize() {
-    std::string const dbName {"/tmp/qlocky/db.data"};
+    std::string const dbName {"/tmp/qlocky/db"};
 
     // ensure directory exists
     std::error_code ec;
@@ -24,7 +24,6 @@ void PreferencesService::initialize() {
 
     rocksdb::Status const status {rocksdb::DB::Open(options, dbName, &pDb)};
     if (!status.ok()) {
-        // TODO Error Handling
         std::cerr << "Error opening DB: " << status.ToString() << std::endl;
         return;
     }
