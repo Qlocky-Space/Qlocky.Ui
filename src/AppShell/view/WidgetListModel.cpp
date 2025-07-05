@@ -1,17 +1,17 @@
-#include "WidgetListViewModel.h"
+#include "WidgetListModel.h"
 
-WidgetListViewModel::WidgetListViewModel() :
+WidgetListModel::WidgetListModel() :
     QAbstractListModel {nullptr}, m_widgets {} {
 }
 
-int WidgetListViewModel::rowCount(QModelIndex const& parent) const {
+int WidgetListModel::rowCount(QModelIndex const& parent) const {
     if (parent.isValid()) {
         return 0;
     }
     return m_widgets.count();
 }
 
-QVariant WidgetListViewModel::data(QModelIndex const& index, int role) const {
+QVariant WidgetListModel::data(QModelIndex const& index, int role) const {
     if (!index.isValid() || index.row() < 0 || index.row() >= m_widgets.size()) {
         return {};
     }
@@ -34,7 +34,7 @@ QVariant WidgetListViewModel::data(QModelIndex const& index, int role) const {
     }
 }
 
-QHash<int, QByteArray> WidgetListViewModel::roleNames() const {
+QHash<int, QByteArray> WidgetListModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[SourceRole] = "source";
     roles[RowRole] = "row";
@@ -44,7 +44,7 @@ QHash<int, QByteArray> WidgetListViewModel::roleNames() const {
     return roles;
 }
 
-void WidgetListViewModel::addWidget(WidgetMetadata const& widget) {
+void WidgetListModel::addWidget(WidgetMetadata const& widget) {
     std::shared_ptr<WidgetModel> model {std::make_shared<WidgetModel>(
         QString::fromStdString(widget.getSource()),
         widget.getRow(),
@@ -57,7 +57,7 @@ void WidgetListViewModel::addWidget(WidgetMetadata const& widget) {
     endInsertRows();
 }
 
-void WidgetListViewModel::clear() {
+void WidgetListModel::clear() {
     if (!m_widgets.isEmpty()) {
         beginResetModel();
         m_widgets.clear();
