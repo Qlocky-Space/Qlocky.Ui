@@ -37,10 +37,6 @@ void PageNavigator::back() {
     m_pageStack.pop();
 }
 
-Page const& PageNavigator::getActivePage() const {
-    return m_activePage;
-}
-
 void PageNavigator::changePageTo(Page const& page) {
     m_activePage = page;
     m_mediator.notify(PageChangedEvent(page));
