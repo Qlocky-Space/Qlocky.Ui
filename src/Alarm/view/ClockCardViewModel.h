@@ -6,8 +6,6 @@
 #include <QObject>
 #include <QString>
 
-#include "Command/QmlCommandBase.h"
-#include "Navigation/NavigateToPageCommand.h"
 #include "PreferencesServiceIfc.h"
 #include "TimeChangedEvent.h"
 
@@ -17,19 +15,12 @@
 class ClockCardViewModel : public QObject {
     Q_OBJECT
 
-    // TODO remove demo
-    Q_PROPERTY(QmlCommandBase const* navigateTo READ getNavigateToCommand CONSTANT)
-
     Q_PROPERTY(QString date READ getDate NOTIFY dateChanged)
     Q_PROPERTY(QString time READ getTime NOTIFY timeChanged)
 
 public:
 
-    ClockCardViewModel(Mediator& mediator, NavigateToPageCommand& navigateToCommand, PreferencesServiceIfc& preferences);
-
-    QmlCommandBase const* getNavigateToCommand() const {
-        return &m_navigateToCommand;
-    }
+    ClockCardViewModel(Mediator& mediator, PreferencesServiceIfc& preferences);
 
     /**
      * Returns the formatted date string.
@@ -58,7 +49,6 @@ private:
     QString formatTime(QDateTime const& time);
     QString formatDate(QDateTime const& time);
 
-    QmlCommandBase& m_navigateToCommand;
     QString m_date;
     QString m_time;
     PreferencesServiceIfc& m_preferences;
