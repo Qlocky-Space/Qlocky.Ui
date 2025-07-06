@@ -1,16 +1,18 @@
 #include "MainWindowViewModel.h"
 
-#include "Navigation/PageChangedEvent.h"
-
 MainWindowViewModel::MainWindowViewModel(Mediator& mediator) :
     QObject {nullptr},
     m_window {},
     m_pageUrl {} {
-    mediator.subscribe<PageChangedEvent>(this, &MainWindowViewModel::onPageChanged);
+    mediator.subscribe<NavigateToEvent>(this, &MainWindowViewModel::onPageChanged);
 }
 
-void MainWindowViewModel::onPageChanged(PageChangedEvent const& event) {
-    QString url {QString::fromStdString(std::string {event.getPage().url})};
+void MainWindowViewModel::onPageChanged(NavigateToEvent const& event) {
+    if (event.getMeta().type != InteractiveMeta::Type::Page) {
+        return;
+    }
+
+    QString url {QString::fromStdString(std::string {event.getMeta().qmlPath})};
 
     if (m_pageUrl != url) {
         m_pageUrl = url;

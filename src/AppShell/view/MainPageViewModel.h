@@ -7,7 +7,7 @@
 #include <QWindow>
 
 #include "api/Mediator.h"
-#include "Navigation/NavigatorIfc.h"
+#include "Navigation/InteractiveNavigatorIfc.h"
 #include "Widget.h"
 #include "WidgetListModel.h"
 #include "WidgetLoadedEvent.h"

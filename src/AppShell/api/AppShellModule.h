@@ -21,6 +21,10 @@ public:
 
     AppShellModule() = default;
     ~AppShellModule() final = default;
+
+protected:
+
+    void onInitialize() final;
 };
 
 #endif
