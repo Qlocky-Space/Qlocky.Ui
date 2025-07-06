@@ -65,4 +65,11 @@ private:
     std::string m_path;
 };
 
+template<>
+struct std::hash<Uri> {
+    std::size_t operator()(Uri const& uri) const noexcept {
+        return std::hash<std::string> {}(uri.toString());
+    }
+};
+
 #endif

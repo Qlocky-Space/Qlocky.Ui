@@ -6,8 +6,8 @@
 #include <QtQml/qqmlregistration.h>
 #include <QWindow>
 
+#include "Navigation/InteractiveNavigatorIfc.h"
 #include "Navigation/NavigateBackCommand.h"
-#include "Navigation/NavigatorIfc.h"
 
 class SettingPageViewModel : public QObject {
     Q_OBJECT
