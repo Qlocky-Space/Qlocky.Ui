@@ -11,13 +11,14 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/NavigateToPageCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/Uri.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/Uri.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/UriQuery.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/UriQuery.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/CommandIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/QmlCommandBase.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/QmlCommandBase.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/CommandRegistryUtil.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/CommandArgs.h
     ${CMAKE_CURRENT_LIST_DIR}/api/QmlRegistryUtil.h
-
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/UiEngine.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/UiEngine.cpp
