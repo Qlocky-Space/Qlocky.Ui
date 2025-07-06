@@ -19,11 +19,6 @@ public:
     InteractiveNavigator(Mediator& mediator, InteractiveUriRegistryIfc& registry);
 
     /**
-     * @see InteractiveNavigatorIfc::navigateToDefault
-     */
-    void navigateToDefault() final;
-
-    /**
      * @see InteractiveNavigatorIfc::navigateTo
      */
     void navigateTo(UriQuery const& uri) final;

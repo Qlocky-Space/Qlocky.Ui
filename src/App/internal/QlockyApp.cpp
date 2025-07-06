@@ -23,7 +23,7 @@ void QlockyApp::start(Injector& container) {
     }
 
     auto navigator = resolve<InteractiveNavigatorIfc>();
-    navigator->navigateToDefault();
+    navigator->navigateTo(UriQuery {"qlocky://main"});
 
     QUrl const url("qrc:/qt/qml/AppShell/qml/Main.qml");
     auto& engine {resolve<UiEngineIfc>()->getAppEngine()};

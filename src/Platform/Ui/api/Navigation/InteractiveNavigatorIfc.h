@@ -10,11 +10,6 @@ class InteractiveNavigatorIfc {
 public:
 
     /**
-     * Navigates to the default page.
-     */
-    virtual void navigateToDefault() = 0;
-
-    /**
      * Navigates to the specified uri.
      * @param uri The uri to navigate to.
      */
