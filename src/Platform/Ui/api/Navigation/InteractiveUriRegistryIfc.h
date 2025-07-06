@@ -12,6 +12,7 @@ struct InteractiveMeta {
      */
     enum class Type {
         Page,
+        Dialog,
     };
 
     /**
