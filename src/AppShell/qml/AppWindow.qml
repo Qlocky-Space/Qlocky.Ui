@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 
 import AppShell 1.0
 import Ui
@@ -25,5 +26,9 @@ ApplicationWindow {
     Item {
         id: windowContentItem
         anchors.fill: parent
+    }
+
+    QInteractiveProvider {
+        backgroundSourceItem: windowContentItem
     }
 }
