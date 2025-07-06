@@ -19,7 +19,9 @@ Item {
             text: "Back"
 
             onClicked: {
-                CommandExecutor.dispatch("nav-back")
+                CommandExecutor.dispatch("nav-to", {
+                    "uri": "qlocky://main"
+                })
             }
         }
 

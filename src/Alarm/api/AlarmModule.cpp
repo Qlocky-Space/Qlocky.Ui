@@ -4,6 +4,7 @@
 
 #include "internal/AlarmService.h"
 #include "internal/PingCommand.h"
+#include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
 #include "view/ClockCardViewModel.h"
 
@@ -18,8 +19,10 @@ void AlarmModule::registerQmlTypes() {
 
 void AlarmModule::onInitialize() {
     auto widgetRegistrator = resolve<WidgetRegistratorIfc>();
-
     widgetRegistrator->registerWidget(WidgetMetadata("ClockCard", WidgetLayout("qrc:/qt/qml/Alarm/qml/ClockCard.qml", 0, 2, 0, 3)));
+
+    auto irRegistry = resolve<InteractiveUriRegistryIfc>();
+    irRegistry->registerUri(Uri {"qlocky://newAlarmDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Alarm/qml/NewAlarmDialog.qml"});
 
     auto alarmService = resolve<AlarmServiceIfc>();
     alarmService->initialize();

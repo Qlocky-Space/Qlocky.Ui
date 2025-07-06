@@ -7,7 +7,6 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/InteractiveNavigatorIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/InteractiveUriRegistryIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/NavigateToEvent.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/NavigateBackCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Navigation/NavigateToCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/CommandIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/QmlCommandBase.h
@@ -19,6 +18,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/UiEngine.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/UiEngine.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/InteractiveNavigator.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/InteractiveProvider.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/InteractiveProvider.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/InteractiveNavigator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/InteractiveUriRegistry.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/InteractiveUriRegistry.h
@@ -32,6 +33,7 @@ set(MODULE_QML_SRC
     qml/QButton.qml
     qml/QIcon.qml
     qml/QInteractiveProvider.qml
+    qml/QDialogProvider.qml
     qml/FontStyle.qml
     qml/ThemeManager.qml
     qml/themes/DarkTheme.qml
