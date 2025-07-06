@@ -71,6 +71,10 @@ bool UriQuery::isValid() {
     return m_uri.isValid();
 }
 
+Uri UriQuery::uri() const {
+    return m_uri;
+}
+
 UriQuery::Params const& UriQuery::params() const {
     return m_params;
 }
@@ -132,4 +136,12 @@ std::string UriQuery::toString() const {
     str.erase(str.size() - 1);
 
     return str;
+}
+
+bool UriQuery::operator==(UriQuery const& query) const {
+    return m_uri == query.m_uri && m_params == query.m_params;
+}
+
+bool UriQuery::operator!=(UriQuery const& query) const {
+    return !(*this == query);
 }

@@ -1,12 +1,12 @@
 #ifndef UI_NAVIGATOR_IFC_H
 #define UI_NAVIGATOR_IFC_H
 
-#include "Page.h"
+#include "types/UriQuery.h"
 
 /**
  * Interface for navigation functionality.
  */
-class NavigatorIfc {
+class InteractiveNavigatorIfc {
 public:
 
     /**
@@ -15,17 +15,17 @@ public:
     virtual void navigateToDefault() = 0;
 
     /**
-     * Navigates to the specified page.
-     * @param page The page to navigate to.
+     * Navigates to the specified uri.
+     * @param uri The uri to navigate to.
      */
-    virtual void navigateTo(Page const& page) = 0;
+    virtual void navigateTo(UriQuery const& uri) = 0;
 
     /**
      * Navigates back to the previous page.
      */
     virtual void back() = 0;
 
-    virtual ~NavigatorIfc() = default;
+    virtual ~InteractiveNavigatorIfc() = default;
 };
 
 #endif

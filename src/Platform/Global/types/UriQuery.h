@@ -18,6 +18,8 @@ public:
 
     bool isValid();
 
+    Uri uri() const;
+
     Params const& params() const;
     bool contains(std::string const& key) const;
     template<class T>
@@ -29,6 +31,9 @@ public:
     void addParam(std::string const& key, T const& value) {
         addParamInternal(key, value);
     }
+
+    bool operator==(UriQuery const& query) const;
+    bool operator!=(UriQuery const& query) const;
 
     std::string toString() const;
 

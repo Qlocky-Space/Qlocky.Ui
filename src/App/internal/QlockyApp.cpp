@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QQmlApplicationEngine>
 
+#include "Navigation/InteractiveNavigatorIfc.h"
 #include "UiEngineIfc.h"
 
 void QlockyApp::addModule(std::unique_ptr<ModuleBase> module) {
@@ -20,6 +21,9 @@ void QlockyApp::start(Injector& container) {
     for (std::unique_ptr<ModuleBase>& module : m_modules) {
         module->initialize();
     }
+
+    auto navigator = resolve<InteractiveNavigatorIfc>();
+    navigator->navigateToDefault();
 
     QUrl const url("qrc:/qt/qml/AppShell/qml/Main.qml");
     auto& engine {resolve<UiEngineIfc>()->getAppEngine()};
