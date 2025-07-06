@@ -2,7 +2,6 @@
 #define UI_PAGE_NAVIGATOR_H
 
 #include <api/Mediator.h>
-#include <stack>
 
 #include "Navigation/InteractiveNavigatorIfc.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
@@ -23,19 +22,12 @@ public:
      */
     void navigateTo(UriQuery const& uri) final;
 
-    /**
-     * @see InteractiveNavigatorIfc::back
-     */
-    void back() final;
-
 private:
 
     void changeTo(UriQuery const& page);
 
     Mediator& m_mediator;
     InteractiveUriRegistryIfc& m_registry;
-    std::stack<UriQuery> m_uriStack;
-    UriQuery m_activeUri;
 };
 
 #endif

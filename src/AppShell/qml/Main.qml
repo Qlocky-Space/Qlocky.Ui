@@ -10,9 +10,17 @@ AppWindow {
     id: root
 
     Loader {
-        id: mainLoader
+        id: pageProvider
         anchors.fill: parent
-        source: MainWindowViewModel.pageUrl
     }
 
+    QDialogProvider {
+        id: dialogProvider
+        backgroundSourceItem: pageProvider
+    }
+
+    QInteractiveProvider {
+        pageLoader: pageProvider
+        dialogLoader: dialogProvider
+    }
 }

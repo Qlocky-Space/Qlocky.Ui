@@ -22,9 +22,6 @@ void QlockyApp::start(Injector& container) {
         module->initialize();
     }
 
-    auto navigator = resolve<InteractiveNavigatorIfc>();
-    navigator->navigateTo(UriQuery {"qlocky://main"});
-
     QUrl const url("qrc:/qt/qml/AppShell/qml/Main.qml");
     auto& engine {resolve<UiEngineIfc>()->getAppEngine()};
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, qApp, [this, url](QObject* obj, QUrl const& objUrl) {
@@ -32,6 +29,9 @@ void QlockyApp::start(Injector& container) {
             QCoreApplication::exit(-1);
             return;
         }
+
+        auto navigator = resolve<InteractiveNavigatorIfc>();
+        navigator->navigateTo(UriQuery {"qlocky://main"});
     });
 
     engine.load(url);

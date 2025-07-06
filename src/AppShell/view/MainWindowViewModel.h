@@ -7,7 +7,6 @@
 #include <QWindow>
 
 #include "api/Mediator.h"
-#include "Navigation/NavigateToEvent.h"
 
 /**
  * MainWindowViewModel is responsible for managing the main window view model.
@@ -16,7 +15,6 @@
 class MainWindowViewModel : public QObject {
     Q_OBJECT
     Q_PROPERTY(QWindow* window READ getWindow WRITE setWindow)
-    Q_PROPERTY(QString pageUrl READ getPageUrl NOTIFY pageUrlChanged)
 
 public:
 
@@ -24,10 +22,6 @@ public:
 
     QWindow* getWindow() const {
         return m_window;
-    }
-
-    QString getPageUrl() const {
-        return m_pageUrl;
     }
 
 signals:
@@ -38,10 +32,7 @@ private slots:
 
 private:
 
-    void onPageChanged(NavigateToEvent const& event);
-
     QWindow* m_window;
-    QString m_pageUrl;
 };
 
 #endif
