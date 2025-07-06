@@ -28,6 +28,7 @@ macro(declare_module name)
     unset(MODULE_INCLUDE_API)
     unset(MODULE_QML_SRC)
     unset(MODULE_QML_RESOURCES)
+    unset(MODULE_SHADERS)
 endmacro()
 
 macro(add_qml_import_path input_var)
@@ -67,6 +68,15 @@ macro(setup_module)
         add_library(${MODULE_ALIAS} ALIAS ${MODULE})
     endif()
 
+    if (MODULE_SHADERS)
+        qt6_add_shaders(${MODULE} "${MODULE}-shaders"
+            BATCHABLE
+            PRECOMPILE
+            OPTIMIZED
+            PREFIX ${MODULE}
+            FILES ${MODULE_SHADERS}
+        )
+    endif()
 
     target_include_directories(${MODULE} PUBLIC
         # Default include folder for all modules

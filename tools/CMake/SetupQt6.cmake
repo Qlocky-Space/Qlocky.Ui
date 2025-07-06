@@ -10,6 +10,7 @@ set(_components
     Qml
     Quick
     LinguistTools
+    ShaderTools
 )
 
 set(QT_QML_GENERATE_QMLLS_INI ON)

@@ -30,6 +30,7 @@ set(MODULE_SRC
 set(MODULE_QML_SRC
     qml/QButton.qml
     qml/QIcon.qml
+    qml/QInteractiveProvider.qml
     qml/FontStyle.qml
     qml/ThemeManager.qml
     qml/themes/DarkTheme.qml
@@ -39,6 +40,10 @@ set(MODULE_QML_SRC
 set(MODULE_QML_RESOURCES
     resources/SF-Pro-Display-Regular.otf
     resources/Font-Awesome-6-Solid-900.otf
+)
+
+set(MODULE_SHADERS
+    resources/shaders/gaussianblur.frag
 )
 
 # Make the available as a singleton
