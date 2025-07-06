@@ -15,11 +15,6 @@ public:
      */
     virtual void navigateTo(UriQuery const& uri) = 0;
 
-    /**
-     * Navigates back to the previous page.
-     */
-    virtual void back() = 0;
-
     virtual ~InteractiveNavigatorIfc() = default;
 };
 

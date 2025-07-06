@@ -27,8 +27,4 @@ ApplicationWindow {
         id: windowContentItem
         anchors.fill: parent
     }
-
-    QInteractiveProvider {
-        backgroundSourceItem: windowContentItem
-    }
 }
