@@ -104,6 +104,10 @@ macro(setup_module)
         ${MODULE_UPPERCASE}_QML_IMPORT="${MODULE_QML_IMPORT}"
     )
 
+    if (NOT "${MODULE}" STREQUAL "Global")
+        list(APPEND MODULE_LINK "Global")
+    endif()
+
     list(APPEND MODULE_LINK ${EXTERN_LIBRARIES})
 
     target_link_libraries(${MODULE} PRIVATE ${MODULE_LINK})

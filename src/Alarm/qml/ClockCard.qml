@@ -47,8 +47,7 @@ Widget {
 
             onClicked: {
                 CommandExecutor.dispatch("nav-to", {
-                    "pageName": "SettingPage",
-                    "pageUrl": "/qt/qml/AppShell/qml/SettingPage.qml"
+                    "uri": "qlocky://settings"
                 });
             }
         }
