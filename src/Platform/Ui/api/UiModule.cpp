@@ -8,6 +8,7 @@
 #include "internal/UiEngine.h"
 #include "Navigation/NavigateBackCommand.h"
 #include "Navigation/NavigateToPageCommand.h"
+#include "Navigation/Uri.h"
 #include "QmlRegistryUtil.h"
 
 void UiModule::registerExports(Injector& container) {
