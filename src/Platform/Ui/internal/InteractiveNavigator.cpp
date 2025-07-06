@@ -2,6 +2,8 @@
 
 #include "Navigation/NavigateToEvent.h"
 
+static Uri::Scheme const QlockyScheme {"qlocky"};
+
 InteractiveNavigator::InteractiveNavigator(Mediator& mediator, InteractiveUriRegistryIfc& registry) :
     m_mediator {mediator},
     m_registry {registry},
@@ -31,5 +33,10 @@ void InteractiveNavigator::changeTo(UriQuery const& query) {
     m_activeUri = query;
     InteractiveMeta meta {m_registry.meta(query.uri())};
 
-    m_mediator.notify(NavigateToEvent(query, meta));
+    if (query.uri().scheme() == QlockyScheme) {
+        m_mediator.notify(NavigateToEvent(query, meta));
+    }
+    else {
+        // Not supported yet
+    }
 }

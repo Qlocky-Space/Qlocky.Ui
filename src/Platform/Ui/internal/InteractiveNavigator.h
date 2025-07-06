@@ -8,7 +8,7 @@
 #include "Navigation/InteractiveUriRegistryIfc.h"
 
 /**
- * InteractiveNavigator is responsible for navigating between pages in the application.
+ * InteractiveNavigator is responsible for navigation between pages, dialogs or external tools.
  */
 class InteractiveNavigator : public InteractiveNavigatorIfc {
 public:

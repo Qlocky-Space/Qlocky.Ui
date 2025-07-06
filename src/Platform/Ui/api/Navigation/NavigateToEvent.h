@@ -21,14 +21,15 @@ public:
     }
 
     /**
-     * Returns the page associated with this event.
-     *
-     * @return The changed page.
+     * @return the uri associated with this event.
      */
     UriQuery getUri() const {
         return m_uri;
     }
 
+    /**
+     * @return the meta info where it is navigated to
+     */
     InteractiveMeta const& getMeta() const {
         return m_meta;
     }
