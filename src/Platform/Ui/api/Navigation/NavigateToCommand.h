@@ -7,7 +7,8 @@
 #include "InteractiveNavigatorIfc.h"
 
 /**
- * NavigateToCommand is a command that navigates to a specific page in the application.
+ * NavigateToCommand is a command that navigates to a specific uri.
+ * This makes it very generic to open external tools or navigate to pages or open dialogs
  */
 class NavigateToCommand final : public QmlCommandBase {
 public:

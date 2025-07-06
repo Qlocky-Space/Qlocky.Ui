@@ -9,15 +9,6 @@ InteractiveNavigator::InteractiveNavigator(Mediator& mediator, InteractiveUriReg
     m_activeUri {} {
 }
 
-void InteractiveNavigator::navigateToDefault() {
-    // Clear the uri stack to ensure we start fresh
-    while (!m_uriStack.empty()) {
-        m_uriStack.pop();
-    }
-
-    changeTo(UriQuery {"qlocky://main"});
-}
-
 void InteractiveNavigator::navigateTo(UriQuery const& uri) {
     if (m_activeUri == uri) {
         return;
