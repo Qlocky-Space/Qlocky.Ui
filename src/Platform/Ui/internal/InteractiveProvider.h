@@ -50,10 +50,10 @@ signals:
 private:
 
     void navigateToQlocky(NavigateToEvent const& event);
-    void openPage(InteractiveMeta const& meta);
-    void openDialog(InteractiveMeta const& meta);
+    void openPage(NavigateToEvent const& event);
+    void openDialog(NavigateToEvent const& event);
 
-    void fillData(InteractiveQmlData& data, InteractiveMeta const& meta);
+    void fillData(InteractiveQmlData& data, NavigateToEvent const& event);
 };
 
 #endif

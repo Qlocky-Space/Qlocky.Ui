@@ -9,10 +9,10 @@ void InteractiveProvider::navigateToQlocky(NavigateToEvent const& event) {
 
     switch (type) {
         case InteractiveMeta::Type::Dialog:
-            openDialog(event.getMeta());
+            openDialog(event);
             break;
         case InteractiveMeta::Type::Page:
-            openPage(event.getMeta());
+            openPage(event);
             break;
 
         default:
@@ -21,20 +21,27 @@ void InteractiveProvider::navigateToQlocky(NavigateToEvent const& event) {
     }
 }
 
-void InteractiveProvider::openPage(InteractiveMeta const& meta) {
+void InteractiveProvider::openPage(NavigateToEvent const& event) {
     InteractiveQmlData data {};
-    fillData(data, meta);
+    fillData(data, event);
 
     emit fireOpenPage(&data);
 }
 
-void InteractiveProvider::openDialog(InteractiveMeta const& meta) {
+void InteractiveProvider::openDialog(NavigateToEvent const& event) {
     InteractiveQmlData data {};
-    fillData(data, meta);
+    fillData(data, event);
 
     emit fireOpenDialog(&data);
 }
 
-void InteractiveProvider::fillData(InteractiveQmlData& data, InteractiveMeta const& meta) {
-    data.setValue("path", QString::fromStdString(std::string {meta.qmlPath}));
+void InteractiveProvider::fillData(InteractiveQmlData& data, NavigateToEvent const& event) {
+    data.setValue("path", QString::fromStdString(std::string {event.getMeta().qmlPath}));
+
+    QVariantMap params {};
+    UriQuery::Params const& uriParams {event.getUri().params()};
+    for (auto& it : uriParams) {
+        params[QString::fromStdString(it.first)] = QVariant {QString::fromStdString(it.second)};
+    }
+    data.setValue("params", params);
 }
