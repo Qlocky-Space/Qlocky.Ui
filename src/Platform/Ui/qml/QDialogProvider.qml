@@ -10,14 +10,18 @@ Item {
     anchors.fill: parent
 
     property Item backgroundSourceItem
-    property string source: ""
 
     function open() {
-        customDialog.open()
+        blurEffect.opacity = 1
+        delayDialogTimer.start()
     }
 
     function close() {
-        customDialog.close()
+        dialog.close()
+    }
+
+    function setSource(uri, params) {
+        contentLoader.setSource(uri, params)
     }
 
     Component.onCompleted: {
@@ -27,6 +31,16 @@ Item {
         // must be 1 and when component is loaded, it will be transparent
         blurEffect.opacity = 0
         shaderSource.opacity = 0
+    }
+
+    Timer {
+        id: delayDialogTimer
+        repeat: false
+        interval: 300
+
+        onTriggered: {
+            dialog.open()
+        }
     }
 
     ShaderEffectSource {
@@ -59,7 +73,7 @@ Item {
     }
 
     Popup {
-        id: customDialog
+        id: dialog
         anchors.centerIn: parent
         focus: true
         modal: true
@@ -76,14 +90,20 @@ Item {
         }
 
         contentItem: Loader {
-            source: root.source
+            id: contentLoader
         }
 
         onVisibleChanged: {
             if (visible) {
                 blurEffect.opacity = 1
+                if (contentLoader.status === Loader.Ready && contentLoader.item?.opened) {
+                    contentLoader.item.opened()
+                }
             } else {
                 blurEffect.opacity = 0
+                if (contentLoader.status === Loader.Ready && contentLoader.item?.closed) {
+                    contentLoader.item.closed()
+                }
             }
         }
     }

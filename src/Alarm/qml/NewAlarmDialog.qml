@@ -4,14 +4,23 @@ import QtQuick.Controls
 
 import Ui
 
-Item {
-    Column {
-        spacing: 10
-        QButton {
-            text: "Close Dialog"
-            onClicked: {
-                customDialog.close()
-            }
+QDialog {
+    id: root
+
+    onOpened: {
+        console.log("Opened")
+    }
+
+    onClosed: {
+        console.log("Closed")
+    }
+
+    property string text: "Close Dialog"
+
+    QButton {
+        text: root.text
+        onClicked: {
+            close()
         }
     }
 }
