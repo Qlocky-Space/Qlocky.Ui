@@ -15,11 +15,11 @@ Item {
         target: root.provider
 
         function onFireOpenPage(data) {
-            pageLoader.source = data.value("path")
+            pageLoader.setSource(data.value("path"), data.value("params"))
         }
 
         function onFireOpenDialog(data) {
-            dialogLoader.source = data.value("path")
+            dialogLoader.setSource(data.value("path"), data.value("params"))
             dialogLoader.open()
         }
     }
