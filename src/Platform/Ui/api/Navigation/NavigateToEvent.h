@@ -23,7 +23,7 @@ public:
     /**
      * @return the uri associated with this event.
      */
-    UriQuery getUri() const {
+    UriQuery const& getUri() const {
         return m_uri;
     }
 

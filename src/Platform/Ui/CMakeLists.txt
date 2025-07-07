@@ -33,6 +33,7 @@ set(MODULE_QML_SRC
     qml/QButton.qml
     qml/QIcon.qml
     qml/QInteractiveProvider.qml
+    qml/QDialog.qml
     qml/QDialogProvider.qml
     qml/FontStyle.qml
     qml/ThemeManager.qml
