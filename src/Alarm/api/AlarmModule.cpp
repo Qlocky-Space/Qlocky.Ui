@@ -20,6 +20,7 @@ void AlarmModule::registerQmlTypes() {
 void AlarmModule::onInitialize() {
     auto widgetRegistrator = resolve<WidgetRegistratorIfc>();
     widgetRegistrator->registerWidget(WidgetMetadata("ClockCard", WidgetLayout("qrc:/qt/qml/Alarm/qml/ClockCard.qml", 0, 2, 0, 3)));
+    widgetRegistrator->registerWidget(WidgetMetadata("AlarmListCard", WidgetLayout("qrc:/qt/qml/Alarm/qml/AlarmListCard.qml", 0, 3, 3, 2)));
 
     auto irRegistry = resolve<InteractiveUriRegistryIfc>();
     irRegistry->registerUri(Uri {"qlocky://newAlarmDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Alarm/qml/NewAlarmDialog.qml"});
