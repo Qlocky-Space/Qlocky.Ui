@@ -18,6 +18,9 @@ set(MODULE_SRC
 set(MODULE_QML_SRC
     qml/ClockCard.qml
     qml/NewAlarmDialog.qml
+    qml/internal/AlarmList.qml
+    qml/internal/AlarmListItem.qml
+    qml/AlarmListCard.qml
 )
 
 set(MODULE_QML_RESOURCES
