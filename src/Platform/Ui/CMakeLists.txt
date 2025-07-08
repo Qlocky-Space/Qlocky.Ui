@@ -34,6 +34,8 @@ set(MODULE_QML_SRC
     qml/QIcon.qml
     qml/QInteractiveProvider.qml
     qml/QDialog.qml
+    qml/QLabel.qml
+    qml/QToggleButton.qml
     qml/QDialogProvider.qml
     qml/FontStyle.qml
     qml/ThemeManager.qml

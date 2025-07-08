@@ -65,11 +65,10 @@ T.Button {
                 visible: control.image !== "" && control.image !== null
             }
 
-            T.Label {
+            QLabel {
                 id: labelText
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
-                font: control.font
                 text: control.text
                 color: control.getFontColor()
                 visible: control.text !== "" && control.text !== null
