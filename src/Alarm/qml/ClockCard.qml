@@ -51,14 +51,5 @@ Widget {
                 });
             }
         }
-
-        QButton {
-            text: "Open Dialog"
-            onClicked: {
-                CommandExecutor.dispatch("nav-to", {
-                    "uri": "qlocky://newAlarmDialog?text=Custom Close Text"
-                });
-            }
-        }
     }
 }

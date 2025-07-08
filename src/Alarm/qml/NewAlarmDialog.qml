@@ -17,10 +17,20 @@ QDialog {
 
     property string text: "Close Dialog"
 
-    QButton {
-        text: root.text
-        onClicked: {
-            close()
+    RowLayout {
+        QButton {
+            text: root.text
+            onClicked: {
+                close()
+            }
+        }
+
+        QLabel {
+            text: "Hallo Welt"
+        }
+
+        QToggleButton {
+
         }
     }
 }
