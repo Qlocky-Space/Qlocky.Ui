@@ -6,31 +6,28 @@ import Widget
 import Ui
 
 Widget {
+    id: widget
 
-    Rectangle {
-        anchors.fill: parent
-        color: ThemeManager.theme.backgroundTertiary
-
-        radius: 30
-    }
+    color: ThemeManager.theme.backgroundTertiary
 
     ColumnLayout {
         anchors.fill: parent
 
         RowLayout {
-            QLabel {
-                text: "New Alarm"
+            id: header
+            Layout.fillWidth: true
+            Layout.margins: 16
 
+            QLabel {
+                id: title
+                text: "New Alarm"
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             }
 
             QButton {
                 image: "\u002b"
-                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-
-                height: 80
-                width: 80
+                height: 48
+                width: 48
 
                 onClicked: {
                     CommandExecutor.dispatch("nav-to", {

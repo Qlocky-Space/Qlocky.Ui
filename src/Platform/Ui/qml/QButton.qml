@@ -42,8 +42,10 @@ T.Button {
     implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
     implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding
 
-    leftPadding: 16
-    rightPadding: 16
+    leftPadding: 12
+    rightPadding: 12
+    topPadding: 12
+    bottomPadding: 12
 
     contentItem: Item {
         width: parent.width

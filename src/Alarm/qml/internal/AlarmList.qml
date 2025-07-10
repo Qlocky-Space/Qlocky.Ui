@@ -5,18 +5,15 @@ import QtQuick.Controls
 import Ui
 
 Item {
-    ScrollView  {
+    ListView  {
+        id: listView
+        snapMode: ListView.SnapOneItem
         anchors.fill: parent
+        clip: true
 
-        ColumnLayout {
-            anchors.fill: parent
-
-            Repeater {
-                model: 15
-                delegate: AlarmListItem {
-                    Layout.fillWidth: true
-                }
-            }
+        model: 15
+        delegate: AlarmListItem {
+            width: listView.width
         }
     }
 }
