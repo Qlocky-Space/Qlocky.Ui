@@ -20,6 +20,7 @@ set(MODULE_QML_SRC
     qml/NewAlarmDialog.qml
     qml/internal/AlarmList.qml
     qml/internal/AlarmListItem.qml
+    qml/internal/AlarmSwipeButton.qml
     qml/AlarmListCard.qml
 )
 

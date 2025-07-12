@@ -9,6 +9,7 @@ SwipeDelegate {
 
     property bool active: false
 
+    property string time: "00:00"
 
     ListView.onRemove: removeAnimation.start()
 
@@ -21,7 +22,7 @@ SwipeDelegate {
             anchors.margins: 16
 
             QLabel {
-                text: "6:20"
+                text: root.time
             }
 
             QLabel {
@@ -37,51 +38,42 @@ SwipeDelegate {
                 }
             }
         }
-
-        // TODO doesn't work
-        TapHandler {
-            onTapped: {
-                root.active = !root.active
-            }
-
-            onLongPressed: {
-                CommandExecutor.dispatch("nav-to", {
-                        "uri": "qlocky://newAlarmDialog?text=Edit Alarm"
-                });
-            }
-
-            // prevent conflict with swiping
-            gesturePolicy: TapHandler.DragThreshold  // allows drag gestures to pass
-            grabPermissions: TapHandler.CanTakeOverFromAnything
-            longPressThreshold: 0.4
-        }
     }
 
     swipe.right: Loader {
         id: swipArea
-        width: 150
+        width: 300
         active: root.swipe.complete || root.pressed
 
         height: parent.height
         anchors.right: parent.right
 
-        sourceComponent: Item {
+        sourceComponent: RowLayout {
             anchors.fill: parent
+            spacing: 0
 
-            Rectangle {
-                anchors.fill: parent
-                color: "red"
+            AlarmSwipeButton {
+                icon: "\uf304"
+                color: ThemeManager.theme.orange
+
+                onClicked: {
+                    // TOOD CommandExecutor.dispatch("alarm-edit", root.alarmId)
+                    console.log("Edit Clicked")
+
+                    CommandExecutor.dispatch("nav-to", {
+                        "uri": "qlocky://newAlarmDialog?text=Edit Alarm"
+                    });
+                }
             }
 
-            QIcon {
-                anchors.centerIn: parent
-                size: 48
+            AlarmSwipeButton {
                 icon: "\uf1f8"
-            }
+                color: ThemeManager.theme.red
 
-            SwipeDelegate.onClicked: {
-                console.log("Remove Clicked")
-                root.swipe.close()
+                onClicked: {
+                    // TOOD CommandExecutor.dispatch("alarm-remove", root.alarmId)
+                    console.log("Remove Clicked")
+                }
             }
         }
 
