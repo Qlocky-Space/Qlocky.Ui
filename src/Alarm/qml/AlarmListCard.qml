@@ -40,6 +40,8 @@ Widget {
         AlarmList {
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            model: AlarmListCardViewModel.alarmList
         }
     }
 }

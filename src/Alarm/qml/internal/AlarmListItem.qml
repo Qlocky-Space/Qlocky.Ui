@@ -3,15 +3,12 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import Ui
+import Alarm
 
 SwipeDelegate {
     id: root
 
-    property bool active: false
-
-    property string time: "00:00"
-
-    ListView.onRemove: removeAnimation.start()
+    required property AlarmListItemModel model
 
     contentItem: Item {
         implicitHeight: 132
@@ -21,20 +18,29 @@ SwipeDelegate {
             anchors.fill: parent
             anchors.margins: 16
 
-            QLabel {
-                text: root.time
+            Column {
+                QLabel {
+                    // TODO Use 24HFormat configuration from Persistency
+                    text: Qt.formatDateTime(root.model.time, "HH:mm")
+                    font.pixelSize: 56
+                }
+
+                QLabel {
+                    text: root.model.label
+                    font.pixelSize: 32
+                }
             }
 
             QLabel {
-                text: "Imgs"
+                text: ""
                 Layout.fillWidth: true
             }
 
             QToggleButton {
-                checked: root.active
+                checked: root.model.active
 
                 onToggled: function(state) {
-                    root.active = state
+                    root.model.active = state
                 }
             }
         }
@@ -57,12 +63,14 @@ SwipeDelegate {
                 color: ThemeManager.theme.orange
 
                 onClicked: {
-                    // TOOD CommandExecutor.dispatch("alarm-edit", root.alarmId)
                     console.log("Edit Clicked")
 
+                    // TOOD CommandExecutor.dispatch("alarm-edit", root.alarmId)
                     CommandExecutor.dispatch("nav-to", {
                         "uri": "qlocky://newAlarmDialog?text=Edit Alarm"
                     });
+
+                    root.swipe.close()
                 }
             }
 
@@ -71,8 +79,12 @@ SwipeDelegate {
                 color: ThemeManager.theme.red
 
                 onClicked: {
-                    // TOOD CommandExecutor.dispatch("alarm-remove", root.alarmId)
+                    root.swipe.close()
+
                     console.log("Remove Clicked")
+                    removeAnimation.start()
+
+                    // TOOD CommandExecutor.dispatch("alarm-remove", root.alarmId)
                 }
             }
         }
@@ -80,7 +92,7 @@ SwipeDelegate {
     }
 
     background: Rectangle {
-        color: root.active ? ThemeManager.theme.fillsPrimary : ThemeManager.theme.fillsQuaternary
+        color: root.model.active ? ThemeManager.theme.fillsPrimary : ThemeManager.theme.fillsQuaternary
     }
 
     SequentialAnimation {
@@ -96,6 +108,11 @@ SwipeDelegate {
             property: "height"
             to: 0
             easing.type: Easing.InOutQuad
+        }
+        PropertyAction {
+            target: root
+            property: "visible"
+            value: false
         }
         PropertyAction {
             target: root

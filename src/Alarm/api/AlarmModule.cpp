@@ -6,6 +6,7 @@
 #include "internal/PingCommand.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
+#include "view/AlarmListCardViewModel.h"
 #include "view/ClockCardViewModel.h"
 
 void AlarmModule::registerExports(Injector& container) {
@@ -15,6 +16,9 @@ void AlarmModule::registerExports(Injector& container) {
 
 void AlarmModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<ClockCardViewModel>(*this, "ClockCardViewModel");
+    QmlRegistryUtil::qmlRegisterViewModel<AlarmListCardViewModel>(*this, "AlarmListCardViewModel");
+
+    qmlRegisterType<AlarmListItemModel>("Alarm", 1, 0, "AlarmListItemModel");
 }
 
 void AlarmModule::onInitialize() {
