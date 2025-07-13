@@ -8,7 +8,7 @@ import Alarm
 SwipeDelegate {
     id: root
 
-    required property AlarmListItemModel model
+    required property AlarmItemViewModel model
 
     contentItem: Item {
         implicitHeight: 132
@@ -41,6 +41,7 @@ SwipeDelegate {
 
                 onToggled: function(state) {
                     root.model.active = state
+                    root.model.changed(root.model)
                 }
             }
         }
@@ -63,12 +64,7 @@ SwipeDelegate {
                 color: ThemeManager.theme.orange
 
                 onClicked: {
-                    console.log("Edit Clicked")
-
-                    // TOOD CommandExecutor.dispatch("alarm-edit", root.alarmId)
-                    CommandExecutor.dispatch("nav-to", {
-                        "uri": "qlocky://newAlarmDialog?text=Edit Alarm"
-                    });
+                    CommandExecutor.dispatch("alarm-edit", {"id": root.model.id})
 
                     root.swipe.close()
                 }
@@ -81,14 +77,12 @@ SwipeDelegate {
                 onClicked: {
                     root.swipe.close()
 
-                    console.log("Remove Clicked")
                     removeAnimation.start()
 
-                    // TOOD CommandExecutor.dispatch("alarm-remove", root.alarmId)
+                    CommandExecutor.dispatch("alarm-remove", {"id": root.model.id})
                 }
             }
         }
-
     }
 
     background: Rectangle {

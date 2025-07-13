@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QQmlListProperty>
 
-#include "AlarmListItemModel.h"
+#include "AlarmItemViewModel.h"
 
 /**
  * View model for the alarm list card.
@@ -14,7 +14,7 @@
 class AlarmListCardViewModel : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QQmlListProperty<AlarmListItemModel> alarmList READ alarmList NOTIFY alarmListChanged)
+    Q_PROPERTY(QQmlListProperty<AlarmItemViewModel> alarmList READ alarmList NOTIFY alarmListChanged)
 
 public:
 
@@ -23,20 +23,24 @@ public:
     /**
      * Gets a list of alarm list items
      */
-    QQmlListProperty<AlarmListItemModel> alarmList();
+    QQmlListProperty<AlarmItemViewModel> alarmList();
 
 signals:
     void alarmListChanged();
 
 private:
 
-    QList<AlarmListItemModel*> m_alarms;
+    QList<AlarmItemViewModel*> m_alarms;
+
+    void addAlarm(AlarmItemViewModel& alarm);
+    void removeAlarm(AlarmItemViewModel& alarm);
+    void onAlarmChanged(AlarmItemViewModel const* alarm);
 
     // Static helper methods required by QQmlListProperty
-    static void appendAlarm(QQmlListProperty<AlarmListItemModel>* list, AlarmListItemModel* alarm);
-    static qsizetype alarmCount(QQmlListProperty<AlarmListItemModel>* list);
-    static AlarmListItemModel* alarmAt(QQmlListProperty<AlarmListItemModel>* list, qsizetype index);
-    static void clearAlarms(QQmlListProperty<AlarmListItemModel>* list);
+    static void appendAlarm(QQmlListProperty<AlarmItemViewModel>* list, AlarmItemViewModel* alarm);
+    static qsizetype alarmCount(QQmlListProperty<AlarmItemViewModel>* list);
+    static AlarmItemViewModel* alarmAt(QQmlListProperty<AlarmItemViewModel>* list, qsizetype index);
+    static void clearAlarms(QQmlListProperty<AlarmItemViewModel>* list);
 };
 
 #endif

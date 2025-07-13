@@ -4,6 +4,9 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/AlarmModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/AlarmModule.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AlarmServiceIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/AlarmNewCommand.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/AlarmEditCommand.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/AlarmRemoveCommand.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/PingCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmService.h
@@ -15,13 +18,13 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/ClockCardViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListCardViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListCardViewModel.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListItemModel.h
-    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListItemModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmItemViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmItemViewModel.cpp
 )
 
 set(MODULE_QML_SRC
     qml/ClockCard.qml
-    qml/NewAlarmDialog.qml
+    qml/AlarmDialog.qml
     qml/internal/AlarmList.qml
     qml/internal/AlarmListItem.qml
     qml/internal/AlarmSwipeButton.qml

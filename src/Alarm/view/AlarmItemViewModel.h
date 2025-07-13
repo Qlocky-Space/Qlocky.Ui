@@ -7,18 +7,26 @@
 #include <QString>
 
 /**
- * View model for the alarm list card.
+ * Model for the alarm.
  */
-class AlarmListItemModel : public QObject {
+class AlarmItemViewModel : public QObject {
     Q_OBJECT
 
+    Q_PROPERTY(int id READ getId)
     Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(bool active READ getActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QDateTime time READ getTime WRITE setTime NOTIFY timeChanged)
 
 public:
 
-    AlarmListItemModel();
+    AlarmItemViewModel(int const id);
+
+    /**
+     * Gets a unique alarm identifier
+     */
+    int getId() const {
+        return m_id;
+    }
 
     /**
      * Returns the label.
@@ -66,9 +74,11 @@ signals:
     void labelChanged();
     void timeChanged();
     void activeChanged();
+    void changed(AlarmItemViewModel const* alarm);
 
 private:
 
+    int m_id;
     QDateTime m_time;
     bool m_active;
     QString m_label;

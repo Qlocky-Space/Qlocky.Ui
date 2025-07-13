@@ -18,7 +18,7 @@ Item {
         model: root.model
 
         delegate: AlarmListItem {
-            required property AlarmListItemModel modelData
+            required property AlarmItemViewModel modelData
 
             width: listView.width
             model: modelData
