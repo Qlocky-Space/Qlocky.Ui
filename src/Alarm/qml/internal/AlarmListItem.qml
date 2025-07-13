@@ -3,14 +3,12 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import Ui
+import Alarm
 
 SwipeDelegate {
     id: root
 
-    property bool active: false
-
-
-    ListView.onRemove: removeAnimation.start()
+    required property AlarmItemViewModel model
 
     contentItem: Item {
         implicitHeight: 132
@@ -20,75 +18,75 @@ SwipeDelegate {
             anchors.fill: parent
             anchors.margins: 16
 
-            QLabel {
-                text: "6:20"
+            Column {
+                QLabel {
+                    // TODO Use 24HFormat configuration from Persistency
+                    text: Qt.formatDateTime(root.model.time, "HH:mm")
+                    font.pixelSize: 56
+                }
+
+                QLabel {
+                    text: root.model.label
+                    font.pixelSize: 32
+                }
             }
 
             QLabel {
-                text: "Imgs"
+                text: ""
                 Layout.fillWidth: true
             }
 
             QToggleButton {
-                checked: root.active
+                checked: root.model.active
 
                 onToggled: function(state) {
-                    root.active = state
+                    root.model.active = state
+                    root.model.changed(root.model)
                 }
             }
-        }
-
-        // TODO doesn't work
-        TapHandler {
-            onTapped: {
-                root.active = !root.active
-            }
-
-            onLongPressed: {
-                CommandExecutor.dispatch("nav-to", {
-                        "uri": "qlocky://newAlarmDialog?text=Edit Alarm"
-                });
-            }
-
-            // prevent conflict with swiping
-            gesturePolicy: TapHandler.DragThreshold  // allows drag gestures to pass
-            grabPermissions: TapHandler.CanTakeOverFromAnything
-            longPressThreshold: 0.4
         }
     }
 
     swipe.right: Loader {
         id: swipArea
-        width: 150
+        width: 300
         active: root.swipe.complete || root.pressed
 
         height: parent.height
         anchors.right: parent.right
 
-        sourceComponent: Item {
+        sourceComponent: RowLayout {
             anchors.fill: parent
+            spacing: 0
 
-            Rectangle {
-                anchors.fill: parent
-                color: "red"
+            AlarmSwipeButton {
+                icon: "\uf304"
+                color: ThemeManager.theme.orange
+
+                onClicked: {
+                    CommandExecutor.dispatch("alarm-edit", {"id": root.model.id})
+
+                    root.swipe.close()
+                }
             }
 
-            QIcon {
-                anchors.centerIn: parent
-                size: 48
+            AlarmSwipeButton {
                 icon: "\uf1f8"
-            }
+                color: ThemeManager.theme.red
 
-            SwipeDelegate.onClicked: {
-                console.log("Remove Clicked")
-                root.swipe.close()
+                onClicked: {
+                    root.swipe.close()
+
+                    removeAnimation.start()
+
+                    CommandExecutor.dispatch("alarm-remove", {"id": root.model.id})
+                }
             }
         }
-
     }
 
     background: Rectangle {
-        color: root.active ? ThemeManager.theme.fillsPrimary : ThemeManager.theme.fillsQuaternary
+        color: root.model.active ? ThemeManager.theme.fillsPrimary : ThemeManager.theme.fillsQuaternary
     }
 
     SequentialAnimation {
@@ -104,6 +102,11 @@ SwipeDelegate {
             property: "height"
             to: 0
             easing.type: Easing.InOutQuad
+        }
+        PropertyAction {
+            target: root
+            property: "visible"
+            value: false
         }
         PropertyAction {
             target: root

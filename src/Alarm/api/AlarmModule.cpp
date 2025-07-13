@@ -2,10 +2,15 @@
 
 #include <WidgetRegistratorIfc.h>
 
+#include "Command/CommandRegistryUtil.h"
+#include "commands/AlarmEditCommand.h"
+#include "commands/AlarmNewCommand.h"
+#include "commands/AlarmRemoveCommand.h"
 #include "internal/AlarmService.h"
 #include "internal/PingCommand.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
+#include "view/AlarmListCardViewModel.h"
 #include "view/ClockCardViewModel.h"
 
 void AlarmModule::registerExports(Injector& container) {
@@ -15,6 +20,9 @@ void AlarmModule::registerExports(Injector& container) {
 
 void AlarmModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<ClockCardViewModel>(*this, "ClockCardViewModel");
+    QmlRegistryUtil::qmlRegisterViewModel<AlarmListCardViewModel>(*this, "AlarmListCardViewModel");
+
+    qmlRegisterType<AlarmItemViewModel>("Alarm", 1, 0, "AlarmItemViewModel");
 }
 
 void AlarmModule::onInitialize() {
@@ -23,7 +31,11 @@ void AlarmModule::onInitialize() {
     widgetRegistrator->registerWidget(WidgetMetadata("AlarmListCard", WidgetLayout("qrc:/qt/qml/Alarm/qml/AlarmListCard.qml", 0, 3, 3, 2)));
 
     auto irRegistry = resolve<InteractiveUriRegistryIfc>();
-    irRegistry->registerUri(Uri {"qlocky://newAlarmDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Alarm/qml/NewAlarmDialog.qml"});
+    irRegistry->registerUri(Uri {"qlocky://alarmDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Alarm/qml/AlarmDialog.qml"});
+
+    CommandRegistryUtil::registerCommand<AlarmEditCommand>(*this, "alarm-edit");
+    CommandRegistryUtil::registerCommand<AlarmNewCommand>(*this, "alarm-new");
+    CommandRegistryUtil::registerCommand<AlarmRemoveCommand>(*this, "alarm-remove");
 
     auto alarmService = resolve<AlarmServiceIfc>();
     alarmService->initialize();

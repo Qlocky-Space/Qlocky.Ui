@@ -30,9 +30,7 @@ Widget {
                 width: 48
 
                 onClicked: {
-                    CommandExecutor.dispatch("nav-to", {
-                        "uri": "qlocky://newAlarmDialog?text=Custom Close Text"
-                    });
+                    CommandExecutor.dispatch("alarm-new");
                 }
             }
         }
@@ -40,6 +38,8 @@ Widget {
         AlarmList {
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            model: AlarmListCardViewModel.alarmList
         }
     }
 }
