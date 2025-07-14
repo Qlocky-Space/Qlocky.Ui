@@ -43,9 +43,9 @@ SwipeDelegate {
             QToggleButton {
                 checked: root.isEnabled
 
-                onToggled: function(state) {
-                    root.isEnabled = state
-                    root.activationToggled(state)
+                onToggled: function (state) {
+                    root.isEnabled = state;
+                    root.activationToggled(state);
                 }
             }
         }
@@ -68,8 +68,10 @@ SwipeDelegate {
                 color: ThemeManager.theme.orange
 
                 onClicked: {
-                    CommandExecutor.dispatch("alarm-edit", {"id": root.alarmId})
-                    root.swipe.close()
+                    CommandExecutor.dispatch("alarm-edit", {
+                        "id": root.alarmId
+                    });
+                    root.swipe.close();
                 }
             }
 
@@ -78,9 +80,11 @@ SwipeDelegate {
                 color: ThemeManager.theme.red
 
                 onClicked: {
-                    root.swipe.close()
-                    removeAnimation.start()
-                    CommandExecutor.dispatch("alarm-remove", {"id": root.alarmId})
+                    root.swipe.close();
+                    CommandExecutor.dispatch("alarm-remove", {
+                        "id": root.alarmId
+                    });
+                    removeAnimation.start();
                 }
             }
         }
