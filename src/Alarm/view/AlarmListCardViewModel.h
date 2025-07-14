@@ -7,6 +7,10 @@
 #include <QQmlListProperty>
 
 #include "AlarmListModel.h"
+#include "events/AlarmAddedEvent.h"
+#include "events/AlarmRemovedEvent.h"
+#include "events/AlarmUpdatedEvent.h"
+#include "internal/AlarmRepositoryIfc.h"
 
 /**
  * View model for the alarm list card.
@@ -21,7 +25,7 @@ class AlarmListCardViewModel : public QObject {
 
 public:
 
-    AlarmListCardViewModel(Mediator& mediator);
+    AlarmListCardViewModel(Mediator& mediator, AlarmRepositoryIfc& repository);
 
     /**
      * Gets a list of alarm list items
@@ -45,7 +49,12 @@ signals:
 
 private:
 
+    void onAlarmAdded(AlarmAddedEvent const& event);
+    void onAlarmRemoved(AlarmRemovedEvent const& event);
+    void onAlarmUpdated(AlarmUpdatedEvent const& event);
+
     AlarmListModel m_alarms;
+    AlarmRepositoryIfc& m_repository;
 };
 
 #endif

@@ -56,9 +56,11 @@ void AlarmListModel::removeAlarm(AlarmItemViewModel* alarm) {
     endRemoveRows();
 }
 
-AlarmItemViewModel* AlarmListModel::alarmAt(int index) const {
-    if (index < 0 || index >= m_alarms.size()) {
-        return nullptr;
+AlarmItemViewModel* AlarmListModel::alarmById(int id) const {
+    for (auto* alarm : m_alarms) {
+        if (alarm->getAlarmId() == id) {
+            return alarm;
+        }
     }
-    return m_alarms.at(index);
+    return nullptr;
 }

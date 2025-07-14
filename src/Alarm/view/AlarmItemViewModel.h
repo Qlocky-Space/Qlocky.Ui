@@ -78,6 +78,12 @@ public:
      */
     void setDueTime(QDateTime const& dueTime);
 
+    /**
+     * Updates this view model from another instance.
+     * @param other The source view model to copy data from.
+     */
+    void updateFrom(AlarmItemViewModel const& other);
+
 signals:
     void displayNameChanged();
     void dueTimeChanged();

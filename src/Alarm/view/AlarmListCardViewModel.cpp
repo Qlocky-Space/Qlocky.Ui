@@ -1,19 +1,13 @@
 #include "AlarmListCardViewModel.h"
 
-AlarmListCardViewModel::AlarmListCardViewModel(Mediator& mediator) {
-    // TODO replace demo code with mediator AlarmAddedEvent/AlarmRemovedEvent/AlarmUpdateEvent
+#include "../internal/AlarmMapper.h"
 
-    auto* pAlarm = new AlarmItemViewModel(0);
-    pAlarm->setDisplayName("Label 1");
-    pAlarm->setDueTime(QDateTime::currentDateTime());
-    pAlarm->setState(true);
-    m_alarms.addAlarm(pAlarm);
-
-    auto* pAlarm1 = new AlarmItemViewModel(1);
-    pAlarm1->setDisplayName("Label 2");
-    pAlarm1->setDueTime(QDateTime::currentDateTime().addDays(5));
-    pAlarm1->setState(false);
-    m_alarms.addAlarm(pAlarm1);
+AlarmListCardViewModel::AlarmListCardViewModel(Mediator& mediator, AlarmRepositoryIfc& repository) :
+    m_alarms {this},
+    m_repository {repository} {
+    mediator.subscribe<AlarmAddedEvent>(this, &AlarmListCardViewModel::onAlarmAdded);
+    mediator.subscribe<AlarmRemovedEvent>(this, &AlarmListCardViewModel::onAlarmRemoved);
+    mediator.subscribe<AlarmUpdatedEvent>(this, &AlarmListCardViewModel::onAlarmUpdated);
 }
 
 AlarmListModel* AlarmListCardViewModel::alarmList() {
@@ -21,9 +15,29 @@ AlarmListModel* AlarmListCardViewModel::alarmList() {
 }
 
 void AlarmListCardViewModel::activateAlarm(int alarmId) {
-    // TODO AlarmRepositoryIfc::setAlarmState(alarmId, true)
+    m_repository.setAlarmState(alarmId, true);
 }
 
 void AlarmListCardViewModel::deactivateAlarm(int alarmId) {
-    // TODO AlarmRepositoryIfc::setAlarmState(alarmId, false)
+    m_repository.setAlarmState(alarmId, false);
+}
+
+void AlarmListCardViewModel::onAlarmAdded(AlarmAddedEvent const& event) {
+    auto viewModel = AlarmMapper::toViewModel(event.alarm);
+    m_alarms.addAlarm(viewModel.release());
+    emit alarmListChanged();
+}
+
+void AlarmListCardViewModel::onAlarmRemoved(AlarmRemovedEvent const& event) {
+    m_alarms.removeAlarm(m_alarms.alarmById(event.id));
+    emit alarmListChanged();
+}
+
+void AlarmListCardViewModel::onAlarmUpdated(AlarmUpdatedEvent const& event) {
+    auto viewModel = AlarmMapper::toViewModel(event.alarm);
+    AlarmItemViewModel* existingAlarm = m_alarms.alarmById(event.alarm.id);
+    if (existingAlarm) {
+        existingAlarm->updateFrom(*viewModel);
+        emit alarmListChanged();
+    }
 }

@@ -27,3 +27,11 @@ void AlarmItemViewModel::setDueTime(QDateTime const& dueTime) {
         emit dueTimeChanged();
     }
 }
+
+void AlarmItemViewModel::updateFrom(AlarmItemViewModel const& other) {
+    setDisplayName(other.getDisplayName());
+    setState(other.getState());
+    setDueTime(other.getDueTime());
+
+    // @note: When adding new attributes to AlarmItemViewModel, add the mapping here.
+}

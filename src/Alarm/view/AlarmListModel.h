@@ -58,10 +58,10 @@ public:
 
     /**
      * Returns the alarm at the given index.
-     * @param index The index.
+     * @param id The unique identifier of the alarm.
      * @return The alarm item.
      */
-    AlarmItemViewModel* alarmAt(int index) const;
+    AlarmItemViewModel* alarmById(int id) const;
 
 private:
 
