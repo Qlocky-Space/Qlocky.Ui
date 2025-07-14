@@ -29,8 +29,11 @@ void AlarmListCardViewModel::onAlarmAdded(AlarmAddedEvent const& event) {
 }
 
 void AlarmListCardViewModel::onAlarmRemoved(AlarmRemovedEvent const& event) {
-    m_alarms.removeAlarm(m_alarms.alarmById(event.id));
-    emit alarmListChanged();
+    AlarmItemViewModel* alarm = m_alarms.alarmById(event.id);
+    if (alarm) {
+        m_alarms.removeAlarm(alarm);
+        emit alarmListChanged();
+    }
 }
 
 void AlarmListCardViewModel::onAlarmUpdated(AlarmUpdatedEvent const& event) {

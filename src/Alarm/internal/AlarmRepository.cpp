@@ -15,19 +15,20 @@ AlarmRepository::AlarmRepository(Mediator& mediator, PreferencesServiceIfc& pers
 void AlarmRepository::initialize() {
     m_alarms.clear();
 
-    auto* pAlarm = new AlarmEntity();
-    pAlarm->id = 0;
-    pAlarm->name = "Alarm 1";
-    pAlarm->isActive = true;
-    pAlarm->dueTime = 1752502140;
-    addAlarm(*pAlarm);
+    // TOOD just demo code, load from persistency
+    AlarmEntity alarm1;
+    alarm1.id = 0;
+    alarm1.name = "Alarm 1";
+    alarm1.isActive = true;
+    alarm1.dueTime = 1752502140;
+    addAlarm(alarm1);
 
-    auto* pAlarm2 = new AlarmEntity();
-    pAlarm2->id = 1;
-    pAlarm2->name = "Alarm 2";
-    pAlarm2->isActive = false;
-    pAlarm2->dueTime = 1752508140;
-    addAlarm(*pAlarm2);
+    AlarmEntity alarm2;
+    alarm2.id = 1;
+    alarm2.name = "Alarm 2";
+    alarm2.isActive = false;
+    alarm2.dueTime = 1752508140;
+    addAlarm(alarm2);
 }
 
 void AlarmRepository::addAlarm(AlarmEntity const& alarm) {

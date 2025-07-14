@@ -20,7 +20,7 @@ struct AlarmEntity {
     bool isActive;    // Indicates if the alarm is currently active
     int64_t dueTime;  // Schedule for the alarm, including recurrence rules
 
-    // TOOD add other attributes: Snooze time, volume, light, sound, recurrent date, etc
+    // TODO add other attributes: Snooze time, volume, light, sound, recurrent date, etc
 };
 
 #endif

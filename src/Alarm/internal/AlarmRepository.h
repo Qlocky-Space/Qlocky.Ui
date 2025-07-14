@@ -35,7 +35,7 @@ public:
     /**
      * @see AlarmRepositoryIfc::setAlarmState
      */
-    void setAlarmState(AlarmId const id, bool isActive);
+    void setAlarmState(AlarmId const id, bool isActive) final;
 
     /**
      * @see AlarmRepositoryIfc::alarms
