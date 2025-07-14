@@ -20,6 +20,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListCardViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmItemViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmItemViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListModel.cpp
 )
 
 set(MODULE_QML_SRC

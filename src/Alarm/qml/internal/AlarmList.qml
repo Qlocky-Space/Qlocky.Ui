@@ -3,11 +3,10 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import Ui
+import Alarm
 
 Item {
     id: root
-
-    property var model
 
     ListView  {
         id: listView
@@ -15,13 +14,26 @@ Item {
         anchors.fill: parent
         clip: true
 
-        model: root.model
+        model: AlarmListCardViewModel.alarms
 
         delegate: AlarmListItem {
-            required property AlarmItemViewModel modelData
+            required property var alarm
+
+            alarmId: alarm.alarmId
+            displayName: alarm.displayName
+            isEnabled: alarm.state
+            dueTime: Qt.formatDateTime(alarm.dueTime, "HH:mm") // TODO use 24HFormat from persistency
 
             width: listView.width
-            model: modelData
+
+            onActivationToggled: function (isEnabled) {
+                if (isEnabled) {
+                    AlarmListCardViewModel.activateAlarm(alarmId)
+                }
+                else {
+                    AlarmListCardViewModel.deactivateAlarm(alarmId)
+                }
+            }
         }
     }
 }

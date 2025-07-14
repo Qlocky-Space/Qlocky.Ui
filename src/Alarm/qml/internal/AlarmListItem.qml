@@ -8,7 +8,12 @@ import Alarm
 SwipeDelegate {
     id: root
 
-    required property AlarmItemViewModel model
+    required property int alarmId
+    property string displayName: "Label"
+    property bool isEnabled: false
+    property string dueTime: "00:00"
+
+    signal activationToggled(bool isEnabled)
 
     contentItem: Item {
         implicitHeight: 132
@@ -20,13 +25,12 @@ SwipeDelegate {
 
             Column {
                 QLabel {
-                    // TODO Use 24HFormat configuration from Persistency
-                    text: Qt.formatDateTime(root.model.time, "HH:mm")
+                    text: root.dueTime
                     font.pixelSize: 56
                 }
 
                 QLabel {
-                    text: root.model.label
+                    text: root.displayName
                     font.pixelSize: 32
                 }
             }
@@ -37,11 +41,11 @@ SwipeDelegate {
             }
 
             QToggleButton {
-                checked: root.model.active
+                checked: root.isEnabled
 
                 onToggled: function(state) {
-                    root.model.active = state
-                    root.model.changed(root.model)
+                    root.isEnabled = state
+                    root.activationToggled(state)
                 }
             }
         }
@@ -64,8 +68,7 @@ SwipeDelegate {
                 color: ThemeManager.theme.orange
 
                 onClicked: {
-                    CommandExecutor.dispatch("alarm-edit", {"id": root.model.id})
-
+                    CommandExecutor.dispatch("alarm-edit", {"id": root.alarmId})
                     root.swipe.close()
                 }
             }
@@ -76,17 +79,15 @@ SwipeDelegate {
 
                 onClicked: {
                     root.swipe.close()
-
                     removeAnimation.start()
-
-                    CommandExecutor.dispatch("alarm-remove", {"id": root.model.id})
+                    CommandExecutor.dispatch("alarm-remove", {"id": root.alarmId})
                 }
             }
         }
     }
 
     background: Rectangle {
-        color: root.model.active ? ThemeManager.theme.fillsPrimary : ThemeManager.theme.fillsQuaternary
+        color: root.isEnabled ? ThemeManager.theme.fillsPrimary : ThemeManager.theme.fillsQuaternary
     }
 
     SequentialAnimation {

@@ -7,81 +7,88 @@
 #include <QString>
 
 /**
- * Model for the alarm.
+ * ViewModel representing a single alarm item.
+ *
+ * Exposes properties like ID, label, enabled state, and scheduled time
+ * for use in QML or UI binding contexts.
  */
 class AlarmItemViewModel : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(int id READ getId)
-    Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged)
-    Q_PROPERTY(bool active READ getActive WRITE setActive NOTIFY activeChanged)
-    Q_PROPERTY(QDateTime time READ getTime WRITE setTime NOTIFY timeChanged)
+    Q_PROPERTY(int alarmId READ getAlarmId CONSTANT)
+    Q_PROPERTY(QString displayName READ getDisplayName WRITE setDisplayName NOTIFY displayNameChanged)
+    Q_PROPERTY(bool state READ getState WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(QDateTime dueTime READ getDueTime WRITE setDueTime NOTIFY dueTimeChanged)
 
 public:
 
-    AlarmItemViewModel(int const id);
+    /**
+     * Constructs an AlarmItemViewModel with a given alarm ID.
+     * @param id Unique identifier for this alarm.
+     */
+    explicit AlarmItemViewModel(int const id);
 
     /**
-     * Gets a unique alarm identifier
+     * Gets the unique alarm identifier.
+     * @return The alarm ID.
      */
-    int getId() const {
+    int getAlarmId() const {
         return m_id;
     }
 
     /**
-     * Returns the label.
-     * @return The label as a string.
+     * Gets the display name of the alarm.
+     * @return The display name.
      */
-    QString getLabel() const {
-        return m_label;
+    QString getDisplayName() const {
+        return m_displayName;
     }
 
     /**
-     * Sets the label.
-     * @param label The new label to set.
+     * Sets the display name of the alarm.
+     * @param displayName The new display name to set.
      */
-    void setLabel(QString const& label);
+    void setDisplayName(QString const& displayName);
 
     /**
-     * Sets whether the object is active.
-     * @param active True to activate, false to deactivate.
+     * Sets the active state of the alarm.
+     * @param state True to enable the alarm, false to disable.
      */
-    void setActive(bool active);
+    void setState(bool state);
 
     /**
-     * Returns whether the object is active.
-     * @return True if active, false otherwise.
+     * Gets the active state of the alarm.
+     * @return True if the alarm is enabled, false otherwise.
      */
-    bool getActive() const {
-        return m_active;
+    bool getState() const {
+        return m_state;
     }
 
     /**
-     * Returns the formatted time string.
-     * @return The current time as a string.
+     * Gets the scheduled time for the alarm.
+     * @return The due time as a QDateTime.
      */
-    QDateTime getTime() const {
-        return m_time;
+    QDateTime getDueTime() const {
+        return m_dueTime;
     }
 
     /**
-     * Sets the time.
-     * @param time The time to set.
+     * Sets the scheduled time for the alarm.
+     * @param dueTime The new due time to set.
      */
-    void setTime(QDateTime const& time);
+    void setDueTime(QDateTime const& dueTime);
 
 signals:
-    void labelChanged();
-    void timeChanged();
-    void activeChanged();
-    void changed(AlarmItemViewModel const* alarm);
+    void displayNameChanged();
+    void dueTimeChanged();
+    void stateChanged();
 
 private:
 
     int m_id;
-    QDateTime m_time;
-    bool m_active;
-    QString m_label;
+    QDateTime m_dueTime;
+    bool m_state;
+    QString m_displayName;
 };
 
 #endif

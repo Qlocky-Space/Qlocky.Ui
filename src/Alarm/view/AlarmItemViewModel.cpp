@@ -2,28 +2,28 @@
 
 AlarmItemViewModel::AlarmItemViewModel(int const id) :
     m_id {id},
-    m_time {},
-    m_active {},
-    m_label {} {
+    m_dueTime {},
+    m_state {},
+    m_displayName {} {
 }
 
-void AlarmItemViewModel::setLabel(QString const& label) {
-    if (m_label != label) {
-        m_label = label;
-        emit labelChanged();
+void AlarmItemViewModel::setDisplayName(QString const& displayName) {
+    if (m_displayName != displayName) {
+        m_displayName = displayName;
+        emit displayNameChanged();
     }
 }
 
-void AlarmItemViewModel::setActive(bool active) {
-    if (m_active != active) {
-        m_active = active;
-        emit activeChanged();
+void AlarmItemViewModel::setState(bool state) {
+    if (m_state != state) {
+        m_state = state;
+        emit stateChanged();
     }
 }
 
-void AlarmItemViewModel::setTime(QDateTime const& time) {
-    if (m_time != time) {
-        m_time = time;
-        emit timeChanged();
+void AlarmItemViewModel::setDueTime(QDateTime const& dueTime) {
+    if (m_dueTime != dueTime) {
+        m_dueTime = dueTime;
+        emit dueTimeChanged();
     }
 }
