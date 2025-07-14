@@ -5,15 +5,21 @@ import QtQuick.Layouts
 T.Button {
     id: control
 
+    enum ButtonStyle {
+        Filled,
+        Tinted,
+        Plain
+    }
+
     property color backgroundColor: ThemeManager.theme.blue
-    property color backgroundColorTinted:  Qt.alpha(backgroundColor, 0.15)
+    property color backgroundColorTinted: Qt.alpha(backgroundColor, 0.15)
     property color backgroundColorDisabled: ThemeManager.theme.miscellaneousButtonDisabled
     property color fontColorDisabled: ThemeManager.theme.labelTertiary
     property color fontColor: ThemeManager.theme.labelPrimary
 
     property real borderWidth: 0
     property color borderColor: "transparent"
-    property bool tinted: false
+    property int buttonStyle: QButton.ButtonStyle.Filled
 
     property string image: ""
 
@@ -23,16 +29,23 @@ T.Button {
         if (!control.enabled) {
             return control.backgroundColorDisabled;
         }
-
-        return control.tinted ? control.backgroundColorTinted : control.backgroundColor;
+        if (control.buttonStyle === QButton.ButtonStyle.Tinted) {
+            return control.backgroundColorTinted;
+        }
+        if (control.buttonStyle === QButton.ButtonStyle.Plain) {
+            return "transparent";
+        }
+        return control.backgroundColor;
     }
 
     function getFontColor() {
         if (!control.enabled) {
             return control.fontColorDisabled;
         }
-
-        return control.tinted ? control.backgroundColor : control.fontColor;
+        if (control.buttonStyle === QButton.ButtonStyle.Tinted) {
+            return control.backgroundColor;
+        }
+        return control.fontColor;
     }
 
     font: FontStyle.caption
@@ -108,8 +121,8 @@ T.Button {
 
             property int mx
             property int my
-            x: mx - width/2
-            y: my - height/2
+            x: mx - width / 2
+            y: my - height / 2
             height: width
             radius: control.radius
             color: Qt.lighter(control.backgroundColor)
@@ -150,10 +163,12 @@ T.Button {
     }
 
     onPressed: {
-        if (!control.enabled) { return; }
+        if (!control.enabled) {
+            return;
+        }
 
-        indicator.mx = mouseArea.mouseX
-        indicator.my = mouseArea.mouseY
-        main.restart()
+        indicator.mx = mouseArea.mouseX;
+        indicator.my = mouseArea.mouseY;
+        main.restart();
     }
 }

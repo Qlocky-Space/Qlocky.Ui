@@ -7,30 +7,37 @@ import Ui
 QDialog {
     id: root
 
-    onOpened: {
-        console.log("Opened")
+    property var viewModel: AlarmDialogViewModel
+
+    property string text: "Label"
+    property date dueTime: new Date(Date.now())
+    property bool isActive: true
+
+    onCanceled: {
+        close();
     }
 
-    onClosed: {
-        console.log("Closed")
+    onAccepted: {
+        viewModel.save();
+        close();
     }
 
-    property string text: "Close Dialog"
+    ColumnLayout {
 
-    RowLayout {
-        QButton {
+        QLabel {
             text: root.text
-            onClicked: {
-                close()
-            }
         }
 
         QLabel {
-            text: "Hallo Welt"
+            text: "Active " + (root.isActive ? "Yes" : "No")
         }
 
-        QToggleButton {
+        QLabel {
+            text: "Music"
+        }
 
+        QLabel {
+            text: "Light"
         }
     }
 }
