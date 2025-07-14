@@ -1,63 +1,43 @@
 #include "AlarmListCardViewModel.h"
 
-AlarmListCardViewModel::AlarmListCardViewModel(Mediator& mediator) {
-    // TODO replace demo code with mediator AlarmAddedEvent/AlarmRemovedEvent/AlarmUpdateEvent
+#include "../internal/AlarmMapper.h"
 
-    auto* pAlarm = new AlarmItemViewModel(0);
-    pAlarm->setLabel("Label 1");
-    pAlarm->setTime(QDateTime::currentDateTime());
-    pAlarm->setActive(true);
-    addAlarm(*pAlarm);
-
-    auto* pAlarm1 = new AlarmItemViewModel(1);
-    pAlarm1->setLabel("Label 2");
-    pAlarm1->setTime(QDateTime::currentDateTime().addDays(5));
-    pAlarm1->setActive(false);
-    addAlarm(*pAlarm1);
+AlarmListCardViewModel::AlarmListCardViewModel(Mediator& mediator, AlarmRepositoryIfc& repository) :
+    m_alarms {this},
+    m_repository {repository} {
+    mediator.subscribe<AlarmAddedEvent>(this, &AlarmListCardViewModel::onAlarmAdded);
+    mediator.subscribe<AlarmRemovedEvent>(this, &AlarmListCardViewModel::onAlarmRemoved);
+    mediator.subscribe<AlarmUpdatedEvent>(this, &AlarmListCardViewModel::onAlarmUpdated);
 }
 
-QQmlListProperty<AlarmItemViewModel> AlarmListCardViewModel::alarmList() {
-    return QQmlListProperty<AlarmItemViewModel>(this, &m_alarms,
-        &AlarmListCardViewModel::appendAlarm,
-        &AlarmListCardViewModel::alarmCount,
-        &AlarmListCardViewModel::alarmAt,
-        &AlarmListCardViewModel::clearAlarms);
+AlarmListModel* AlarmListCardViewModel::alarmList() {
+    return &m_alarms;
 }
 
-void AlarmListCardViewModel::addAlarm(AlarmItemViewModel& alarm) {
-    m_alarms.append(&alarm);
-    connect(&alarm, &AlarmItemViewModel::changed, this, &AlarmListCardViewModel::onAlarmChanged);
-    emit alarmListChanged();
+void AlarmListCardViewModel::activateAlarm(int alarmId) {
+    m_repository.setAlarmState(alarmId, true);
 }
 
-void AlarmListCardViewModel::removeAlarm(AlarmItemViewModel& alarm) {
-    if (m_alarms.removeOne(&alarm)) {
-        emit alarmListChanged();
-    }
+void AlarmListCardViewModel::deactivateAlarm(int alarmId) {
+    m_repository.setAlarmState(alarmId, false);
 }
 
-void AlarmListCardViewModel::onAlarmChanged(AlarmItemViewModel const* alarm) {
-    // TODO update AlarmRepositoryIfc
+void AlarmListCardViewModel::onAlarmAdded(AlarmAddedEvent const& event) {
+    auto viewModel = AlarmMapper::toViewModel(event.alarm);
+    m_alarms.addAlarm(viewModel.release());
 }
 
-void AlarmListCardViewModel::appendAlarm(QQmlListProperty<AlarmItemViewModel>* list, AlarmItemViewModel* alarm) {
-    auto* alarms = static_cast<QList<AlarmItemViewModel*>*>(list->data);
+void AlarmListCardViewModel::onAlarmRemoved(AlarmRemovedEvent const& event) {
+    AlarmItemViewModel* alarm = m_alarms.alarmById(event.id);
     if (alarm) {
-        alarms->append(alarm);
+        m_alarms.removeAlarm(alarm);
     }
 }
 
-qsizetype AlarmListCardViewModel::alarmCount(QQmlListProperty<AlarmItemViewModel>* list) {
-    auto* alarms = static_cast<QList<AlarmItemViewModel*>*>(list->data);
-    return alarms->size();
-}
-
-AlarmItemViewModel* AlarmListCardViewModel::alarmAt(QQmlListProperty<AlarmItemViewModel>* list, qsizetype index) {
-    auto* alarms = static_cast<QList<AlarmItemViewModel*>*>(list->data);
-    return alarms->at(index);
-}
-
-void AlarmListCardViewModel::clearAlarms(QQmlListProperty<AlarmItemViewModel>* list) {
-    auto* alarms = static_cast<QList<AlarmItemViewModel*>*>(list->data);
-    alarms->clear();
+void AlarmListCardViewModel::onAlarmUpdated(AlarmUpdatedEvent const& event) {
+    auto viewModel = AlarmMapper::toViewModel(event.alarm);
+    AlarmItemViewModel* existingAlarm = m_alarms.alarmById(event.alarm.id);
+    if (existingAlarm) {
+        existingAlarm->updateFrom(*viewModel);
+    }
 }

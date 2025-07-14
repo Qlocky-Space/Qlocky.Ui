@@ -4,15 +4,21 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/AlarmModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/AlarmModule.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AlarmServiceIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/AlarmEntity.h
     ${CMAKE_CURRENT_LIST_DIR}/api/commands/AlarmNewCommand.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/commands/AlarmEditCommand.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/commands/AlarmRemoveCommand.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/AlarmAddedEvent.h
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/PingCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmService.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmService.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesDefault.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesDefault.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmMapper.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepositoryIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepository.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepository.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/view/ClockCardViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/ClockCardViewModel.cpp
@@ -20,6 +26,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListCardViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmItemViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmItemViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListModel.cpp
 )
 
 set(MODULE_QML_SRC

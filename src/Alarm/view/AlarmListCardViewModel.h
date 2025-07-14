@@ -6,41 +6,55 @@
 #include <QObject>
 #include <QQmlListProperty>
 
-#include "AlarmItemViewModel.h"
+#include "AlarmListModel.h"
+#include "events/AlarmAddedEvent.h"
+#include "events/AlarmRemovedEvent.h"
+#include "events/AlarmUpdatedEvent.h"
+#include "internal/AlarmRepositoryIfc.h"
 
 /**
  * View model for the alarm list card.
+ *
+ * Manages a list of individual alarm view models and provides methods
+ * to activate or deactivate alarms. Designed for use in QML contexts.
  */
 class AlarmListCardViewModel : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QQmlListProperty<AlarmItemViewModel> alarmList READ alarmList NOTIFY alarmListChanged)
+    Q_PROPERTY(AlarmListModel* alarms READ alarmList CONSTANT)
 
 public:
 
-    AlarmListCardViewModel(Mediator& mediator);
+    AlarmListCardViewModel(Mediator& mediator, AlarmRepositoryIfc& repository);
 
     /**
      * Gets a list of alarm list items
      */
-    QQmlListProperty<AlarmItemViewModel> alarmList();
+    AlarmListModel* alarmList();
+
+    /**
+     * Activates the alarm with the specified ID.
+     * @param alarmId The unique identifier of the alarm to activate.
+     */
+    Q_INVOKABLE void activateAlarm(int alarmId);
+
+    /**
+     * Deactivates the alarm with the specified ID.
+     * @param alarmId The unique identifier of the alarm to deactivate.
+     */
+    Q_INVOKABLE void deactivateAlarm(int alarmId);
 
 signals:
     void alarmListChanged();
 
 private:
 
-    QList<AlarmItemViewModel*> m_alarms;
+    void onAlarmAdded(AlarmAddedEvent const& event);
+    void onAlarmRemoved(AlarmRemovedEvent const& event);
+    void onAlarmUpdated(AlarmUpdatedEvent const& event);
 
-    void addAlarm(AlarmItemViewModel& alarm);
-    void removeAlarm(AlarmItemViewModel& alarm);
-    void onAlarmChanged(AlarmItemViewModel const* alarm);
-
-    // Static helper methods required by QQmlListProperty
-    static void appendAlarm(QQmlListProperty<AlarmItemViewModel>* list, AlarmItemViewModel* alarm);
-    static qsizetype alarmCount(QQmlListProperty<AlarmItemViewModel>* list);
-    static AlarmItemViewModel* alarmAt(QQmlListProperty<AlarmItemViewModel>* list, qsizetype index);
-    static void clearAlarms(QQmlListProperty<AlarmItemViewModel>* list);
+    AlarmListModel m_alarms;
+    AlarmRepositoryIfc& m_repository;
 };
 
 #endif
