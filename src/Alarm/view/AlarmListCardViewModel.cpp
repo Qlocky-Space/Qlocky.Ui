@@ -25,14 +25,12 @@ void AlarmListCardViewModel::deactivateAlarm(int alarmId) {
 void AlarmListCardViewModel::onAlarmAdded(AlarmAddedEvent const& event) {
     auto viewModel = AlarmMapper::toViewModel(event.alarm);
     m_alarms.addAlarm(viewModel.release());
-    emit alarmListChanged();
 }
 
 void AlarmListCardViewModel::onAlarmRemoved(AlarmRemovedEvent const& event) {
     AlarmItemViewModel* alarm = m_alarms.alarmById(event.id);
     if (alarm) {
         m_alarms.removeAlarm(alarm);
-        emit alarmListChanged();
     }
 }
 
@@ -41,6 +39,5 @@ void AlarmListCardViewModel::onAlarmUpdated(AlarmUpdatedEvent const& event) {
     AlarmItemViewModel* existingAlarm = m_alarms.alarmById(event.alarm.id);
     if (existingAlarm) {
         existingAlarm->updateFrom(*viewModel);
-        emit alarmListChanged();
     }
 }

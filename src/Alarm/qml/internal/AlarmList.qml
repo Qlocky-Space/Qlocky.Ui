@@ -8,13 +8,15 @@ import Alarm
 Item {
     id: root
 
-    ListView  {
+    property var viewModel: AlarmListCardViewModel
+
+    ListView {
         id: listView
         snapMode: ListView.SnapOneItem
         anchors.fill: parent
         clip: true
 
-        model: AlarmListCardViewModel.alarms
+        model: viewModel.alarms
 
         delegate: AlarmListItem {
             required property var alarm
@@ -28,10 +30,9 @@ Item {
 
             onActivationToggled: function (isEnabled) {
                 if (isEnabled) {
-                    AlarmListCardViewModel.activateAlarm(alarmId)
-                }
-                else {
-                    AlarmListCardViewModel.deactivateAlarm(alarmId)
+                    viewModel.activateAlarm(alarmId);
+                } else {
+                    viewModel.deactivateAlarm(alarmId);
                 }
             }
         }
