@@ -7,22 +7,6 @@
 #include <variant>
 
 /**
- * Wrapper for success value.
- */
-template<typename T>
-struct Ok {
-    T value;
-};
-
-/**
- * Wrapper for error value.
- */
-template<typename E>
-struct Err {
-    E error;
-};
-
-/**
  * A type-safe Result<T, E> implementation with disambiguated success/error states,
  * even when T == E, using tagged variant wrappers.
  *
@@ -33,15 +17,12 @@ template<typename T, typename E = std::string>
 class Result {
 public:
 
-    using OkType = Ok<T>;
-    using ErrType = Err<E>;
-
     // Implicit constructor from T
     Result(T const& value) :
-        Result {Ok<T> {value}} {
+        Result {Ok {value}} {
     }
     Result(T&& value) :
-        Result {Ok<T> {std::forward<T>(value)}} {
+        Result {Ok {std::forward<T>(value)}} {
     }
 
     /**
@@ -50,7 +31,7 @@ public:
      * @return Result containing the value.
      */
     static Result success(T&& value) {
-        return Result {Ok<T> {std::forward<T>(value)}};
+        return Result {Ok {std::forward<T>(value)}};
     }
 
     /**
@@ -59,7 +40,7 @@ public:
      * @return Result containing the value.
      */
     static Result success(T const& value) {
-        return Result {Ok<T> {value}};
+        return Result {Ok {value}};
     }
 
     /**
@@ -68,7 +49,7 @@ public:
      * @return Result containing the error.
      */
     static Result error(E&& error) {
-        return Result {Err<E> {std::forward<E>(error)}};
+        return Result {Err {std::forward<E>(error)}};
     }
 
     /**
@@ -77,7 +58,7 @@ public:
      * @return Result containing the error.
      */
     static Result error(E const& error) {
-        return Result {Err<E> {error}};
+        return Result {Err {error}};
     }
 
     /**
@@ -85,7 +66,7 @@ public:
      * @return True if success.
      */
     bool isSuccess() const {
-        return std::holds_alternative<Ok<T>>(m_result);
+        return std::holds_alternative<Ok>(m_result);
     }
 
     /**
@@ -93,7 +74,7 @@ public:
      * @return True if error.
      */
     bool isError() const {
-        return std::holds_alternative<Err<E>>(m_result);
+        return std::holds_alternative<Err>(m_result);
     }
 
     /**
@@ -105,7 +86,7 @@ public:
         if (!isSuccess()) {
             throw std::logic_error {"Tried to access value on an error result."};
         }
-        return std::get<Ok<T>>(m_result).value;
+        return std::get<Ok>(m_result).value;
     }
 
     /**
@@ -117,29 +98,32 @@ public:
         if (!isError()) {
             throw std::logic_error {"Tried to access error on a success result."};
         }
-        return std::get<Err<E>>(m_result).error;
-    }
-
-    /**
-     * Get the raw variant.
-     * @return Variant holding Ok or Err.
-     */
-    std::variant<Ok<T>, Err<E>> const& raw() const {
-        return m_result;
+        return std::get<Err>(m_result).error;
     }
 
 private:
 
-    explicit Result(Ok<T>&& ok) :
+    struct Ok {
+        T value;
+    };
+
+    struct Err {
+        E error;
+    };
+
+    explicit Result(Ok&& ok) :
         m_result {std::move(ok)} {
     }
-    explicit Result(Err<E>&& err) :
+    explicit Result(Err&& err) :
         m_result {std::move(err)} {
     }
 
-    std::variant<Ok<T>, Err<E>> m_result;
+    std::variant<Ok, Err> m_result;
 };
 
+/**
+ * Alias for Result with void success type.
+ */
 using ResultVoid = Result<bool, std::string>;
 
 #endif // SRC_PLATFORM_GLOBAL_TYPES_RESULT_H

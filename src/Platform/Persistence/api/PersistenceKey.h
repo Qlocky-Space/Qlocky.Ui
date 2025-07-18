@@ -4,8 +4,8 @@
 #include <string_view>
 
 /**
- * Represents a key used for preferences storage.
- * @param name The name of the preference key.
+ * Represents a key used for persistence storage.
+ * @param name The name of the persistence key.
  */
 class PersistenceKey final {
 public:
@@ -19,7 +19,7 @@ public:
     }
 
     /**
-     * Returns the name of the preference key.
+     * Returns the name of the persistence key.
      * @return The key name as a string_view.
      */
     constexpr std::string_view name() const noexcept {

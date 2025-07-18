@@ -41,7 +41,7 @@ Result<int32_t> KeyValueDatabase::getInt(PersistenceItem<int32_t> const& item) {
         return toResult(std::stoi(value), item, status);
     }
     catch (std::invalid_argument const&) {
-        return toResult(item.defaultValue(), item, rocksdb::Status::InvalidArgument("Invalid integer format"));
+        return toResult(item.defaultValue(), item, rocksdb::Status::Corruption("Invalid integer format"));
     }
 }
 

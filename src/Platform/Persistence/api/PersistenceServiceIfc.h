@@ -16,7 +16,7 @@ class PersistenceServiceIfc {
 public:
 
     /**
-     * Initialize preferences service
+     * Initialize persistence service
      */
     virtual void initialize() = 0;
 
