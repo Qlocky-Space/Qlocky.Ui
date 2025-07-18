@@ -31,11 +31,13 @@ set(MODULE_SRC
 
 set(MODULE_QML_SRC
     qml/QButton.qml
+    qml/QStatusButton.qml
     qml/QIcon.qml
     qml/QInteractiveProvider.qml
     qml/QDialog.qml
     qml/QLabel.qml
     qml/QToggleButton.qml
+    qml/QTimePicker.qml
     qml/QDialogProvider.qml
     qml/FontStyle.qml
     qml/ThemeManager.qml

@@ -6,6 +6,6 @@ AlarmNewCommand::AlarmNewCommand(CommandDispatcherIfc& dispatcher) :
 
 void AlarmNewCommand::doExecute(CommandArgs const& data) {
     CommandArgs args {};
-    args.set("uri", "qlocky://alarmDialog?text=New Alarm");
+    args.set("uri", "qlocky://alarmDialog?alarmId=");
     m_dispatcher.dispatch("nav-to", &args);
 }

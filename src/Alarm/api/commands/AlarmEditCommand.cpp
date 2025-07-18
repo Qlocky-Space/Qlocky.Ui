@@ -8,6 +8,6 @@ void AlarmEditCommand::doExecute(CommandArgs const& data) {
     int const id {data.get<int>("id")};
 
     CommandArgs args {};
-    args.set("uri", "qlocky://alarmDialog?text=Edit " + QString::number(id));
+    args.set("uri", "qlocky://alarmDialog?alarmId=" + QString::number(id));
     m_dispatcher.dispatch("nav-to", &args);
 }

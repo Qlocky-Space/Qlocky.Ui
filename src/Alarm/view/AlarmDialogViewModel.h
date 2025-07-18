@@ -4,14 +4,13 @@
 #include <QDateTime>
 #include <QObject>
 
+#include "AlarmItemViewModel.h"
 #include "internal/AlarmRepositoryIfc.h"
 
 class AlarmDialogViewModel : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QString displayName READ getDisplayName CONSTANT)
-    Q_PROPERTY(bool state READ getState CONSTANT)
-    Q_PROPERTY(QDateTime dueTime READ getDueTime CONSTANT)
+    Q_PROPERTY(AlarmItemViewModel* item READ getItem CONSTANT)
 
 public:
 
@@ -22,38 +21,30 @@ public:
     AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository);
 
     /**
-     * Gets the display name of the alarm.
-     * @return The display name of the alarm.
+     * Loads the alarm data for the given alarm ID.
+     * @param alarmId The ID of the alarm to load.
      */
-    QString getDisplayName() const {
-        return m_displayName;
-    }
+    Q_INVOKABLE void loadAlarm(int32_t const alarmId);
 
     /**
-     * Gets the alarm state.
-     * @return True if the alarm is active, false otherwise.
+     * Saves the current alarm item to the repository.
+     * If the alarm ID is negative, a new alarm is created; otherwise, the existing
+     * alarm is updated.
      */
-    bool getState() const {
-        return m_state;
-    }
-
-    /**
-     * Gets the due time of the alarm.
-     * @return The due time of the alarm.
-     */
-    QDateTime getDueTime() const {
-        return m_dueTime;
-    }
-
     Q_INVOKABLE void save();
+
+    /**
+     * Returns the AlarmItemViewModel associated with this dialog.
+     */
+    AlarmItemViewModel* getItem() {
+        return &m_item;
+    }
 
 private:
 
     AlarmRepositoryIfc& m_alarmRepository;
 
-    QString m_displayName;
-    bool m_state;
-    QDateTime m_dueTime;
+    AlarmItemViewModel m_item;
 };
 
 #endif
