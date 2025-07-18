@@ -57,6 +57,21 @@ public:
      */
     ResultVoid remove(PersistenceKey const& item) final;
 
+    /**
+     * @see KeyValueDatabaseIfc::getList
+     */
+    Result<KeyValueList> getList(PersistenceKey const& item) final;
+
+    /**
+     * @see KeyValueDatabaseIfc::setListItem
+     */
+    ResultVoid setListItem(PersistenceKey const& item, uint32_t const id, std::string const& value);
+
+    /**
+     * @see KeyValueDatabaseIfc::removeListItem
+     */
+    ResultVoid removeListItem(PersistenceKey const& item, uint32_t const id);
+
 private:
 
     rocksdb::Status writeString(PersistenceKey const& key, std::string const& value);

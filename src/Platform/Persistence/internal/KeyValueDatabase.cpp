@@ -16,7 +16,6 @@ Result<std::string> KeyValueDatabase::getString(PersistenceKey const& key) {
 
 ResultVoid KeyValueDatabase::setString(PersistenceKey const& key, std::string const& value) {
     rocksdb::Status const status {writeString(key, value)};
-
     return toResult(status);
 }
 
@@ -49,6 +48,34 @@ ResultVoid KeyValueDatabase::setInt(PersistenceKey const& key, int32_t const val
     rocksdb::Status const status {writeString(key, std::to_string(value))};
 
     return toResult(status);
+}
+
+ResultVoid KeyValueDatabase::remove(PersistenceKey const& key) {
+    rocksdb::Status const status {m_db->Delete(rocksdb::WriteOptions(), getInternalKey(key))};
+    return toResult(status);
+}
+
+Result<KeyValueList> KeyValueDatabase::getList(PersistenceKey const& item) {
+    std::vector<std::pair<std::string, std::string>> items;
+
+    std::unique_ptr<rocksdb::Iterator> it(m_db->NewIterator(rocksdb::ReadOptions()));
+    std::string prefix = getInternalKey(item) + ":";
+    for (it->Seek(prefix); it->Valid() && it->key().starts_with(prefix); it->Next()) {
+        std::string key = it->key().ToString();
+        std::string value = it->value().ToString();
+        items.emplace_back(key.substr(prefix.size()), value);
+    }
+
+    return Result<KeyValueList>::success(items);
+}
+
+ResultVoid KeyValueDatabase::setListItem(PersistenceKey const& item, uint32_t const id, std::string const& value) {
+    rocksdb::Status const status {writeString(item + ":" + std::to_string(id), value)};
+    return toResult(status);
+}
+
+ResultVoid KeyValueDatabase::removeListItem(PersistenceKey const& item, uint32_t const id) {
+    return remove(item + ":" + std::to_string(id));
 }
 
 rocksdb::Status KeyValueDatabase::writeString(PersistenceKey const& key, std::string const& value) {
