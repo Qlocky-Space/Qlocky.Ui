@@ -1,6 +1,8 @@
 #ifndef ALARM_ALARM_ENTITY_H
 #define ALARM_ALARM_ENTITY_H
 
+#include <cstdint>
+#include <nlohmann/json.hpp>
 #include <optional>
 #include <string>
 
@@ -21,6 +23,7 @@ struct AlarmEntity {
     int64_t dueTime;  // Schedule for the alarm, including recurrence rules
 
     // TODO add other attributes: Snooze time, volume, light, sound, recurrent date, etc
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(AlarmEntity, id, name, isActive, dueTime)
 };
 
 #endif
