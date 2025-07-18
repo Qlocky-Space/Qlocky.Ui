@@ -51,6 +51,8 @@ set(MODULE_LINK
     qlocky::Persistence
     qlocky::Widget
     qlocky::Os
+
+    nlohmann_json::nlohmann_json
 )
 
 setup_module()
