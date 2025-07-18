@@ -33,8 +33,8 @@ private:
     static std::string const ALARM_PREFERENCES_NAMESPACE;
 
     struct Preferences final {
-        static constexpr PersistenceItem PROP_TIMEZONE {"TimeZone", "Europe/Zurich"};
-        static constexpr PersistenceItem PROP_24H_FORMAT {"24HFormat", "HH"};
+        inline static std::string const PROP_TIMEZONE_KEY {"TimeZone"};
+        inline static std::string const PROP_24H_FORMAT_KEY {"24HFormat"};
     };
 
     KeyValueDatabaseIfc& getContext() {

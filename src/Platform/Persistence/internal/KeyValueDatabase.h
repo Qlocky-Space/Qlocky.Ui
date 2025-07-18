@@ -4,7 +4,6 @@
 #include <memory>
 #include <rocksdb/db.h>
 #include <string>
-#include <types/RawString.h>
 
 #include "KeyValueDatabaseIfc.h"
 
@@ -26,32 +25,37 @@ public:
     /**
      * @see KeyValueDatabaseIfc::getString
      */
-    Result<std::string> getString(PersistenceItem<RawString> const& item) final;
+    Result<std::string> getString(PersistenceKey const& item) final;
 
     /**
      * @see KeyValueDatabaseIfc::setString
      */
-    ResultVoid setString(PersistenceItem<RawString> const& item, std::string const& value) final;
+    ResultVoid setString(PersistenceKey const& item, std::string const& value) final;
 
     /**
      * @see KeyValueDatabaseIfc::getBool
      */
-    Result<bool> getBool(PersistenceItem<bool> const& item) final;
+    Result<bool> getBool(PersistenceKey const& item) final;
 
     /**
      * @see KeyValueDatabaseIfc::setBool
      */
-    ResultVoid setBool(PersistenceItem<bool> const& item, bool const value) final;
+    ResultVoid setBool(PersistenceKey const& item, bool const value) final;
 
     /**
      * @see KeyValueDatabaseIfc::getInt
      */
-    Result<int32_t> getInt(PersistenceItem<int32_t> const& item) final;
+    Result<int32_t> getInt(PersistenceKey const& item) final;
 
     /**
      * @see KeyValueDatabaseIfc::setInt
      */
-    ResultVoid setInt(PersistenceItem<int32_t> const& item, int32_t const value) final;
+    ResultVoid setInt(PersistenceKey const& item, int32_t const value) final;
+
+    /**
+     * @see KeyValueDatabaseIfc::remove
+     */
+    ResultVoid remove(PersistenceKey const& item) final;
 
 private:
 
@@ -60,31 +64,21 @@ private:
 
     std::string getInternalKey(PersistenceKey const& key);
 
-    template<typename T, typename E>
-    Result<T> toResult(T const& value, PersistenceItem<E> const& item, rocksdb::Status const& status) const {
-        if (status.IsNotFound()) {
-            if constexpr (std::is_same_v<E, RawString>) {
-                return std::string {item.defaultValue()};
-            }
-            else {
-                return item.defaultValue();
-            }
-        }
-        else if (!status.ok()) {
+    template<typename T>
+    Result<T> toResult(T const& value, rocksdb::Status const& status) const {
+        if (!status.ok()) {
             return Result<T>::error(status.ToString());
         }
 
-        return value;
+        return Result<T>::success(value);
     }
 
-    template<typename T>
-    ResultVoid toResult(PersistenceItem<T> const& item, rocksdb::Status const& status) const {
-        if (status.ok()) {
-            return ResultVoid::success(true);
-        }
-        else {
+    ResultVoid toResult(rocksdb::Status const& status) const {
+        if (!status.ok()) {
             return ResultVoid::error(status.ToString());
         }
+
+        return ResultVoid::success(true);
     }
 
     std::shared_ptr<rocksdb::DB> m_db;

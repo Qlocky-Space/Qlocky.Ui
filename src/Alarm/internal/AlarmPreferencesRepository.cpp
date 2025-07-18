@@ -13,7 +13,7 @@ void AlarmPreferencesRepository::initialize() {
 
 std::string AlarmPreferencesRepository::getTimeFormat() {
     // TODO log on error
-    std::string const hFormat {getContext().getString(Preferences::PROP_24H_FORMAT).value()};
+    std::string const hFormat {getContext().getString(Preferences::PROP_24H_FORMAT_KEY).valueOr("HH")};
 
     std::string format {};
     format.append(hFormat);
@@ -24,9 +24,8 @@ std::string AlarmPreferencesRepository::getTimeFormat() {
 }
 
 std::string AlarmPreferencesRepository::getTimeZone() {
-    auto& ctx = getContext();
     // TODO log on error
-    std::string const prefTimeZone {getContext().getString(Preferences::PROP_TIMEZONE).value()};
+    std::string const prefTimeZone {getContext().getString(Preferences::PROP_TIMEZONE_KEY).valueOr("Europe/Zurich")};
 
     return prefTimeZone;
 }

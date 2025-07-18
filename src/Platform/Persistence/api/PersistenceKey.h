@@ -2,33 +2,12 @@
 #define PERSISTENCE_API_PERSISTENCE_KEY_H
 
 #include <string_view>
+#include <variant>
 
 /**
  * Represents a key used for persistence storage.
  * @param name The name of the persistence key.
  */
-class PersistenceKey final {
-public:
-
-    /**
-     * Constructs a PersistenceKey from a string literal or string_view.
-     * @param name The key name.
-     */
-    constexpr explicit PersistenceKey(std::string_view name) noexcept :
-        m_name {name} {
-    }
-
-    /**
-     * Returns the name of the persistence key.
-     * @return The key name as a string_view.
-     */
-    constexpr std::string_view name() const noexcept {
-        return m_name;
-    }
-
-private:
-
-    std::string_view m_name;
-};
+using PersistenceKey = std::string;
 
 #endif

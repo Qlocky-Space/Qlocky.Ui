@@ -90,6 +90,18 @@ public:
     }
 
     /**
+     * Get the success value or a default value if error.
+     * @param defaultValue Default value to return if error.
+     * @return Success value or default value.
+     */
+    T const& valueOr(T const& defaultValue) const {
+        if (!isSuccess()) {
+            return defaultValue;
+        }
+        return std::get<Ok>(m_result).value;
+    }
+
+    /**
      * Get the error value.
      * @return Error value.
      * @throws std::logic_error if not error.
