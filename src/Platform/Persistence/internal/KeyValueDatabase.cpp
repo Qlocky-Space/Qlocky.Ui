@@ -7,68 +7,48 @@ KeyValueDatabase::KeyValueDatabase(std::shared_ptr<rocksdb::DB> db, std::string 
     m_ns {ns} {
 }
 
-std::string KeyValueDatabase::getString(PersistenceItem<RawString> const& item) {
+Result<std::string> KeyValueDatabase::getString(PersistenceItem<RawString> const& item) {
     std::string value {};
     rocksdb::Status const status {readString(item.key(), value)};
 
-    if (onError(status)) {
-        // TODO error handling
-        return item.defaultValue();
-    }
-
-    return value;
+    return toResult(value, item, status);
 }
 
-void KeyValueDatabase::setString(PersistenceItem<RawString> const& item, std::string const& value) {
+ResultVoid KeyValueDatabase::setString(PersistenceItem<RawString> const& item, std::string const& value) {
     rocksdb::Status const status {writeString(item.key(), value)};
 
-    if (onError(status)) {
-        std::cerr << "Error setting string for key '" << item.key().name() << "': " << status.ToString() << std::endl;
-    }
+    return toResult(item, status);
 }
 
-bool KeyValueDatabase::getBool(PersistenceItem<bool> const& item) {
+Result<bool> KeyValueDatabase::getBool(PersistenceItem<bool> const& item) {
     std::string value {};
     rocksdb::Status const status {readString(item.key(), value)};
 
-    if (onError(status)) {
-        return item.defaultValue();
-    }
-
-    return value == "true";
+    return toResult(value == "true", item, status);
 }
 
-void KeyValueDatabase::setBool(PersistenceItem<bool> const& item, bool const value) {
+ResultVoid KeyValueDatabase::setBool(PersistenceItem<bool> const& item, bool const value) {
     rocksdb::Status const status {writeString(item.key(), value ? "true" : "false")};
 
-    if (onError(status)) {
-        std::cerr << "Error setting bool for key '" << item.key().name() << "': " << status.ToString() << std::endl;
-    }
+    return toResult(item, status);
 }
 
-int32_t KeyValueDatabase::getInt(PersistenceItem<int32_t> const& item) {
+Result<int32_t> KeyValueDatabase::getInt(PersistenceItem<int32_t> const& item) {
     std::string value {};
     rocksdb::Status const status {readString(item.key(), value)};
 
-    if (onError(status)) {
-        return item.defaultValue();
-    }
-
     try {
-        return std::stoi(value);
+        return toResult(std::stoi(value), item, status);
     }
     catch (std::invalid_argument const&) {
-        std::cerr << "Error setting int for key '" << item.key().name() << "': invalid value (" << value << ")" << std::endl;
-        return item.defaultValue();
+        return toResult(item.defaultValue(), item, rocksdb::Status::InvalidArgument("Invalid integer format"));
     }
 }
 
-void KeyValueDatabase::setInt(PersistenceItem<int32_t> const& item, int32_t const value) {
+ResultVoid KeyValueDatabase::setInt(PersistenceItem<int32_t> const& item, int32_t const value) {
     rocksdb::Status const status {writeString(item.key(), std::to_string(value))};
 
-    if (onError(status)) {
-        std::cerr << "Error setting int for key '" << item.key().name() << "': " << status.ToString() << std::endl;
-    }
+    return toResult(item, status);
 }
 
 rocksdb::Status KeyValueDatabase::writeString(PersistenceKey const& key, std::string const& value) {
@@ -86,15 +66,4 @@ std::string KeyValueDatabase::getInternalKey(PersistenceKey const& key) {
     internalKey.append(key.name());
 
     return internalKey;
-}
-
-bool KeyValueDatabase::onError(rocksdb::Status const& status) const {
-    if (status.IsNotFound()) {
-        return true;
-    }
-    else if (!status.ok()) {
-        return true;
-    }
-
-    return false;
 }

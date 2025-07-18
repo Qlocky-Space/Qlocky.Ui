@@ -26,32 +26,32 @@ public:
     /**
      * @see KeyValueDatabaseIfc::getString
      */
-    std::string getString(PersistenceItem<RawString> const& item) final;
+    Result<std::string> getString(PersistenceItem<RawString> const& item) final;
 
     /**
      * @see KeyValueDatabaseIfc::setString
      */
-    void setString(PersistenceItem<RawString> const& item, std::string const& value) final;
+    ResultVoid setString(PersistenceItem<RawString> const& item, std::string const& value) final;
 
     /**
      * @see KeyValueDatabaseIfc::getBool
      */
-    bool getBool(PersistenceItem<bool> const& item) final;
+    Result<bool> getBool(PersistenceItem<bool> const& item) final;
 
     /**
      * @see KeyValueDatabaseIfc::setBool
      */
-    void setBool(PersistenceItem<bool> const& item, bool const value) final;
+    ResultVoid setBool(PersistenceItem<bool> const& item, bool const value) final;
 
     /**
      * @see KeyValueDatabaseIfc::getInt
      */
-    int32_t getInt(PersistenceItem<int32_t> const& item) final;
+    Result<int32_t> getInt(PersistenceItem<int32_t> const& item) final;
 
     /**
      * @see KeyValueDatabaseIfc::setInt
      */
-    void setInt(PersistenceItem<int32_t> const& item, int32_t const value) final;
+    ResultVoid setInt(PersistenceItem<int32_t> const& item, int32_t const value) final;
 
 private:
 
@@ -59,7 +59,33 @@ private:
     rocksdb::Status readString(PersistenceKey const& key, std::string& value);
 
     std::string getInternalKey(PersistenceKey const& key);
-    bool onError(rocksdb::Status const& status) const;
+
+    template<typename T, typename E>
+    Result<T> toResult(T const& value, PersistenceItem<E> const& item, rocksdb::Status const& status) const {
+        if (status.IsNotFound()) {
+            if constexpr (std::is_same_v<E, RawString>) {
+                return std::string {item.defaultValue()};
+            }
+            else {
+                return item.defaultValue();
+            }
+        }
+        else if (!status.ok()) {
+            return Result<T>::error(status.ToString());
+        }
+
+        return value;
+    }
+
+    template<typename T>
+    ResultVoid toResult(PersistenceItem<T> const& item, rocksdb::Status const& status) const {
+        if (status.ok()) {
+            return ResultVoid::success(true);
+        }
+        else {
+            return ResultVoid::error(status.ToString());
+        }
+    }
 
     std::shared_ptr<rocksdb::DB> m_db;
     std::string const m_ns;
