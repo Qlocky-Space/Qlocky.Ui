@@ -1,17 +1,17 @@
-#include "PreferencesService.h"
+#include "PersistenceService.h"
 
 #include <filesystem>
 #include <iostream>
 
-#include "PreferencesContext.h"
+#include "KeyValueDatabase.h"
 
-PreferencesService::PreferencesService() :
+PersistenceService::PersistenceService() :
     m_mutex {},
     m_contexts {},
     m_db {} {
 }
 
-void PreferencesService::initialize() {
+void PersistenceService::initialize() {
     std::string const dbName {"/tmp/qlocky/db"};
 
     // ensure directory exists
@@ -33,13 +33,13 @@ void PreferencesService::initialize() {
     });
 }
 
-PreferencesContextIfc& PreferencesService::getContext(std::string const& ns) {
+KeyValueDatabaseIfc& PersistenceService::getContext(std::string const& ns) {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     if (m_contexts.count(ns) != 0) {
         return *m_contexts[ns];
     }
 
-    std::shared_ptr<PreferencesContext> ctx {std::make_shared<PreferencesContext>(m_db, ns)};
+    std::shared_ptr<KeyValueDatabase> ctx {std::make_shared<KeyValueDatabase>(m_db, ns)};
     return *m_contexts.emplace(ns, ctx).first->second;
 }

@@ -1,13 +1,13 @@
-#include "PreferencesContext.h"
+#include "KeyValueDatabase.h"
 
 #include <iostream>
 
-PreferencesContext::PreferencesContext(std::shared_ptr<rocksdb::DB> db, std::string const& ns) :
+KeyValueDatabase::KeyValueDatabase(std::shared_ptr<rocksdb::DB> db, std::string const& ns) :
     m_db {db},
     m_ns {ns} {
 }
 
-std::string PreferencesContext::getString(PreferencesItem<RawString> const& item) {
+std::string KeyValueDatabase::getString(PersistenceItem<RawString> const& item) {
     std::string value {};
     rocksdb::Status const status {readString(item.key(), value)};
 
@@ -19,7 +19,7 @@ std::string PreferencesContext::getString(PreferencesItem<RawString> const& item
     return value;
 }
 
-void PreferencesContext::setString(PreferencesItem<RawString> const& item, std::string const& value) {
+void KeyValueDatabase::setString(PersistenceItem<RawString> const& item, std::string const& value) {
     rocksdb::Status const status {writeString(item.key(), value)};
 
     if (onError(status)) {
@@ -27,7 +27,7 @@ void PreferencesContext::setString(PreferencesItem<RawString> const& item, std::
     }
 }
 
-bool PreferencesContext::getBool(PreferencesItem<bool> const& item) {
+bool KeyValueDatabase::getBool(PersistenceItem<bool> const& item) {
     std::string value {};
     rocksdb::Status const status {writeString(item.key(), value)};
 
@@ -38,7 +38,7 @@ bool PreferencesContext::getBool(PreferencesItem<bool> const& item) {
     return value == "true";
 }
 
-void PreferencesContext::setBool(PreferencesItem<bool> const& item, bool const value) {
+void KeyValueDatabase::setBool(PersistenceItem<bool> const& item, bool const value) {
     rocksdb::Status const status {writeString(item.key(), value ? "true" : "false")};
 
     if (onError(status)) {
@@ -46,7 +46,7 @@ void PreferencesContext::setBool(PreferencesItem<bool> const& item, bool const v
     }
 }
 
-int PreferencesContext::getInt(PreferencesItem<int32_t> const& item) {
+int KeyValueDatabase::getInt(PersistenceItem<int32_t> const& item) {
     std::string value {};
     rocksdb::Status const status {readString(item.key(), value)};
 
@@ -63,7 +63,7 @@ int PreferencesContext::getInt(PreferencesItem<int32_t> const& item) {
     }
 }
 
-void PreferencesContext::setInt(PreferencesItem<int32_t> const& item, int32_t const value) {
+void KeyValueDatabase::setInt(PersistenceItem<int32_t> const& item, int32_t const value) {
     rocksdb::Status const status {writeString(item.key(), std::to_string(value))};
 
     if (onError(status)) {
@@ -71,15 +71,15 @@ void PreferencesContext::setInt(PreferencesItem<int32_t> const& item, int32_t co
     }
 }
 
-rocksdb::Status PreferencesContext::writeString(PreferencesKey const& key, std::string const& value) {
+rocksdb::Status KeyValueDatabase::writeString(PersistenceKey const& key, std::string const& value) {
     return m_db->Put(rocksdb::WriteOptions(), getInternalKey(key), value);
 }
 
-rocksdb::Status PreferencesContext::readString(PreferencesKey const& key, std::string& value) {
+rocksdb::Status KeyValueDatabase::readString(PersistenceKey const& key, std::string& value) {
     return m_db->Get(rocksdb::ReadOptions(), getInternalKey(key), &value);
 }
 
-std::string PreferencesContext::getInternalKey(PreferencesKey const& key) {
+std::string KeyValueDatabase::getInternalKey(PersistenceKey const& key) {
     std::string internalKey {};
     internalKey.append(m_ns);
     internalKey.append(":");
@@ -88,7 +88,7 @@ std::string PreferencesContext::getInternalKey(PreferencesKey const& key) {
     return internalKey;
 }
 
-bool PreferencesContext::onError(rocksdb::Status const& status) const {
+bool KeyValueDatabase::onError(rocksdb::Status const& status) const {
     if (status.IsNotFound()) {
         return true;
     }

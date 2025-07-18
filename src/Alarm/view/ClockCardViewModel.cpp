@@ -5,7 +5,7 @@
 
 #include "internal/AlarmPreferencesDefault.h"
 
-ClockCardViewModel::ClockCardViewModel(Mediator& mediator, PreferencesServiceIfc& preferences) :
+ClockCardViewModel::ClockCardViewModel(Mediator& mediator, PersistenceServiceIfc& preferences) :
     QObject {nullptr},
     m_date {},
     m_time {},

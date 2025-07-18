@@ -3,7 +3,7 @@
 
 #include <string_view>
 
-#include "PreferencesKey.h"
+#include "PersistenceKey.h"
 
 /**
  * Represents a raw string type for preferences.
@@ -12,33 +12,33 @@
 using RawString = char const*;
 
 template<typename T = std::string>
-class PreferencesItem {
+class PersistenceItem {
 public:
 
     /**
-     * Constructs a PreferencesItem with a key and value.
+     * Constructs a PersistenceItem with a key and value.
      * @param key The key for the preference item.
      * @param value The value for the preference item.
      */
-    constexpr PreferencesItem(PreferencesKey key, T value) :
+    constexpr PersistenceItem(PersistenceKey key, T value) :
         m_key {key},
         m_defaultValue {value} {
     }
 
     /**
-     * Constructs a PreferencesItem with a key and value.
-     * @param name The name of the preference item, used to create a PreferencesKey.
+     * Constructs a PersistenceItem with a key and value.
+     * @param name The name of the preference item, used to create a PersistenceKey.
      * @param value The value for the preference item.
      */
-    constexpr PreferencesItem(std::string_view name, T value) :
-        PreferencesItem {PreferencesKey {name}, value} {
+    constexpr PersistenceItem(std::string_view name, T value) :
+        PersistenceItem {PersistenceKey {name}, value} {
     }
 
     /**
      * Returns the key of the preference item.
-     * @return The key as a PreferencesKey.
+     * @return The key as a PersistenceKey.
      */
-    constexpr PreferencesKey key() const noexcept {
+    constexpr PersistenceKey key() const noexcept {
         return m_key;
     }
 
@@ -69,13 +69,13 @@ public:
             return std::to_string(m_defaultValue);
         }
         else {
-            static_assert("Unsupported type for PreferencesItem");
+            static_assert("Unsupported type for PersistenceItem");
         }
     }
 
 private:
 
-    PreferencesKey m_key;
+    PersistenceKey m_key;
     T m_defaultValue;
 };
 

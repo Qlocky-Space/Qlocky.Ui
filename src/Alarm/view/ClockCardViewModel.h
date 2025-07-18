@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QString>
 
-#include "PreferencesServiceIfc.h"
+#include "PersistenceServiceIfc.h"
 #include "TimeChangedEvent.h"
 
 /**
@@ -20,7 +20,7 @@ class ClockCardViewModel : public QObject {
 
 public:
 
-    ClockCardViewModel(Mediator& mediator, PreferencesServiceIfc& preferences);
+    ClockCardViewModel(Mediator& mediator, PersistenceServiceIfc& preferences);
 
     /**
      * Returns the formatted date string.
@@ -51,7 +51,7 @@ private:
 
     QString m_date;
     QString m_time;
-    PreferencesServiceIfc& m_preferences;
+    PersistenceServiceIfc& m_preferences;
 };
 
 #endif

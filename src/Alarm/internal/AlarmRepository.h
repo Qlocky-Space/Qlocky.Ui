@@ -3,19 +3,19 @@
 
 #include "AlarmRepositoryIfc.h"
 #include "Mediator.h"
-#include "PreferencesServiceIfc.h"
+#include "PersistenceServiceIfc.h"
 
 /**
  * @see AlarmRepositoryIfc
  *
- * This repository manages alarms and persists them using the PreferencesServiceIfc.
+ * This repository manages alarms and persists them using the PersistenceServiceIfc.
  * It provides methods to add, remove, and update alarms, and notifies subscribers of changes
  * through the Mediator.
  */
 class AlarmRepository : public AlarmRepositoryIfc {
 public:
 
-    AlarmRepository(Mediator& mediator, PreferencesServiceIfc& persistency);
+    AlarmRepository(Mediator& mediator, PersistenceServiceIfc& persistency);
 
     /**
      * @see AlarmRepositoryIfc::initialize
@@ -47,7 +47,7 @@ public:
 private:
 
     Mediator& m_mediator;
-    PreferencesServiceIfc& m_persistency;
+    PersistenceServiceIfc& m_persistency;
     std::vector<AlarmEntity> m_alarms;
 };
 

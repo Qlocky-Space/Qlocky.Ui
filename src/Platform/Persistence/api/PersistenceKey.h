@@ -7,14 +7,14 @@
  * Represents a key used for preferences storage.
  * @param name The name of the preference key.
  */
-class PreferencesKey final {
+class PersistenceKey final {
 public:
 
     /**
-     * Constructs a PreferencesKey from a string literal or string_view.
+     * Constructs a PersistenceKey from a string literal or string_view.
      * @param name The key name.
      */
-    constexpr explicit PreferencesKey(std::string_view name) noexcept :
+    constexpr explicit PersistenceKey(std::string_view name) noexcept :
         m_name {name} {
     }
 
