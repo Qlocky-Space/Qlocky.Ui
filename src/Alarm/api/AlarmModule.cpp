@@ -6,6 +6,7 @@
 #include "commands/AlarmEditCommand.h"
 #include "commands/AlarmNewCommand.h"
 #include "commands/AlarmRemoveCommand.h"
+#include "internal/AlarmPreferencesRepository.h"
 #include "internal/AlarmRepository.h"
 #include "internal/AlarmService.h"
 #include "internal/PingCommand.h"
@@ -20,6 +21,7 @@ void AlarmModule::registerExports(Injector& container) {
     container.install(boost::di::bind<PingCommand>());
     container.install(boost::di::bind<AlarmServiceIfc>().to<AlarmService>());
     container.install(boost::di::bind<AlarmRepositoryIfc>().to<AlarmRepository>());
+    container.install(boost::di::bind<AlarmPreferencesRepositoryIfc>().to<AlarmPreferencesRepository>());
 }
 
 void AlarmModule::registerQmlTypes() {
