@@ -27,6 +27,7 @@ void AlarmRepository::initialize() {
     }
 
     for (auto& [key, obj] : result.value()) {
+        // TODO log error - handle exception
         auto json = nlohmann::json::parse(obj);
         auto alarm = json.get<AlarmEntity>();
         m_alarms.push_back(alarm);

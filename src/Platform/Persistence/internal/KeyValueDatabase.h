@@ -65,12 +65,12 @@ public:
     /**
      * @see KeyValueDatabaseIfc::setListItem
      */
-    ResultVoid setListItem(PersistenceKey const& item, uint32_t const id, std::string const& value);
+    ResultVoid setListItem(PersistenceKey const& item, uint32_t const id, std::string const& value) final;
 
     /**
      * @see KeyValueDatabaseIfc::removeListItem
      */
-    ResultVoid removeListItem(PersistenceKey const& item, uint32_t const id);
+    ResultVoid removeListItem(PersistenceKey const& item, uint32_t const id) final;
 
 private:
 

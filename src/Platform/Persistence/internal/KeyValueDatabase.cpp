@@ -66,7 +66,7 @@ Result<KeyValueList> KeyValueDatabase::getList(PersistenceKey const& item) {
         items.emplace_back(key.substr(prefix.size()), value);
     }
 
-    return Result<KeyValueList>::success(items);
+    return toResult(items, it->status());
 }
 
 ResultVoid KeyValueDatabase::setListItem(PersistenceKey const& item, uint32_t const id, std::string const& value) {

@@ -1,5 +1,5 @@
 ###########################################
-# Third part dependencies
+# Third party dependencies
 ###########################################
 
 include(FetchContent)
