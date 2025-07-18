@@ -47,7 +47,7 @@ set(MODULE_QML_RESOURCES
 
 set(MODULE_LINK
     qlocky::Ui
-    qlocky::Preferences
+    qlocky::Persistence
     qlocky::Widget
     qlocky::Os
 )

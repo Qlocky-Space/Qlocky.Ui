@@ -1,5 +1,5 @@
-#ifndef PREFERENCES_CONTEXT_IFC_H
-#define PREFERENCES_CONTEXT_IFC_H
+#ifndef PERSISTENCE_CONTEXT_IFC_H
+#define PERSISTENCE_CONTEXT_IFC_H
 
 #include <cinttypes>
 #include <string>

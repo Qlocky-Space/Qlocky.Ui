@@ -2,7 +2,7 @@
 set(QLOCKY_MODULES_PLATFORM
     Global
     Os
-    Preferences
+    Persistence
     Languages
     Ui
     Widget

@@ -1,5 +1,5 @@
-#ifndef PREFERENCES_IFC_H
-#define PREFERENCES_IFC_H
+#ifndef PERSISTENCE_IFC_H
+#define PERSISTENCE_IFC_H
 
 #include <string>
 

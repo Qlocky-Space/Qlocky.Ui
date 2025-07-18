@@ -1,5 +1,5 @@
-#ifndef PREFERENCES_CONTEXT_H
-#define PREFERENCES_CONTEXT_H
+#ifndef PERSISTENCE_CONTEXT_H
+#define PERSISTENCE_CONTEXT_H
 
 #include <memory>
 #include <rocksdb/db.h>
