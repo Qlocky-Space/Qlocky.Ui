@@ -3,6 +3,7 @@
 
 #include <cinttypes>
 #include <string>
+#include <types/RawString.h>
 
 #include "PersistenceItem.h"
 #include "PersistenceKey.h"
@@ -29,7 +30,7 @@ public:
     virtual void setString(PersistenceItem<RawString> const& item, std::string const& value) = 0;
 
     /**
-     * Reads the integer value for a given key.
+     * Reads the boolean value for a given key.
      * @param key The key to look up.
      * @param defaultValue The value to return if the key does not exist.
      * @return The value associated with the key, or the default value.
@@ -49,7 +50,7 @@ public:
      * @param defaultValue The value to return if the key does not exist.
      * @return The value associated with the key, or the default value.
      */
-    virtual int getInt(PersistenceItem<int32_t> const& item) = 0;
+    virtual int32_t getInt(PersistenceItem<int32_t> const& item) = 0;
 
     /**
      * Sets an integer value for a given key.

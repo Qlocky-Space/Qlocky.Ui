@@ -29,7 +29,7 @@ void KeyValueDatabase::setString(PersistenceItem<RawString> const& item, std::st
 
 bool KeyValueDatabase::getBool(PersistenceItem<bool> const& item) {
     std::string value {};
-    rocksdb::Status const status {writeString(item.key(), value)};
+    rocksdb::Status const status {readString(item.key(), value)};
 
     if (onError(status)) {
         return item.defaultValue();
@@ -46,7 +46,7 @@ void KeyValueDatabase::setBool(PersistenceItem<bool> const& item, bool const val
     }
 }
 
-int KeyValueDatabase::getInt(PersistenceItem<int32_t> const& item) {
+int32_t KeyValueDatabase::getInt(PersistenceItem<int32_t> const& item) {
     std::string value {};
     rocksdb::Status const status {readString(item.key(), value)};
 

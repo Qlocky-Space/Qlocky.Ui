@@ -2,14 +2,9 @@
 #define PERSISTENCE_API_PERSISTENCE_ITEM_H
 
 #include <string_view>
+#include <types/RawString.h>
 
 #include "PersistenceKey.h"
-
-/**
- * Represents a raw string type for preferences.
- * This is used because cpp17 does not support constexpr strings.
- */
-using RawString = char const*;
 
 template<typename T = std::string>
 class PersistenceItem {

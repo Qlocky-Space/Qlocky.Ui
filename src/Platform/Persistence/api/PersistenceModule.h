@@ -6,7 +6,7 @@
 /**
  * Preference module contains functionality for options and peristency
  */
-class PreferencesModule final : public ModuleBase {
+class PersistenceModule final : public ModuleBase {
 public:
 
     /**
@@ -14,8 +14,8 @@ public:
      */
     void registerExports(Injector& container) final;
 
-    PreferencesModule() = default;
-    ~PreferencesModule() final = default;
+    PersistenceModule() = default;
+    ~PersistenceModule() final = default;
 
 protected:
 

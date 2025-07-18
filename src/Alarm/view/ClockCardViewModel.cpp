@@ -31,7 +31,7 @@ QDateTime ClockCardViewModel::getLocalTime(DateTime const timestamp) {
 QString ClockCardViewModel::formatTime(QDateTime const& time) {
     bool const showSeparator {(time.toSecsSinceEpoch() % 2U) == 0U};
     std::string format {m_preferences.getTimeFormat()};
-    format = format.replace(format.find(":"), 1, showSeparator ? ":" : "");
+    format = format.replace(format.find(":"), 1, showSeparator ? ":" : " ");
     QString qFormat {QString::fromStdString(format)};
 
     return time.toString(qFormat);
