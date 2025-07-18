@@ -9,7 +9,7 @@
 /**
  * Represents unique identifier for an alarm.
  */
-using AlarmId = int;
+using AlarmId = uint32_t;
 
 /**
  * Represents an alarm entity.

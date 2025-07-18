@@ -1,6 +1,6 @@
 #include "AlarmItemViewModel.h"
 
-AlarmItemViewModel::AlarmItemViewModel(int const id) :
+AlarmItemViewModel::AlarmItemViewModel(uint32_t const id) :
     m_id {id},
     m_dueTime {},
     m_state {},
