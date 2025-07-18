@@ -29,6 +29,8 @@ void AlarmItemViewModel::setDueTime(QDateTime const& dueTime) {
 }
 
 void AlarmItemViewModel::updateFrom(AlarmItemViewModel const& other) {
+    m_id = other.getAlarmId();
+
     setDisplayName(other.getDisplayName());
     setState(other.getState());
     setDueTime(other.getDueTime());

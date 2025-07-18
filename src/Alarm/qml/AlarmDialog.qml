@@ -8,10 +8,13 @@ QDialog {
     id: root
 
     property var viewModel: AlarmDialogViewModel
+    property var alarm: viewModel.item
 
-    property string text: "Label"
-    property date dueTime: new Date(Date.now())
-    property bool isActive: true
+    property string alarmId
+
+    onOpened: {
+        viewModel.loadAlarm(alarmId);
+    }
 
     onCanceled: {
         close();
@@ -24,12 +27,16 @@ QDialog {
 
     ColumnLayout {
 
-        QLabel {
-            text: root.text
+        QToggleButton {
+            checked: alarm.state
+
+            onToggled: function (state) {
+                alarm.state = state;
+            }
         }
 
         QLabel {
-            text: "Active " + (root.isActive ? "Yes" : "No")
+            text: "Active " + (alarm.state ? "Yes" : "No")
         }
 
         QLabel {

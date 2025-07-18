@@ -1,18 +1,30 @@
 #include "AlarmDialogViewModel.h"
 
 #include "AlarmEntity.h"
+#include "internal/AlarmMapper.h"
 
 AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository) :
-    m_alarmRepository(alarmRepository) {
+    m_alarmRepository(alarmRepository),
+    m_item {0U} {
+}
+
+void AlarmDialogViewModel::loadAlarm(int32_t const alarmId) {
+    std::unique_ptr<AlarmItemViewModel> pItem {std::make_unique<AlarmItemViewModel>(alarmId)};
+
+    for (auto const& alarm : m_alarmRepository.alarms()) {
+        if (alarm.id == alarmId) {
+            pItem = AlarmMapper::toViewModel(alarm);
+            break;
+        }
+    }
+
+    m_item.updateFrom(*pItem);
 }
 
 void AlarmDialogViewModel::save() {
-    // TODO create based on properties
-    AlarmEntity alarmEntity;
-    alarmEntity.id = QDateTime::currentDateTime().toSecsSinceEpoch();
-    alarmEntity.name = "Test Alarm";
-    alarmEntity.dueTime = QDateTime::currentDateTime().toSecsSinceEpoch();
-    alarmEntity.isActive = true;
+    AlarmEntity alarmEntity {AlarmMapper::toEntity(m_item)};
+    // ensure alarm has unique id, when updated
+    alarmEntity.id = m_item.getAlarmId() != 0 ? m_item.getAlarmId() : QDateTime::currentDateTime().toSecsSinceEpoch();
 
     m_alarmRepository.addAlarm(alarmEntity);
 }
