@@ -15,7 +15,7 @@
 class AlarmItemViewModel : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(int alarmId READ getAlarmId CONSTANT)
+    Q_PROPERTY(uint32_t alarmId READ getAlarmId CONSTANT)
     Q_PROPERTY(QString displayName READ getDisplayName WRITE setDisplayName NOTIFY displayNameChanged)
     Q_PROPERTY(bool state READ getState WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(QDateTime dueTime READ getDueTime WRITE setDueTime NOTIFY dueTimeChanged)
@@ -26,13 +26,13 @@ public:
      * Constructs an AlarmItemViewModel with a given alarm ID.
      * @param id Unique identifier for this alarm.
      */
-    explicit AlarmItemViewModel(int const id);
+    explicit AlarmItemViewModel(uint32_t const id);
 
     /**
      * Gets the unique alarm identifier.
      * @return The alarm ID.
      */
-    int getAlarmId() const {
+    uint32_t getAlarmId() const {
         return m_id;
     }
 
@@ -91,7 +91,7 @@ signals:
 
 private:
 
-    int m_id;
+    uint32_t m_id;
     QDateTime m_dueTime;
     bool m_state;
     QString m_displayName;

@@ -1,11 +1,15 @@
 #include "AlarmRepository.h"
 
 #include <algorithm>
+#include <iostream>
+#include <nlohmann/json.hpp>
 #include <vector>
 
 #include "events/AlarmAddedEvent.h"
 #include "events/AlarmRemovedEvent.h"
 #include "events/AlarmUpdatedEvent.h"
+
+std::string const AlarmRepository::ALARM_NAMESPACE {"Alarms"};
 
 AlarmRepository::AlarmRepository(Mediator& mediator, PersistenceServiceIfc& persistency) :
     m_mediator {mediator},
@@ -15,25 +19,32 @@ AlarmRepository::AlarmRepository(Mediator& mediator, PersistenceServiceIfc& pers
 void AlarmRepository::initialize() {
     m_alarms.clear();
 
-    // TOOD just demo code, load from persistency
-    AlarmEntity alarm1;
-    alarm1.id = 0;
-    alarm1.name = "Alarm 1";
-    alarm1.isActive = true;
-    alarm1.dueTime = 1752502140;
-    addAlarm(alarm1);
+    auto result {getContext().getList(Preferences::PROP_ITEMS_KEY)};
+    if (result.isError()) {
+        // TODO log error
+        std::cerr << "Failed to get alarms: " << result.error() << std::endl;
+        return;
+    }
 
-    AlarmEntity alarm2;
-    alarm2.id = 1;
-    alarm2.name = "Alarm 2";
-    alarm2.isActive = false;
-    alarm2.dueTime = 1752508140;
-    addAlarm(alarm2);
+    for (auto& [key, obj] : result.value()) {
+        // TODO log error - handle exception
+        auto json = nlohmann::json::parse(obj);
+        auto alarm = json.get<AlarmEntity>();
+        m_alarms.push_back(alarm);
+        m_mediator.notify(AlarmAddedEvent {alarm});
+    }
 }
 
 void AlarmRepository::addAlarm(AlarmEntity const& alarm) {
     auto it {std::find_if(m_alarms.begin(), m_alarms.end(),
         [&alarm](AlarmEntity const& a) { return a.id == alarm.id; })};
+
+    ResultVoid const result {updateObject(alarm)};
+    if (result.isError()) {
+        // TODO log error
+        std::cerr << "Failed to update alarm: " << result.error() << std::endl;
+        return;
+    }
 
     if (it != m_alarms.end()) {
         *it = alarm;
@@ -52,6 +63,14 @@ void AlarmRepository::removeAlarm(AlarmId const id) {
                 return a.id == id;
             }),
         m_alarms.end());
+
+    ResultVoid const result {removeObject(id)};
+    if (result.isError()) {
+        // TODO log error
+        std::cerr << "Failed to remove alarm: " << result.error() << std::endl;
+        return;
+    }
+
     m_mediator.notify(AlarmRemovedEvent {id});
 }
 
@@ -59,8 +78,27 @@ void AlarmRepository::setAlarmState(AlarmId const id, bool isActive) {
     auto it {std::find_if(m_alarms.begin(), m_alarms.end(),
         [id](AlarmEntity const& a) { return a.id == id; })};
 
-    if (it != m_alarms.end()) {
-        it->isActive = isActive;
-        m_mediator.notify(AlarmUpdatedEvent {*it});
+    if (it == m_alarms.end()) {
+        return;
     }
+
+    // update the state
+    it->isActive = isActive;
+
+    ResultVoid const result {updateObject(*it)};
+    if (result.isError()) {
+        // TODO log error
+        std::cerr << "Failed to update alarm: " << result.error() << std::endl;
+        return;
+    }
+
+    m_mediator.notify(AlarmUpdatedEvent {*it});
+}
+
+ResultVoid AlarmRepository::updateObject(AlarmEntity const& alarm) {
+    return getContext().setListItem(Preferences::PROP_ITEMS_KEY, alarm.id, nlohmann::json(alarm).dump());
+}
+
+ResultVoid AlarmRepository::removeObject(AlarmId const& alarmId) {
+    return getContext().removeListItem(Preferences::PROP_ITEMS_KEY, alarmId);
 }

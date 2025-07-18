@@ -46,6 +46,19 @@ public:
 
 private:
 
+    static std::string const ALARM_NAMESPACE;
+
+    struct Preferences final {
+        inline static std::string const PROP_ITEMS_KEY {"Items"};
+    };
+
+    KeyValueDatabaseIfc& getContext() {
+        return m_persistency.getContext(ALARM_NAMESPACE);
+    }
+
+    ResultVoid updateObject(AlarmEntity const& alarm);
+    ResultVoid removeObject(AlarmId const& alarmId);
+
     Mediator& m_mediator;
     PersistenceServiceIfc& m_persistency;
     std::vector<AlarmEntity> m_alarms;

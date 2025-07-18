@@ -30,6 +30,17 @@ public:
 
 private:
 
+    static std::string const ALARM_PREFERENCES_NAMESPACE;
+
+    struct Preferences final {
+        inline static std::string const PROP_TIMEZONE_KEY {"TimeZone"};
+        inline static std::string const PROP_24H_FORMAT_KEY {"24HFormat"};
+    };
+
+    KeyValueDatabaseIfc& getContext() {
+        return m_persistency.getContext(ALARM_PREFERENCES_NAMESPACE);
+    }
+
     Mediator& m_mediator;
     PersistenceServiceIfc& m_persistency;
 };
