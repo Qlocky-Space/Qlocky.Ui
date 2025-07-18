@@ -8,7 +8,7 @@
 #include "internal/QlockyApp.h"
 #include "LanguageModule.h"
 #include "OsModule.h"
-#include "PreferencesModule.h"
+#include "PersistenceModule.h"
 #include "QlockyConfig.h"
 #include "RadioModule.h"
 #include "UiModule.h"
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     auto app {createApplication<QlockyApp>(globalContainer)};
     // Register Platform modules
     app->addModule<OsModule>();
-    app->addModule<PreferencesModule>();
+    app->addModule<PersistenceModule>();
     app->addModule<WidgetModule>();
     app->addModule<UiModule>();
     app->addModule<LanguageModule>();

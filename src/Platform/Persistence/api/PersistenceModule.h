@@ -1,12 +1,12 @@
-#ifndef QLOCKY_PREFERENCES_MODULE_H
-#define QLOCKY_PREFERENCES_MODULE_H
+#ifndef QLOCKY_PERSISTENCE_MODULE_H
+#define QLOCKY_PERSISTENCE_MODULE_H
 
 #include "api/ModuleBase.h"
 
 /**
  * Preference module contains functionality for options and peristency
  */
-class PreferencesModule final : public ModuleBase {
+class PersistenceModule final : public ModuleBase {
 public:
 
     /**
@@ -14,8 +14,8 @@ public:
      */
     void registerExports(Injector& container) final;
 
-    PreferencesModule() = default;
-    ~PreferencesModule() final = default;
+    PersistenceModule() = default;
+    ~PersistenceModule() final = default;
 
 protected:
 

@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "PreferencesItem.h"
+#include "PersistenceItem.h"
 
 /**
  * List of alarm preferences defaults.
@@ -22,12 +22,12 @@ public:
      * Default time zone string.
      * @return The default time zone used for alarms.
      */
-    static constexpr PreferencesItem PROP_TIMEZONE {"TimeZone", "Europe/Zurich"};
+    static constexpr PersistenceItem PROP_TIMEZONE {"TimeZone", "Europe/Zurich"};
 
     /**
      * Default 24-hour time format string.
      * @return The default time format used for displaying time.
      */
-    static constexpr PreferencesItem PROP_24H_FORMAT {"24HFormat", "HH"};
+    static constexpr PersistenceItem PROP_24H_FORMAT {"24HFormat", "HH"};
 };
 #endif

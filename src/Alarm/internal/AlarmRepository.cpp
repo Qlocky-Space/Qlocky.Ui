@@ -7,7 +7,7 @@
 #include "events/AlarmRemovedEvent.h"
 #include "events/AlarmUpdatedEvent.h"
 
-AlarmRepository::AlarmRepository(Mediator& mediator, PreferencesServiceIfc& persistency) :
+AlarmRepository::AlarmRepository(Mediator& mediator, PersistenceServiceIfc& persistency) :
     m_mediator {mediator},
     m_persistency {persistency} {
 }

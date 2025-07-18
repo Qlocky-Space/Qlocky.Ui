@@ -19,6 +19,9 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepositoryIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepository.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepository.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepositoryIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepository.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepository.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/view/ClockCardViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/ClockCardViewModel.cpp
@@ -47,7 +50,7 @@ set(MODULE_QML_RESOURCES
 
 set(MODULE_LINK
     qlocky::Ui
-    qlocky::Preferences
+    qlocky::Persistence
     qlocky::Widget
     qlocky::Os
 )
