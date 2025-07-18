@@ -13,8 +13,6 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/PingCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmService.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmService.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesDefault.h
-    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesDefault.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmMapper.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepositoryIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepository.h
