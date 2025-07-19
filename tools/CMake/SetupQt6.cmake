@@ -9,9 +9,17 @@ set(_components
     Gui
     Qml
     Quick
-    LinguistTools
     ShaderTools
 )
+
+# TODO environment configuration issue, where LinguistTools is not found
+# on Linux, but it is available in the Qt installation.
+# This is a workaround to ensure that the build does not fail on Target.
+if (OS_IS_LINUX)
+    list(APPEND _components
+        LinguistTools
+    )
+endif()
 
 set(QT_QML_GENERATE_QMLLS_INI ON)
 set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml)

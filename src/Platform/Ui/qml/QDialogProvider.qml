@@ -12,7 +12,7 @@ Item {
     property Item backgroundSourceItem
 
     function open() {
-        blurEffect.opacity = 1
+        blurEffect.opacity = 0.8
         delayDialogTimer.start()
     }
 
@@ -30,7 +30,7 @@ Item {
         // dialog opens. To ensure live update is started, opacity
         // must be 1 and when component is loaded, it will be transparent
         blurEffect.opacity = 0
-        shaderSource.opacity = 0
+        // shaderSource.opacity = 0
     }
 
     Timer {
@@ -43,27 +43,46 @@ Item {
         }
     }
 
-    ShaderEffectSource {
-        id: shaderSource
-        anchors.fill: parent
-        sourceItem: backgroundSourceItem
-        live: true
-        visible: true
-        opacity: 1
-    }
+    // TODO for performance reasons, this is replaced with a simple Rectangle
+    //       with a solid color. If you want to use blur effect, uncomment
+    //       the code below and comment out the Rectangle.
+    //
+    // ShaderEffectSource {
+    //     id: shaderSource
+    //     anchors.fill: parent
+    //     sourceItem: backgroundSourceItem
+    //     live: true
+    //     visible: true
+    //     opacity: 1
+    // }
 
-    ShaderEffect {
+    // ShaderEffect {
+    //     id: blurEffect
+
+    //     property var src: shaderSource
+    //     property int radius: 12
+    //     property real deviation: 24
+    //     property var pixelStep: Qt.vector2d(1/src.width, 1/src.height)
+
+    //     fragmentShader: "/Ui/resources/shaders/gaussianblur.frag.qsb"
+    //     anchors.fill: parent
+
+    //     opacity: 1
+    //     visible: true
+    //     z: 1
+
+    //     Behavior on opacity {
+    //         NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
+    //     }
+    // }
+
+    Rectangle {
         id: blurEffect
-
-        property var src: shaderSource
-        property int radius: 12
-        property real deviation: 24
-        property var pixelStep: Qt.vector2d(1/src.width, 1/src.height)
-
-        fragmentShader: "/Ui/resources/shaders/gaussianblur.frag.qsb"
         anchors.fill: parent
 
-        opacity: 1
+        color: ThemeManager.theme.black
+
+        opacity: 0.8
         visible: true
         z: 1
 
@@ -95,7 +114,7 @@ Item {
 
         onVisibleChanged: {
             if (visible) {
-                blurEffect.opacity = 1
+                blurEffect.opacity = 0.8
                 if (contentLoader.status === Loader.Ready && contentLoader.item?.opened) {
                     contentLoader.item.opened()
                 }
