@@ -21,7 +21,7 @@ void AlarmItemViewModel::setState(bool state) {
     }
 }
 
-void AlarmItemViewModel::setDueTime(QDateTime const& dueTime) {
+void AlarmItemViewModel::setDueTime(uint32_t const dueTime) {
     if (m_dueTime != dueTime) {
         m_dueTime = dueTime;
         emit dueTimeChanged();

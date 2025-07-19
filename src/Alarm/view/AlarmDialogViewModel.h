@@ -6,6 +6,7 @@
 
 #include "AlarmItemViewModel.h"
 #include "internal/AlarmRepositoryIfc.h"
+#include "TimeFormatter.h"
 
 class AlarmDialogViewModel : public QObject {
     Q_OBJECT
@@ -18,7 +19,7 @@ public:
      * Constructor
      * @param alarmRepository Reference to the alarm repository interface.
      */
-    AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository);
+    AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository, TimeFormatter& timeFormatter);
 
     /**
      * Loads the alarm data for the given alarm ID.
@@ -43,7 +44,7 @@ public:
 private:
 
     AlarmRepositoryIfc& m_alarmRepository;
-
+    TimeFormatter& m_timeFormatter;
     AlarmItemViewModel m_item;
 };
 

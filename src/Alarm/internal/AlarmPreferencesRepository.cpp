@@ -25,7 +25,7 @@ std::string AlarmPreferencesRepository::getTimeFormat() {
 
 std::string AlarmPreferencesRepository::getTimeZone() {
     // TODO log on error
-    std::string const prefTimeZone {getContext().getString(Preferences::PROP_TIMEZONE_KEY).valueOr("Europe/Zurich")};
+    std::string const prefTimeZone {getContext().getString(Preferences::PROP_TIMEZONE_KEY).valueOr("UTC+02:00")};
 
     return prefTimeZone;
 }

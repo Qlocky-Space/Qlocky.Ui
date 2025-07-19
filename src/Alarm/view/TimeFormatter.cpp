@@ -7,8 +7,8 @@ TimeFormatter::TimeFormatter(AlarmPreferencesRepositoryIfc& preferences) :
     m_preferences {preferences} {
 }
 
-QString TimeFormatter::asTime(uint64_t const& date) {
-    QDateTime localTime = getLocalTime(date);
+QString TimeFormatter::asTime(uint64_t const date) {
+    QDateTime localTime = toLocalDateTime(date);
 
     bool const showSeparator {(localTime.toSecsSinceEpoch() % 2U) == 0U};
     std::string format {m_preferences.getTimeFormat()};
@@ -18,13 +18,13 @@ QString TimeFormatter::asTime(uint64_t const& date) {
     return localTime.toString(qFormat);
 }
 
-QString TimeFormatter::asDate(uint64_t const& date) {
-    QDateTime localTime = getLocalTime(date);
+QString TimeFormatter::asDate(uint64_t const date) {
+    QDateTime localTime = toLocalDateTime(date);
     QString t = localTime.toString("dddd, d. MMMM yyyy");
     return t;
 }
 
-QDateTime TimeFormatter::getLocalTime(uint64_t const timestamp) {
+QDateTime TimeFormatter::toLocalDateTime(uint64_t const timestamp) {
     QTimeZone const timeZone {m_preferences.getTimeZone().c_str()};
     QDateTime const unixTimestamp {QDateTime::fromSecsSinceEpoch(static_cast<qint64>(timestamp), QTimeZone::utc())};
     return unixTimestamp.toTimeZone(timeZone);

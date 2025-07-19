@@ -24,7 +24,7 @@ Item {
             alarmId: alarm.alarmId
             displayName: alarm.displayName
             isEnabled: alarm.state
-            dueTime: Qt.formatDateTime(alarm.dueTime, "HH:mm") // TODO use 24HFormat from persistency
+            dueTime: Qt.formatDateTime(new Date(alarm.dueTime * 1000), "HH:mm")
 
             width: listView.width
 

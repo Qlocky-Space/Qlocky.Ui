@@ -8,21 +8,21 @@ import Ui
 Item {
     id: root
 
-    signal clicked(date date);
+    signal clicked(int time);
 
     property int interval: 1 // 30 20 15 10 5 2 1 minutes
-    property date date
+    property int time
 
     width: 200
     height: 300
 
     clip: true
 
-    onDateChanged: function() {
+    onTimeChanged: function() {
         delayTimer.start()
     }
 
-    Timer {id: delayTimer;  interval: 20;  onTriggered: set(root.date)}
+    Timer {id: delayTimer;  interval: 20;  onTriggered: set(time)}
 
     property int rows:        5
     property int repetitions: 5
@@ -87,14 +87,17 @@ Item {
         x: root.width / 2 - 25
     }
 
-    function set(date) {
+    function set(time) {
         if (repeater.count < 2 || !repeater.itemAt(0) || !repeater.itemAt(1)) {
             console.warn("QTimePicker: Not enough items in repeater to set time");
             return;
         }
 
-        repeater.itemAt(0).positionViewAtIndex(24            * (repetitions - 1) / 2 + date.getHours(), ListView.Center)
-        repeater.itemAt(1).positionViewAtIndex(60 / interval * (repetitions - 1) / 2 + date.getMinutes() / interval, ListView.Center)
+        var hours = Math.floor(root.time / 3600);
+        var minutes = Math.floor((root.time - (hours * 3600)) / 60);
+
+        repeater.itemAt(0).positionViewAtIndex(24            * (repetitions - 1) / 2 + hours, ListView.Center)
+        repeater.itemAt(1).positionViewAtIndex(60 / interval * (repetitions - 1) / 2 + minutes / interval, ListView.Center)
 
         for(var column = 0; column < repeater.count; column++) {
             select(repeater.itemAt(column))
@@ -106,11 +109,9 @@ Item {
     }
 
     function get() {
-        var newDate = root.date
+        var hours = repeater.itemAt(0).get(repeater.itemAt(0).currentIndex)
+        var minutes = repeater.itemAt(1).get(repeater.itemAt(1).currentIndex)
 
-        newDate.setHours(repeater.itemAt(0).get(repeater.itemAt(0).currentIndex));
-        newDate.setMinutes(repeater.itemAt(1).get(repeater.itemAt(1).currentIndex));
-
-        return newDate
+        return hours * 3600 + minutes * 60
     }
 }

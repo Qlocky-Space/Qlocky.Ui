@@ -25,7 +25,7 @@ public:
         auto viewModel = std::make_unique<AlarmItemViewModel>(entity.id);
         viewModel->setDisplayName(QString::fromStdString(entity.name));
         viewModel->setState(entity.isActive);
-        viewModel->setDueTime(QDateTime::fromSecsSinceEpoch(entity.dueTime));
+        viewModel->setDueTime(entity.dueTime);
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.
@@ -43,7 +43,7 @@ public:
             viewModel.getAlarmId(),
             viewModel.getDisplayName().toStdString(),
             viewModel.getState(),
-            viewModel.getDueTime().toSecsSinceEpoch()};
+            viewModel.getDueTime()};
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.
