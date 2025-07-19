@@ -16,6 +16,7 @@
 #include "view/AlarmListCardViewModel.h"
 #include "view/AlarmListModel.h"
 #include "view/ClockCardViewModel.h"
+#include "view/TimeFormatter.h"
 
 void AlarmModule::registerExports(Injector& container) {
     container.install(boost::di::bind<PingCommand>());
@@ -29,6 +30,8 @@ void AlarmModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<AlarmListCardViewModel>(*this, "AlarmListCardViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<AlarmDialogViewModel>(*this, "AlarmDialogViewModel");
 
+    qmlRegisterSingletonInstance<TimeFormatter>("Alarm", 1, 0, "TimeFormatter",
+        new TimeFormatter(*resolve<AlarmPreferencesRepositoryIfc>()));
     qmlRegisterType<AlarmItemViewModel>("Alarm", 1, 0, "AlarmItemViewModel");
     qmlRegisterType<AlarmListModel>("Alarm", 1, 0, "AlarmListModel");
 }

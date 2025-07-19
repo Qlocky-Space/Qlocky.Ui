@@ -15,43 +15,32 @@
 class ClockCardViewModel : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QString date READ getDate NOTIFY dateChanged)
-    Q_PROPERTY(QString time READ getTime NOTIFY timeChanged)
+    Q_PROPERTY(uint64_t timestamp READ getTimestamp NOTIFY timestampChanged)
 
 public:
 
-    ClockCardViewModel(Mediator& mediator, AlarmPreferencesRepositoryIfc& preferences);
+    /**
+     * Constructor for ClockCardViewModel.
+     * @param mediator The mediator to communicate with other components.
+     */
+    ClockCardViewModel(Mediator& mediator);
 
     /**
-     * Returns the formatted date string.
-     * @return The current date as a string.
+     * Returns the date.
+     * @return The current date and time.
      */
-    QString getDate() const {
-        return m_date;
-    }
-
-    /**
-     * Returns the formatted time string.
-     * @return The current time as a string.
-     */
-    QString getTime() const {
-        return m_time;
+    uint64_t getTimestamp() const {
+        return m_timestamp;
     }
 
 signals:
-    void dateChanged();
-    void timeChanged();
+    void timestampChanged();
 
 private:
 
     void onTimeChanged(TimeChangedEvent const& event);
-    QDateTime getLocalTime(DateTime const timestamp);
-    QString formatTime(QDateTime const& time);
-    QString formatDate(QDateTime const& time);
 
-    QString m_date;
-    QString m_time;
-    AlarmPreferencesRepositoryIfc& m_preferences;
+    uint64_t m_timestamp;
 };
 
 #endif

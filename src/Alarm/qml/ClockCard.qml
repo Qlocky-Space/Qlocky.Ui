@@ -4,6 +4,7 @@ import QtQuick.Controls
 
 import Widget
 import Ui
+import Alarm
 
 Widget {
     FontLoader {
@@ -18,12 +19,12 @@ Widget {
         spacing: 10
 
         Text {
-            text: ClockCardViewModel.date
+            text: TimeFormatter.asDate(ClockCardViewModel.timestamp)
             font.pixelSize: 72
             color: ThemeManager.theme.labelPrimary
         }
         Text {
-            text: ClockCardViewModel.time
+            text: TimeFormatter.asTime(ClockCardViewModel.timestamp)
             font.family: digiFont.name
             font.pixelSize: 220
             font.bold: true
