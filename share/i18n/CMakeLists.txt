@@ -7,12 +7,3 @@ qt_add_translations(QlockyApp
     QM_FILES_OUTPUT_VARIABLE QM_FILES
 )
 
-message(STATUS "Translations installed to: " ${QLOCKY_SHARE_INSTALL_PATH}/locale)
-install(DIRECTORY
-    ${QLOCKY_SHARE_PATH}/i18n/
-    DESTINATION ${QLOCKY_SHARE_INSTALL_PATH}/locale
-    FILES_MATCHING
-    REGEX "qt_.*\\.qm"
-    REGEX "qt_help_.*\\.qm" EXCLUDE
-    REGEX "qtbase_.*\\.qm"
-    REGEX "qt*_en\\.qm" EXCLUDE)
