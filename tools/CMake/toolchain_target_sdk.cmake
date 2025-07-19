@@ -1,5 +1,7 @@
 set(CMAKE_TARGET_SDK Qlocky)
 
+message("Yes: " $ENV{OECORE_NATIVE_SYSROOT}/usr/share/cmake/OEToolchainConfig.cmake)
+
 include($ENV{OECORE_NATIVE_SYSROOT}/usr/share/cmake/OEToolchainConfig.cmake)
 
 # Read the contents of the file
