@@ -9,6 +9,9 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/commands/AlarmEditCommand.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/commands/AlarmRemoveCommand.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/events/AlarmAddedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/AlarmUpdatedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/AlarmRemovedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/AlarmActivatedEvent.h
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/PingCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmService.h
@@ -31,6 +34,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDialogViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDialogViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.h
 )
 
 set(MODULE_QML_SRC

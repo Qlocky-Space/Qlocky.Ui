@@ -5,8 +5,18 @@
 #include "AlarmEntity.h"
 #include "internal/AlarmMapper.h"
 
-AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository) :
-    m_alarmRepository(alarmRepository),
+namespace {
+
+static uint64_t defaultDueTime() {
+    QDateTime now = QDateTime::currentDateTime(QTimeZone::utc());
+    return now.time().msecsSinceStartOfDay() / 1000;
+}
+
+} // namespace
+
+AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository, TimeConverter& timeFormatter) :
+    m_alarmRepository {alarmRepository},
+    m_timeFormatter {timeFormatter},
     m_item {0U} {
 }
 
@@ -14,8 +24,7 @@ void AlarmDialogViewModel::loadAlarm(int32_t const alarmId) {
     std::unique_ptr<AlarmItemViewModel> pItem {std::make_unique<AlarmItemViewModel>(alarmId)};
     pItem->setDisplayName("Alarm");
     pItem->setState(true);
-    // TODO fix workaround, timezone shall be used
-    pItem->setDueTime(QDateTime::currentDateTimeUtc().addSecs(2 * 3600));
+    pItem->setDueTime(defaultDueTime());
 
     for (auto const& alarm : m_alarmRepository.alarms()) {
         if (alarm.id == alarmId) {
@@ -29,8 +38,9 @@ void AlarmDialogViewModel::loadAlarm(int32_t const alarmId) {
 
 void AlarmDialogViewModel::save() {
     AlarmEntity alarmEntity {AlarmMapper::toEntity(m_item)};
+
     // ensure alarm has unique id, when updated
-    alarmEntity.id = m_item.getAlarmId() != 0 ? m_item.getAlarmId() : QDateTime::currentDateTime().toSecsSinceEpoch();
+    alarmEntity.id = m_item.getAlarmId() != 0 ? m_item.getAlarmId() : QDateTime::currentDateTime(QTimeZone::utc()).toSecsSinceEpoch();
 
     m_alarmRepository.addAlarm(alarmEntity);
 }

@@ -18,7 +18,7 @@ class AlarmItemViewModel : public QObject {
     Q_PROPERTY(uint32_t alarmId READ getAlarmId CONSTANT)
     Q_PROPERTY(QString displayName READ getDisplayName WRITE setDisplayName NOTIFY displayNameChanged)
     Q_PROPERTY(bool state READ getState WRITE setState NOTIFY stateChanged)
-    Q_PROPERTY(QDateTime dueTime READ getDueTime WRITE setDueTime NOTIFY dueTimeChanged)
+    Q_PROPERTY(uint32_t dueTime READ getDueTime WRITE setDueTime NOTIFY dueTimeChanged)
 
 public:
 
@@ -68,7 +68,7 @@ public:
      * Gets the scheduled time for the alarm.
      * @return The due time as a QDateTime.
      */
-    QDateTime getDueTime() const {
+    uint32_t getDueTime() const {
         return m_dueTime;
     }
 
@@ -76,7 +76,7 @@ public:
      * Sets the scheduled time for the alarm.
      * @param dueTime The new due time to set.
      */
-    void setDueTime(QDateTime const& dueTime);
+    void setDueTime(uint32_t const dueTime);
 
     /**
      * Updates this view model from another instance.
@@ -92,7 +92,7 @@ signals:
 private:
 
     uint32_t m_id;
-    QDateTime m_dueTime;
+    uint32_t m_dueTime;
     bool m_state;
     QString m_displayName;
 };

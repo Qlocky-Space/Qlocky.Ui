@@ -17,13 +17,13 @@ using AlarmId = uint32_t;
  * This struct encapsulates the properties of an alarm.
  */
 struct AlarmEntity {
-    AlarmId id;       // Unique identifier for the alarm
-    std::string name; // Name of the alarm
-    bool isActive;    // Indicates if the alarm is currently active
-    int64_t dueTime;  // Schedule for the alarm, including recurrence rules
+    AlarmId id;          // Unique identifier for the alarm
+    std::string name;    // Name of the alarm
+    bool isActive;       // Indicates if the alarm is currently active
+    uint32_t dueTimeUtc; // Due time since 00:00 in UTC (seconds since start of day)
 
     // TODO add other attributes: Snooze time, volume, light, sound, recurrent date, etc
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(AlarmEntity, id, name, isActive, dueTime)
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(AlarmEntity, id, name, isActive, dueTimeUtc)
 };
 
 #endif

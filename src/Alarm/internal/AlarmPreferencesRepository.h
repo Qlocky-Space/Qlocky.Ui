@@ -8,6 +8,7 @@
 /**
  * @see AlarmPreferencesRepositoryIfc
  */
+// TODO all system preferences should be moved to a common repository
 class AlarmPreferencesRepository : public AlarmPreferencesRepositoryIfc {
 public:
 
