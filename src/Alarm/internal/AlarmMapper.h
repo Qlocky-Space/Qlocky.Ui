@@ -25,7 +25,7 @@ public:
         auto viewModel = std::make_unique<AlarmItemViewModel>(entity.id);
         viewModel->setDisplayName(QString::fromStdString(entity.name));
         viewModel->setState(entity.isActive);
-        viewModel->setDueTime(entity.dueTime);
+        viewModel->setDueTime(entity.dueTimeUtc);
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.

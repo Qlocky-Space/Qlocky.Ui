@@ -1,14 +1,14 @@
+#include "TimeConverter.h"
+
 #include <iostream>
 #include <QTimeZone>
-
-#include "TimeConverter.h"
 
 TimeConverter::TimeConverter(AlarmPreferencesRepositoryIfc& preferences) :
     m_preferences {preferences} {
 }
 
-QString TimeConverter::asTime(uint64_t const date) {
-    QDateTime localTime = toLocalDateTime(date);
+QString TimeConverter::asTime(uint64_t const utcTimestamp) {
+    QDateTime localTime = toLocalDateTime(utcTimestamp);
 
     bool const showSeparator {(localTime.toSecsSinceEpoch() % 2U) == 0U};
     std::string format {m_preferences.getTimeFormat()};
@@ -18,28 +18,38 @@ QString TimeConverter::asTime(uint64_t const date) {
     return localTime.toString(qFormat);
 }
 
-QString TimeConverter::asDate(uint64_t const date) {
-    QDateTime localTime = toLocalDateTime(date);
-    QString t = localTime.toString("dddd, d. MMMM yyyy");
-    return t;
+QString TimeConverter::asDate(uint64_t const utcTimestamp) {
+    QDateTime localTime = toLocalDateTime(utcTimestamp);
+    return localTime.toLocalTime().toString("dddd, d. MMMM yyyy");
 }
 
-QDateTime TimeConverter::toLocalDateTime(uint64_t const timestamp) {
+QDateTime TimeConverter::toLocalDateTime(uint64_t const utcTimestamp) {
     QTimeZone const timeZone {m_preferences.getTimeZone().c_str()};
-    QDateTime const unixTimestamp {QDateTime::fromSecsSinceEpoch(static_cast<qint64>(timestamp), QTimeZone::utc())};
+    QDateTime unixTimestamp {QDateTime::fromSecsSinceEpoch(static_cast<qint64>(utcTimestamp), QTimeZone::utc())};
     return unixTimestamp.toTimeZone(timeZone);
 }
 
-QDateTime TimeConverter::fromLocalDateTime(uint64_t const timestamp) {
+QDateTime TimeConverter::fromLocalDateTime(uint64_t const localTimestamp) {
     QTimeZone const timeZone {m_preferences.getTimeZone().c_str()};
-    QDateTime const unixTimestamp {QDateTime::fromSecsSinceEpoch(static_cast<qint64>(timestamp), timeZone)};
-    return unixTimestamp.toTimeZone(QTimeZone::utc());
+    QDateTime unixTimestamp {QDateTime::fromSecsSinceEpoch(static_cast<qint64>(localTimestamp), timeZone)};
+    return unixTimestamp.toTimeZone(timeZone);
 }
 
-uint32_t TimeConverter::toLocalRelativeTime(uint64_t const timestamp) {
-    return toLocalDateTime(timestamp).time().msecsSinceStartOfDay() / 1000U;
+uint32_t TimeConverter::utcToRelativeTime(uint64_t const utcTimestamp) {
+    QTimeZone const timeZone {m_preferences.getTimeZone().c_str()};
+    QDateTime dateTime {QDateTime::fromSecsSinceEpoch(static_cast<qint64>(utcTimestamp), QTimeZone::utc())};
+    dateTime.setTimeZone(timeZone);
+
+    auto localTime = dateTime.time().addSecs(dateTime.offsetFromUtc());
+
+    return localTime.msecsSinceStartOfDay() / 1000U;
 }
 
-uint32_t TimeConverter::toUtcRelativeTime(uint64_t const timestamp) {
-    return fromLocalDateTime(timestamp).time().msecsSinceStartOfDay() / 1000U;
+uint32_t TimeConverter::relativeTimeToUtc(uint64_t const localTimestamp) {
+    QTimeZone const timeZone {m_preferences.getTimeZone().c_str()};
+    QDateTime dateTime {QDateTime::fromSecsSinceEpoch(static_cast<qint64>(localTimestamp), timeZone)};
+
+    auto utcTime = dateTime.toUTC().time().addSecs(-dateTime.offsetFromUtc());
+
+    return utcTime.msecsSinceStartOfDay() / 1000U;
 }

@@ -25,47 +25,36 @@ public:
 
     /**
      * Formats the given timestamp as a time string (hh:mm).
-     * @param date The time as a UNIX timestamp.
+     * @param utcTimestamp The time as a UNIX timestamp in UTC.
      * @return The formatted time string.
      */
-    Q_INVOKABLE QString asTime(uint64_t const date);
+    Q_INVOKABLE QString asTime(uint64_t const utcTimestamp);
 
     /**
      * Formats the given timestamp as a date string (e.g., "Saturday, 19. July 2025").
-     * @param date The time as a UNIX timestamp.
-     * @return The formatted date string.
+     * @param utcTimestamp The time as a UNIX timestamp in UTC.
+     * @return The formatted date string
      */
-    Q_INVOKABLE QString asDate(uint64_t const date);
-
-    /**
-     * Converts the given timestamp to a QDateTime in the preferred timezone.
-     * @param timestamp The time as a UNIX timestamp.
-     * @return The QDateTime in the preferred timezone.
-     */
-    Q_INVOKABLE QDateTime toLocalDateTime(uint64_t const timestamp);
-
-    /**
-     * Converts the given timestamp to a QDateTime in the UTC timezone.
-     * @param timestamp The time as a UNIX timestamp.
-     * @return The QDateTime in the preferred timezone.
-     */
-    Q_INVOKABLE QDateTime fromLocalDateTime(uint64_t const timestamp);
+    Q_INVOKABLE QString asDate(uint64_t const utcTimestamp);
 
     /**
      * Converts the given timestamp to a relative day time in the preferred timezone.
-     * @param timestamp The time as a UNIX timestamp.
-     * @return The relative day time as a uint32_t.
+     * @param utcTimestamp The time as a UNIX timestamp in UTC.
+     * @return The relative day time as a uint32_t in the preferred timezone.
      */
-    Q_INVOKABLE uint32_t toLocalRelativeTime(uint64_t const timestamp);
+    Q_INVOKABLE uint32_t utcToRelativeTime(uint64_t const utcTimestamp);
 
     /**
      * Converts the given timestamp to a relative day time in the UTC timezone.
-     * @param timestamp The time as a UNIX timestamp.
-     * @return The relative day time as a uint32_t.
+     * @param localTimestamp The time as a UNIX timestamp in the preferred timezone.
+     * @return The relative day time as a uint32_t in UTC.
      */
-    Q_INVOKABLE uint32_t toUtcRelativeTime(uint64_t const timestamp);
+    Q_INVOKABLE uint32_t relativeTimeToUtc(uint64_t const localTimestamp);
 
 private:
+
+    QDateTime toLocalDateTime(uint64_t const utcTimestamp);
+    QDateTime fromLocalDateTime(uint64_t const localTimestamp);
 
     AlarmPreferencesRepositoryIfc& m_preferences;
 };

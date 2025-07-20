@@ -58,12 +58,14 @@ bool AlarmService::shouldActivateAlarm(AlarmEntity const& alarm, DateTime const 
         return false;
     }
 
-    uint32_t const currentTime {QDateTime::fromSecsSinceEpoch(currentTimestamp, QTimeZone::utc()).time().msecsSinceStartOfDay() / 1000U};
+    // Convert the current timestamp to relative UTC time. Start of day is 00:00 UTC.
+    // This is the number of seconds since the start of the day in UTC.
+    uint32_t const currentTimeUtc {QDateTime::fromSecsSinceEpoch(currentTimestamp, QTimeZone::utc()).time().msecsSinceStartOfDay() / 1000U};
 
     // TODO check also recurrent dates, e.g. every day at 8:00
     // For now, we only check if the hours and minutes match
 
-    if (alarm.dueTime == currentTime) {
+    if (alarm.dueTimeUtc == currentTimeUtc) {
         return true;
     }
 

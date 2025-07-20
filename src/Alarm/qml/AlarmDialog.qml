@@ -35,14 +35,14 @@ QDialog {
 
         QTimePicker {
             id: timePicker
-            time: TimeConverter.toLocalRelativeTime(alarm.dueTime)
+            time: TimeConverter.utcToRelativeTime(alarm.dueTime)
             width: root.implicitWidth
 
             Layout.topMargin: 10
             Layout.bottomMargin: 10
 
             onClicked: function(time) {
-                alarm.dueTime = TimeConverter.toLocalRelativeTime(time)
+                alarm.dueTime = TimeConverter.relativeTimeToUtc(time)
             }
         }
 
