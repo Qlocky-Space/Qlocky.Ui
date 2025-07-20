@@ -1,10 +1,16 @@
 #include "AlarmService.h"
 
+#include <iostream>
+#include <QDateTime>
+#include <QTimeZone>
+
+#include "events/AlarmActivatedEvent.h"
 #include "TimeChangedEvent.h"
 
-AlarmService::AlarmService(Mediator& mediator, std::shared_ptr<TimeProviderIfc> timeProvider) :
+AlarmService::AlarmService(Mediator& mediator, std::shared_ptr<TimeProviderIfc> timeProvider, AlarmRepositoryIfc& alarmRepository) :
     m_mediator {mediator},
     m_timeProvider {timeProvider},
+    m_alarmRepository {alarmRepository},
     m_currentTimestamp {0ULL},
     m_timerRunning {true},
     m_timerThread {} {
@@ -39,10 +45,28 @@ void AlarmService::updateTimestamp() {
 }
 
 void AlarmService::checkAlarmConditions() {
-    // TODO Alarm Feature
-    // check if any alarm conditions (get alarms from AlarmPersistency)
-    // is true and notify mediator with AlarmActivatedEvent(alarm).
-    //
-    // Alarm can be snoozed/stopped with e.g. AlarmService::snooze(alarmId, 10min)
-    // which sends an AlarmDeactivedEvent(alarm, Reason::Snooze)
+    for (AlarmEntity const& alarm : m_alarmRepository.alarms()) {
+        // Check if the alarm should be activated based on the current timestamp
+        if (shouldActivateAlarm(alarm, m_currentTimestamp)) {
+            m_mediator.notify(AlarmActivatedEvent {alarm});
+        }
+    }
+}
+
+bool AlarmService::shouldActivateAlarm(AlarmEntity const& alarm, DateTime const currentTimestamp) {
+    if (!alarm.isActive) {
+        return false;
+    }
+
+    QTimeZone zone {"UTC+02:00"};
+    uint32_t const currentTime {QDateTime::fromSecsSinceEpoch(currentTimestamp, QTimeZone::utc()).toTimeZone(zone).time().msecsSinceStartOfDay() / 1000U};
+
+    // TODO check also recurrent dates, e.g. every day at 8:00
+    // For now, we only check if the hours and minutes match
+
+    if (alarm.dueTime == currentTime) {
+        return true;
+    }
+
+    return false;
 }

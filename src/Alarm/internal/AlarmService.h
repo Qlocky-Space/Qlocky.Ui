@@ -7,6 +7,7 @@
 #include <thread>
 #include <TimeProviderIfc.h>
 
+#include "AlarmRepositoryIfc.h"
 #include "AlarmServiceIfc.h"
 
 /**
@@ -23,8 +24,9 @@ public:
      * @note use shared pointer to ensure lifetime is managed correctly.
      * @param mediator The mediator to communicate with other components.
      * @param timeProvider The time provider to get the current timestamp.
+     * @param alarmRepository The repository to manage alarms.
      */
-    AlarmService(Mediator& mediator, std::shared_ptr<TimeProviderIfc> timeProvider);
+    AlarmService(Mediator& mediator, std::shared_ptr<TimeProviderIfc> timeProvider, AlarmRepositoryIfc& alarmRepository);
 
     virtual ~AlarmService();
 
@@ -38,9 +40,11 @@ private:
     void processTime();
     void updateTimestamp();
     void checkAlarmConditions();
+    bool shouldActivateAlarm(AlarmEntity const& alarm, DateTime const currentTimestamp);
 
     Mediator& m_mediator;
     std::shared_ptr<TimeProviderIfc> m_timeProvider;
+    AlarmRepositoryIfc& m_alarmRepository;
     DateTime m_currentTimestamp;
 
     std::atomic<bool> m_timerRunning;
