@@ -24,7 +24,7 @@ Item {
             alarmId: alarm.alarmId
             displayName: alarm.displayName
             isEnabled: alarm.state
-            dueTime: TimeConverter.asTime(alarm.dueTime)
+            time: TimeConverter.asTime(alarm.dueTime)
 
             width: listView.width
 

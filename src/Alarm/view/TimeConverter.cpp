@@ -12,10 +12,17 @@ QString TimeConverter::asTime(uint64_t const utcTimestamp) {
 
     bool const showSeparator {(localTime.toSecsSinceEpoch() % 2U) == 0U};
     std::string format {m_preferences.getTimeFormat()};
-    format = format.replace(format.find(":"), 1, showSeparator ? ":" : " ");
-    QString const qFormat {QString::fromStdString(format)};
 
-    return localTime.toString(qFormat);
+    size_t const separatorPos = format.find(":");
+    if (separatorPos != std::string::npos) {
+        format = format.replace(separatorPos, 1, showSeparator ? ":" : " ");
+    }
+    else {
+        // If no separator is found, default to "HH:mm"
+        format = "HH:mm";
+    }
+
+    return localTime.toString(QString::fromStdString(format));
 }
 
 QString TimeConverter::asDate(uint64_t const utcTimestamp) {

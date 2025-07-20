@@ -11,7 +11,7 @@ SwipeDelegate {
     required property int alarmId
     property string displayName: "Label"
     property bool isEnabled: false
-    property string dueTime: "00:00"
+    property string time: "00:00"
 
     signal activationToggled(bool isEnabled)
 
@@ -25,7 +25,7 @@ SwipeDelegate {
 
             Column {
                 QLabel {
-                    text: root.dueTime
+                    text: root.time
                     font.pixelSize: 56
                 }
 

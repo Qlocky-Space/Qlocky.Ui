@@ -1,5 +1,5 @@
-#ifndef SRC_ALARM_VIEW_TIMEFORMATTER_H
-#define SRC_ALARM_VIEW_TIMEFORMATTER_H
+#ifndef TIME_CONVERTER_H
+#define TIME_CONVERTER_H
 
 #include <QDateTime>
 #include <QObject>
@@ -59,4 +59,4 @@ private:
     AlarmPreferencesRepositoryIfc& m_preferences;
 };
 
-#endif // SRC_ALARM_VIEW_TIMEFORMATTER_H
+#endif
