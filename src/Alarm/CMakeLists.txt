@@ -34,8 +34,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDialogViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDialogViewModel.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/TimeFormatter.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/TimeFormatter.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.h
 )
 
 set(MODULE_QML_SRC

@@ -24,7 +24,7 @@ Item {
             alarmId: alarm.alarmId
             displayName: alarm.displayName
             isEnabled: alarm.state
-            dueTime: Qt.formatDateTime(new Date(alarm.dueTime * 1000), "HH:mm")
+            dueTime: TimeConverter.asTime(alarm.dueTime)
 
             width: listView.width
 

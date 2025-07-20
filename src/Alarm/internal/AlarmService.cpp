@@ -58,8 +58,7 @@ bool AlarmService::shouldActivateAlarm(AlarmEntity const& alarm, DateTime const 
         return false;
     }
 
-    QTimeZone zone {"UTC+02:00"};
-    uint32_t const currentTime {QDateTime::fromSecsSinceEpoch(currentTimestamp, QTimeZone::utc()).toTimeZone(zone).time().msecsSinceStartOfDay() / 1000U};
+    uint32_t const currentTime {QDateTime::fromSecsSinceEpoch(currentTimestamp, QTimeZone::utc()).time().msecsSinceStartOfDay() / 1000U};
 
     // TODO check also recurrent dates, e.g. every day at 8:00
     // For now, we only check if the hours and minutes match

@@ -11,16 +11,17 @@
  * Formats time and date for display in QML.
  * Provides conversion from timestamp to formatted strings in the user's preferred timezone.
  */
-class TimeFormatter : public QObject {
+// TODO all system preferences should be moved to a common module (in Platform)
+class TimeConverter : public QObject {
     Q_OBJECT
 
 public:
 
     /**
-     * Constructs a TimeFormatter.
+     * Constructs a TimeConverter.
      * @param preferences Reference to the alarm preferences repository.
      */
-    TimeFormatter(AlarmPreferencesRepositoryIfc& preferences);
+    TimeConverter(AlarmPreferencesRepositoryIfc& preferences);
 
     /**
      * Formats the given timestamp as a time string (hh:mm).
@@ -41,7 +42,28 @@ public:
      * @param timestamp The time as a UNIX timestamp.
      * @return The QDateTime in the preferred timezone.
      */
-    QDateTime toLocalDateTime(uint64_t const timestamp);
+    Q_INVOKABLE QDateTime toLocalDateTime(uint64_t const timestamp);
+
+    /**
+     * Converts the given timestamp to a QDateTime in the UTC timezone.
+     * @param timestamp The time as a UNIX timestamp.
+     * @return The QDateTime in the preferred timezone.
+     */
+    Q_INVOKABLE QDateTime fromLocalDateTime(uint64_t const timestamp);
+
+    /**
+     * Converts the given timestamp to a relative day time in the preferred timezone.
+     * @param timestamp The time as a UNIX timestamp.
+     * @return The relative day time as a uint32_t.
+     */
+    Q_INVOKABLE uint32_t toLocalRelativeTime(uint64_t const timestamp);
+
+    /**
+     * Converts the given timestamp to a relative day time in the UTC timezone.
+     * @param timestamp The time as a UNIX timestamp.
+     * @return The relative day time as a uint32_t.
+     */
+    Q_INVOKABLE uint32_t toUtcRelativeTime(uint64_t const timestamp);
 
 private:
 

@@ -7,26 +7,24 @@
 
 namespace {
 
-static uint32_t defaultDueTime() {
+static uint64_t defaultDueTime() {
     QDateTime now = QDateTime::currentDateTime(QTimeZone::utc());
     return now.time().msecsSinceStartOfDay() / 1000;
 }
 
 } // namespace
 
-AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository, TimeFormatter& timeFormatter) :
+AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository, TimeConverter& timeFormatter) :
     m_alarmRepository {alarmRepository},
     m_timeFormatter {timeFormatter},
     m_item {0U} {
 }
 
 void AlarmDialogViewModel::loadAlarm(int32_t const alarmId) {
-    uint32_t const localDueTime {m_timeFormatter.toLocalDateTime(defaultDueTime()).time().msecsSinceStartOfDay() / 1000U};
-
     std::unique_ptr<AlarmItemViewModel> pItem {std::make_unique<AlarmItemViewModel>(alarmId)};
     pItem->setDisplayName("Alarm");
     pItem->setState(true);
-    pItem->setDueTime(localDueTime);
+    pItem->setDueTime(defaultDueTime());
 
     for (auto const& alarm : m_alarmRepository.alarms()) {
         if (alarm.id == alarmId) {
@@ -40,6 +38,7 @@ void AlarmDialogViewModel::loadAlarm(int32_t const alarmId) {
 
 void AlarmDialogViewModel::save() {
     AlarmEntity alarmEntity {AlarmMapper::toEntity(m_item)};
+
     // ensure alarm has unique id, when updated
     alarmEntity.id = m_item.getAlarmId() != 0 ? m_item.getAlarmId() : QDateTime::currentDateTime(QTimeZone::utc()).toSecsSinceEpoch();
 

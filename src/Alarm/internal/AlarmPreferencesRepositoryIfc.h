@@ -7,6 +7,8 @@
  * Represents an interface for an alarm setting repository.
  * This interface defines the basic operations for managing alarm settings.
  */
+// TODO all system preferences should be moved to a common module (in Platform)
+// TODO rename to SystemPreferencesRepositoryIfc
 class AlarmPreferencesRepositoryIfc {
 public:
 

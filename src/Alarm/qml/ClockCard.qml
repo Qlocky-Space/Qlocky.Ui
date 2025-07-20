@@ -19,12 +19,12 @@ Widget {
         spacing: 10
 
         Text {
-            text: TimeFormatter.asDate(ClockCardViewModel.timestamp)
+            text: TimeConverter.asDate(ClockCardViewModel.timestamp)
             font.pixelSize: 72
             color: ThemeManager.theme.labelPrimary
         }
         Text {
-            text: TimeFormatter.asTime(ClockCardViewModel.timestamp)
+            text: TimeConverter.asTime(ClockCardViewModel.timestamp)
             font.family: digiFont.name
             font.pixelSize: 220
             font.bold: true
