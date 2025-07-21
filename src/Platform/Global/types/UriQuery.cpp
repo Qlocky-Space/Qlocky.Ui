@@ -16,6 +16,9 @@ std::string anyToString(std::any const& value) {
     else if (value.type() == typeid(int)) {
         return std::to_string(std::any_cast<int>(value));
     }
+    else if (value.type() == typeid(unsigned int)) {
+        return std::to_string(std::any_cast<unsigned int>(value));
+    }
     else if (value.type() == typeid(double)) {
         return std::to_string(std::any_cast<double>(value));
     }
@@ -41,6 +44,9 @@ std::any stringToAny(std::type_info const& type, std::string const& value) {
     }
     else if (type == typeid(int)) {
         return std::atoi(value.c_str());
+    }
+    else if (type == typeid(unsigned int)) {
+        return static_cast<unsigned int>(std::atol(value.c_str()));
     }
     else if (type == typeid(double)) {
         return std::atof(value.c_str());
