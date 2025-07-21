@@ -28,7 +28,7 @@ public:
      * Loads the alarm data for the given alarm ID.
      * @param alarmId The ID of the alarm to load.
      */
-    Q_INVOKABLE void loadAlarm(int32_t const alarmId);
+    Q_INVOKABLE void loadAlarm(uint32_t const alarmId);
 
     /**
      * Saves the current alarm item to the repository.

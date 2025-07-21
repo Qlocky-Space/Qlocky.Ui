@@ -19,7 +19,7 @@ AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository) 
     m_item {0U} {
 }
 
-void AlarmDialogViewModel::loadAlarm(int32_t const alarmId) {
+void AlarmDialogViewModel::loadAlarm(uint32_t const alarmId) {
     std::unique_ptr<AlarmItemViewModel> pItem {std::make_unique<AlarmItemViewModel>(alarmId)};
     pItem->setDisplayName("Alarm");
     pItem->setState(true);
