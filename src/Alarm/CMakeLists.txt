@@ -23,6 +23,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepositoryIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepository.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepository.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmOverlaySelector.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmOverlaySelector.h
 
     ${CMAKE_CURRENT_LIST_DIR}/view/ClockCardViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/ClockCardViewModel.cpp
@@ -34,6 +36,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmListModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDialogViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDialogViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmActiveDialogViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmActiveDialogViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.h
 )
@@ -41,6 +45,7 @@ set(MODULE_SRC
 set(MODULE_QML_SRC
     qml/ClockCard.qml
     qml/AlarmDialog.qml
+    qml/AlarmActiveDialog.qml
     qml/internal/AlarmList.qml
     qml/internal/AlarmListItem.qml
     qml/internal/AlarmSwipeButton.qml

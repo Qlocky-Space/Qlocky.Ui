@@ -6,12 +6,14 @@
 #include "commands/AlarmEditCommand.h"
 #include "commands/AlarmNewCommand.h"
 #include "commands/AlarmRemoveCommand.h"
+#include "internal/AlarmOverlaySelector.h"
 #include "internal/AlarmPreferencesRepository.h"
 #include "internal/AlarmRepository.h"
 #include "internal/AlarmService.h"
 #include "internal/PingCommand.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
+#include "view/AlarmActiveDialogViewModel.h"
 #include "view/AlarmDialogViewModel.h"
 #include "view/AlarmListCardViewModel.h"
 #include "view/AlarmListModel.h"
@@ -23,12 +25,14 @@ void AlarmModule::registerExports(Injector& container) {
     container.install(boost::di::bind<AlarmServiceIfc>().to<AlarmService>());
     container.install(boost::di::bind<AlarmRepositoryIfc>().to<AlarmRepository>());
     container.install(boost::di::bind<AlarmPreferencesRepositoryIfc>().to<AlarmPreferencesRepository>());
+    container.install(boost::di::bind<AlarmOverlaySelector>());
 }
 
 void AlarmModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<ClockCardViewModel>(*this, "ClockCardViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<AlarmListCardViewModel>(*this, "AlarmListCardViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<AlarmDialogViewModel>(*this, "AlarmDialogViewModel");
+    QmlRegistryUtil::qmlRegisterViewModel<AlarmActiveDialogViewModel>(*this, "AlarmActiveDialogViewModel");
 
     qmlRegisterSingletonInstance<TimeConverter>("Alarm", 1, 0, "TimeConverter", resolve<TimeConverter>().get());
     qmlRegisterType<AlarmItemViewModel>("Alarm", 1, 0, "AlarmItemViewModel");
@@ -42,6 +46,7 @@ void AlarmModule::onInitialize() {
 
     auto irRegistry = resolve<InteractiveUriRegistryIfc>();
     irRegistry->registerUri(Uri {"qlocky://alarmDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Alarm/qml/AlarmDialog.qml"});
+    irRegistry->registerUri(Uri {"qlocky://alarmActiveDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Alarm/qml/AlarmActiveDialog.qml"});
 
     CommandRegistryUtil::registerCommand<AlarmEditCommand>(*this, "alarm-edit");
     CommandRegistryUtil::registerCommand<AlarmNewCommand>(*this, "alarm-new");
@@ -52,4 +57,7 @@ void AlarmModule::onInitialize() {
 
     auto alarmRepository = resolve<AlarmRepositoryIfc>();
     alarmRepository->initialize();
+
+    auto alarmSelector = resolve<AlarmOverlaySelector>();
+    alarmSelector->initialize();
 }
