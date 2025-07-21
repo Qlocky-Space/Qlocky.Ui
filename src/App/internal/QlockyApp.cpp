@@ -1,5 +1,8 @@
 #include "QlockyApp.h"
 
+#include <events/ApplicationClosedEvent.h>
+#include <events/ApplicationStartedEvent.h>
+#include <Mediator.h>
 #include <QCoreApplication>
 #include <QQmlApplicationEngine>
 
@@ -32,11 +35,21 @@ void QlockyApp::start(Injector& container) {
 
         auto navigator = resolve<InteractiveNavigatorIfc>();
         navigator->navigateTo(UriQuery {"qlocky://main"});
+
+        auto mediator = resolve<Mediator>();
+        mediator->notify(ApplicationStartedEvent {});
+    });
+
+    QObject::connect(&engine, &QQmlApplicationEngine::exit, qApp, [this](int code) {
+        QCoreApplication::quit();
     });
 
     engine.load(url);
 }
 
 void QlockyApp::finish() {
+    auto mediator = resolve<Mediator>();
+    mediator->notify(ApplicationClosedEvent {});
+
     m_modules.clear();
 }

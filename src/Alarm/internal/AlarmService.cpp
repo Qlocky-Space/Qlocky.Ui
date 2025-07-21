@@ -5,23 +5,17 @@
 #include <QTimeZone>
 
 #include "events/AlarmActivatedEvent.h"
+#include "events/ApplicationClosedEvent.h"
 #include "TimeChangedEvent.h"
 
-AlarmService::AlarmService(Mediator& mediator, std::shared_ptr<TimeProviderIfc> timeProvider, AlarmRepositoryIfc& alarmRepository) :
+AlarmService::AlarmService(Mediator& mediator, TimeProviderIfc& timeProvider, AlarmRepositoryIfc& alarmRepository) :
     m_mediator {mediator},
     m_timeProvider {timeProvider},
     m_alarmRepository {alarmRepository},
     m_currentTimestamp {0ULL},
     m_timerRunning {true},
     m_timerThread {} {
-}
-
-AlarmService::~AlarmService() {
-    m_timerRunning = false;
-
-    if (m_timerThread.joinable()) {
-        m_timerThread.join();
-    }
+    mediator.subscribe<ApplicationClosedEvent>([this](ApplicationClosedEvent const&) { stop(); });
 }
 
 void AlarmService::initialize() {
@@ -30,17 +24,25 @@ void AlarmService::initialize() {
     m_timerThread = std::thread(&AlarmService::processTime, this);
 }
 
+void AlarmService::stop() {
+    m_timerRunning = false;
+
+    if (m_timerThread.joinable()) {
+        m_timerThread.join();
+    }
+}
+
 void AlarmService::processTime() {
     while (m_timerRunning) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-
         updateTimestamp();
         checkAlarmConditions();
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
 void AlarmService::updateTimestamp() {
-    m_currentTimestamp = m_timeProvider->getCurrentTimestamp();
+    m_currentTimestamp = m_timeProvider.getCurrentTimestamp();
     m_mediator.notify(TimeChangedEvent {m_currentTimestamp});
 }
 
