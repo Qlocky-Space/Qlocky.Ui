@@ -28,6 +28,9 @@ Item {
     property alias cancelText: cancelButton.text
     property alias acceptText: acceptButton.text
 
+    property bool acceptShow: true
+    property bool cancelShow: true
+
     Item {
         id: headerItem
         anchors.top: parent.top
@@ -35,11 +38,15 @@ Item {
         anchors.right: parent.right
         height: 100
 
+        visible: acceptShow || cancelShow
+
         QButton {
             id: cancelButton
             anchors.left: parent.left
             anchors.top: parent.top
             buttonStyle: QButton.ButtonStyle.Plain
+
+            visible: cancelShow
 
             text: qsTr("Cancel")
             onClicked: root.canceled()
@@ -50,6 +57,8 @@ Item {
             anchors.right: parent.right
             anchors.top: parent.top
             buttonStyle: QButton.ButtonStyle.Tinted
+
+            visible: acceptShow
 
             text: qsTr("Accept")
             onClicked: root.accepted()

@@ -8,6 +8,9 @@
 #include "internal/AlarmRepositoryIfc.h"
 #include "TimeConverter.h"
 
+/**
+ * ViewModel for the alarm dialog, handling alarm data loading and saving.
+ */
 class AlarmDialogViewModel : public QObject {
     Q_OBJECT
 
@@ -19,13 +22,13 @@ public:
      * Constructor
      * @param alarmRepository Reference to the alarm repository interface.
      */
-    AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository, TimeConverter& timeFormatter);
+    AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository);
 
     /**
      * Loads the alarm data for the given alarm ID.
      * @param alarmId The ID of the alarm to load.
      */
-    Q_INVOKABLE void loadAlarm(int32_t const alarmId);
+    Q_INVOKABLE void loadAlarm(uint32_t const alarmId);
 
     /**
      * Saves the current alarm item to the repository.
@@ -44,7 +47,6 @@ public:
 private:
 
     AlarmRepositoryIfc& m_alarmRepository;
-    TimeConverter& m_timeFormatter;
     AlarmItemViewModel m_item;
 };
 

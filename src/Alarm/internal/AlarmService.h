@@ -26,9 +26,7 @@ public:
      * @param timeProvider The time provider to get the current timestamp.
      * @param alarmRepository The repository to manage alarms.
      */
-    AlarmService(Mediator& mediator, std::shared_ptr<TimeProviderIfc> timeProvider, AlarmRepositoryIfc& alarmRepository);
-
-    virtual ~AlarmService();
+    AlarmService(Mediator& mediator, TimeProviderIfc& timeProvider, AlarmRepositoryIfc& alarmRepository);
 
     /**
      * @see AlarmServiceIfc::initialize
@@ -42,8 +40,10 @@ private:
     void checkAlarmConditions();
     bool shouldActivateAlarm(AlarmEntity const& alarm, DateTime const currentTimestamp);
 
+    void stop();
+
     Mediator& m_mediator;
-    std::shared_ptr<TimeProviderIfc> m_timeProvider;
+    TimeProviderIfc& m_timeProvider;
     AlarmRepositoryIfc& m_alarmRepository;
     DateTime m_currentTimestamp;
 

@@ -2,11 +2,8 @@
 #define CLOCK_CARD_VIEW_MODEL_H
 
 #include <api/Mediator.h>
-#include <QDateTime>
 #include <QObject>
-#include <QString>
 
-#include "internal/AlarmPreferencesRepositoryIfc.h"
 #include "TimeChangedEvent.h"
 
 /**
