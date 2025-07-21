@@ -43,6 +43,11 @@ public:
 
     InteractiveProvider(Mediator& mediator);
 
+    /**
+     * Called when the QML dialog is completed.
+     */
+    Q_INVOKABLE void cleanup(InteractiveQmlData* data);
+
 signals:
     void fireOpenPage(InteractiveQmlData* data);
     void fireOpenDialog(InteractiveQmlData* data);

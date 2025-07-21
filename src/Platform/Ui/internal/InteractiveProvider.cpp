@@ -22,17 +22,23 @@ void InteractiveProvider::navigateToQlocky(NavigateToEvent const& event) {
 }
 
 void InteractiveProvider::openPage(NavigateToEvent const& event) {
-    InteractiveQmlData data {};
-    fillData(data, event);
+    InteractiveQmlData* data = new InteractiveQmlData();
+    fillData(*data, event);
 
-    emit fireOpenPage(&data);
+    emit fireOpenPage(data);
 }
 
 void InteractiveProvider::openDialog(NavigateToEvent const& event) {
-    InteractiveQmlData data {};
-    fillData(data, event);
+    InteractiveQmlData* data = new InteractiveQmlData();
+    fillData(*data, event);
 
-    emit fireOpenDialog(&data);
+    emit fireOpenDialog(data);
+}
+
+void InteractiveProvider::cleanup(InteractiveQmlData* data) {
+    // because emit fireOpenPage or fireOpenDialog is not guaranteed to by
+    // blocked, a callback is used to ensure the data is cleaned up
+    delete data;
 }
 
 void InteractiveProvider::fillData(InteractiveQmlData& data, NavigateToEvent const& event) {

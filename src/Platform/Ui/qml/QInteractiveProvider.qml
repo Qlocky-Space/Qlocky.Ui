@@ -15,12 +15,24 @@ Item {
         target: root.provider
 
         function onFireOpenPage(data) {
-            pageLoader.setSource(data.value("path"), data.value("params"))
+            var params = data.value("params")
+            var path = data.value("path")
+            console.log("open page - path: " + path + ", params: " + JSON.stringify(params))
+
+            pageLoader.setSource(path, params)
+
+            provider.cleanup(data)
         }
 
         function onFireOpenDialog(data) {
-            dialogLoader.setSource(data.value("path"), data.value("params"))
+            var params = data.value("params")
+            var path = data.value("path")
+            console.log("open dialog - path: " + path + ", params: " + JSON.stringify(params))
+
+            dialogLoader.setSource(path, params)
             dialogLoader.open()
+
+            provider.cleanup(data)
         }
     }
 }
