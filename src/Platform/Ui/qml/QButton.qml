@@ -22,6 +22,7 @@ T.Button {
     property int buttonStyle: QButton.ButtonStyle.Filled
 
     property string image: ""
+    property real imageSize: Math.max(32, control.height * 0.8)
 
     property real radius: 40
 
@@ -76,7 +77,7 @@ T.Button {
 
                 icon: control.image
                 color: control.getFontColor()
-                size: Math.max(32, parent.height * 0.8)
+                size: control.imageSize
                 visible: control.image !== "" && control.image !== null
             }
 

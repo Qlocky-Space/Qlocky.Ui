@@ -13,7 +13,7 @@ QDialog {
     property string alarmId
 
     implicitWidth: 800
-    implicitHeight: content.implicitHeight + 180
+    implicitHeight: content.implicitHeight
 
     acceptShow: false
     cancelShow: false
@@ -36,12 +36,16 @@ QDialog {
 
         QButton {
             id: snoozeButton
-
-            height: 150
-            width: 450
-            buttonStyle: QButton.ButtonStyle.Filled
-
             text: qsTr("Snooze")
+
+            implicitHeight: 100
+            implicitWidth: 300
+
+            buttonStyle: QButton.ButtonStyle.Filled
+            backgroundColor: ThemeManager.theme.blue
+
+            image: "\uf04b"
+            imageSize: 64
             onClicked: {
                 viewModel.snooze();
                 root.close();
@@ -50,12 +54,16 @@ QDialog {
 
         QButton {
             id: dismissButton
-
-            height: 75
-            width: 300
-            buttonStyle: QButton.ButtonStyle.Tinted
-
             text: qsTr("Dismiss")
+
+            implicitHeight: 100
+            implicitWidth: 300
+
+            buttonStyle: QButton.ButtonStyle.Filled
+            backgroundColor: ThemeManager.theme.red
+
+            image: "\uf1f6"
+            imageSize: 64
             onClicked: {
                 viewModel.dismiss();
                 root.close();

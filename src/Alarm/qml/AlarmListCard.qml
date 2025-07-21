@@ -8,36 +8,56 @@ import Ui
 Widget {
     id: widget
 
-    color: ThemeManager.theme.backgroundTertiary
+    anchors.fill: parent
+    anchors.margins: 16
 
-    ColumnLayout {
-        anchors.fill: parent
+    Item {
+        id: header
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
 
-        RowLayout {
-            id: header
-            Layout.fillWidth: true
-            Layout.margins: 16
+        height: 128
 
-            QLabel {
-                id: title
-                text: "New Alarm"
-                Layout.fillWidth: true
-            }
+        QRoundedRectangle {
+            radius: widget.radius
+            cornerSide: QRoundedRectangle.Direction.Up
 
-            QButton {
-                image: "\u002b"
-                height: 48
-                width: 48
-
-                onClicked: {
-                    CommandExecutor.dispatch("alarm-new");
-                }
-            }
+            anchors.fill: parent
+            color: ThemeManager.theme.backgroundTertiary
         }
 
-        AlarmList {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        QLabel {
+            id: title
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+
+            text: qsTr("New Alarm")
         }
+
+        QButton {
+            image: "\u002b"
+            imageSize: 32
+
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.margins: 48
+
+            height: 72
+            width: 72
+
+            onClicked: {
+                CommandExecutor.dispatch("alarm-new");
+            }
+        }
+    }
+
+    AlarmList {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.top: header.bottom
     }
 }
