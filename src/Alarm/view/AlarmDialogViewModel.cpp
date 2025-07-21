@@ -14,9 +14,8 @@ static uint64_t defaultDueTime() {
 
 } // namespace
 
-AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository, TimeConverter& timeFormatter) :
+AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository) :
     m_alarmRepository {alarmRepository},
-    m_timeFormatter {timeFormatter},
     m_item {0U} {
 }
 
