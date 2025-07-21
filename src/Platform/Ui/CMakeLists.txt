@@ -39,6 +39,7 @@ set(MODULE_QML_SRC
     qml/QRoundedRectangle.qml
     qml/QToggleButton.qml
     qml/QTimePicker.qml
+    qml/QConfirmationSlider.qml
     qml/QDialogProvider.qml
     qml/FontStyle.qml
     qml/ThemeManager.qml
