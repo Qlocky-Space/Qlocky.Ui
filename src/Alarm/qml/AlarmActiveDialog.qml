@@ -12,8 +12,8 @@ QDialog {
 
     property string alarmId
 
-    implicitWidth: 800
-    implicitHeight: content.implicitHeight
+    implicitWidth: 1300
+    implicitHeight: 520
 
     acceptShow: false
     cancelShow: false
@@ -25,44 +25,58 @@ QDialog {
     Item {
         id: content
         anchors.fill: parent
+        anchors.margins: 16
 
-        QButton {
-            id: snoozeButton
-            text: qsTr("Snooze")
+        QLabel {
+            id: title
+            text: alarm.displayName
+            font.bold: true
+            font.pixelSize: 72
+            color: ThemeManager.theme.labelPrimary
 
-            implicitHeight: 100
-            implicitWidth: 250
-
-            anchors.left: parent.left
-            anchors.leftMargin: 16
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: dismissButton.left
-            anchors.rightMargin: 16
-
-            buttonStyle: QButton.ButtonStyle.Filled
-            backgroundColor: ThemeManager.theme.blue
-
-            image: "\uf04b"
-            imageSize: 64
-            onClicked: {
-                viewModel.snooze();
-                root.close();
-            }
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        QConfirmationSlider {
-            confirmText: qsTr("Slide to dismiss")
-            color: ThemeManager.theme.red
+        QLabel {
+            id: description
+            text: qsTr("Alarm Description")
+            color: ThemeManager.theme.labelPrimary
 
             anchors.right: parent.right
-            anchors.rightMargin: 16
-            anchors.left: snoozeButton.right
-            anchors.leftMargin: 16
+            anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
 
-            onConfirmed: {
-                viewModel.dismiss();
-                root.close();
+            wrapMode: Text.WordWrap
+        }
+
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+
+            QConfirmationSlider {
+                id: dismissButton
+
+                confirmText: qsTr("Slide to dismiss")
+                color: ThemeManager.theme.red
+
+                onConfirmed: {
+                    viewModel.dismiss();
+                    root.close();
+                }
+            }
+
+            QButton {
+                id: snoozeButton
+                text: qsTr("Snooze")
+
+                buttonStyle: QButton.ButtonStyle.Filled
+                backgroundColor: ThemeManager.theme.blue
+
+                image: "\uf0f3"
+                onClicked: {
+                    viewModel.snooze();
+                    root.close();
+                }
             }
         }
     }

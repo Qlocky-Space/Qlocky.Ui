@@ -36,7 +36,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 100
+        height: visible ? 100 : 0
 
         visible: acceptShow || cancelShow
 
