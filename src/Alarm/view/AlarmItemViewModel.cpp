@@ -8,7 +8,8 @@ AlarmItemViewModel::AlarmItemViewModel(uint32_t const id) :
     m_displayName {},
     m_snoozeTime {},
     m_maxSnoozeCount {},
-    m_snoozeCount {} {
+    m_snoozeCount {},
+    m_daysOfWeek {DayOfWeekViewModel::Day::None} {
 }
 
 void AlarmItemViewModel::setDisplayName(QString const& displayName) {
@@ -60,6 +61,13 @@ void AlarmItemViewModel::setSnoozeCount(uint8_t snoozeCount) {
     }
 }
 
+void AlarmItemViewModel::setDaysOfWeek(DayOfWeekViewModel::Days daysOfWeek) {
+    if (m_daysOfWeek != daysOfWeek) {
+        m_daysOfWeek = daysOfWeek;
+        emit daysOfWeekChanged();
+    }
+}
+
 void AlarmItemViewModel::updateFrom(AlarmItemViewModel const& other) {
     m_id = other.getAlarmId();
 
@@ -70,6 +78,7 @@ void AlarmItemViewModel::updateFrom(AlarmItemViewModel const& other) {
     setSnoozeTime(other.snoozeTime());
     setMaxSnoozeCount(other.getMaxSnoozeCount());
     setSnoozeCount(other.getSnoozeCount());
+    setDaysOfWeek(other.getDaysOfWeek());
 
     // @note: When adding new attributes to AlarmItemViewModel, add the mapping here.
 }

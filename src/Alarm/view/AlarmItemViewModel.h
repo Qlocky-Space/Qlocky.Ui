@@ -3,6 +3,7 @@
 #define ALARM_LIST_ITEM_VIEW_MODEL_H
 
 #include <api/Mediator.h>
+#include <DayOfWeekViewModel.h>
 #include <QDateTime>
 #include <QObject>
 #include <QString>
@@ -24,6 +25,7 @@ class AlarmItemViewModel : public QObject {
     Q_PROPERTY(uint32_t snoozeTime READ snoozeTime WRITE setSnoozeTime NOTIFY snoozeTimeChanged)
     Q_PROPERTY(uint8_t maxSnoozeCount READ getMaxSnoozeCount WRITE setMaxSnoozeCount NOTIFY maxSnoozeCountChanged)
     Q_PROPERTY(uint8_t snoozeCount READ getSnoozeCount WRITE setSnoozeCount NOTIFY snoozeCountChanged)
+    Q_PROPERTY(DayOfWeekViewModel::Days daysOfWeek READ getDaysOfWeek WRITE setDaysOfWeek NOTIFY daysOfWeekChanged)
 
 public:
 
@@ -140,6 +142,20 @@ public:
     void setSnoozeCount(uint8_t snoozeCount);
 
     /**
+     * Gets the days of the week when the alarm is active.
+     * @return The days of the week as a DayOfWeek enum.
+     */
+    DayOfWeekViewModel::Days getDaysOfWeek() const {
+        return m_daysOfWeek;
+    }
+
+    /**
+     * Sets the days of the week when the alarm is active.
+     * @param daysOfWeek The new days of the week to set.
+     */
+    void setDaysOfWeek(DayOfWeekViewModel::Days daysOfWeek);
+
+    /**
      * Updates this view model from another instance.
      * @param other The source view model to copy data from.
      */
@@ -153,6 +169,7 @@ signals:
     void snoozeTimeChanged();
     void maxSnoozeCountChanged();
     void snoozeCountChanged();
+    void daysOfWeekChanged();
 
 private:
 
@@ -164,6 +181,7 @@ private:
     uint32_t m_snoozeTime;
     uint8_t m_maxSnoozeCount;
     uint8_t m_snoozeCount;
+    DayOfWeekViewModel::Days m_daysOfWeek;
 };
 
 #endif

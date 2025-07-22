@@ -27,6 +27,7 @@ public:
         viewModel->setState(entity.isActive);
         viewModel->setDueTime(entity.dueTimeUtc);
         viewModel->setRepeated(entity.repeated);
+        viewModel->setDaysOfWeek(DayOfWeekViewModel::Days::fromInt(static_cast<int>(entity.daysOfWeek)));
         viewModel->setSnoozeTime(entity.snoozeTime);
         viewModel->setMaxSnoozeCount(entity.maxSnoozeCount);
         viewModel->setSnoozeCount(entity.snoozeCount);
@@ -49,6 +50,7 @@ public:
             viewModel.getState(),
             viewModel.getDueTime(),
             viewModel.isRepeated(),
+            static_cast<DayOfWeek>(viewModel.getDaysOfWeek().toInt()),
             viewModel.snoozeTime(),
             viewModel.getMaxSnoozeCount(),
             viewModel.getSnoozeCount(),

@@ -14,10 +14,12 @@
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
 #include "view/AlarmActiveDialogViewModel.h"
+#include "view/AlarmDayUtils.h"
 #include "view/AlarmDialogViewModel.h"
 #include "view/AlarmListCardViewModel.h"
 #include "view/AlarmListModel.h"
 #include "view/ClockCardViewModel.h"
+#include "view/DayOfWeekViewModel.h"
 #include "view/TimeConverter.h"
 
 void AlarmModule::registerExports(Injector& container) {
@@ -35,8 +37,12 @@ void AlarmModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<AlarmActiveDialogViewModel>(*this, "AlarmActiveDialogViewModel");
 
     qmlRegisterSingletonInstance<TimeConverter>("Alarm", 1, 0, "TimeConverter", resolve<TimeConverter>().get());
+    qmlRegisterSingletonInstance<AlarmDayUtils>("Alarm", 1, 0, "AlarmDayUtils", resolve<AlarmDayUtils>().get());
     qmlRegisterType<AlarmItemViewModel>("Alarm", 1, 0, "AlarmItemViewModel");
     qmlRegisterType<AlarmListModel>("Alarm", 1, 0, "AlarmListModel");
+
+    qmlRegisterUncreatableType<DayOfWeekViewModel>("Alarm", 1, 0, "DayOfWeek", "DayOfWeekViewModel is uncreatable"
+                                                                               " because it is an enum class. Use DayOfWeekViewModel::Days instead.");
 }
 
 void AlarmModule::onInitialize() {
