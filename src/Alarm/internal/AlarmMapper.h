@@ -26,6 +26,7 @@ public:
         viewModel->setDisplayName(QString::fromStdString(entity.name));
         viewModel->setState(entity.isActive);
         viewModel->setDueTime(entity.dueTimeUtc);
+        viewModel->setRepeated(entity.repeated);
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.
@@ -43,7 +44,9 @@ public:
             viewModel.getAlarmId(),
             viewModel.getDisplayName().toStdString(),
             viewModel.getState(),
-            viewModel.getDueTime()};
+            viewModel.getDueTime(),
+            viewModel.isRepeated(),
+        };
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.

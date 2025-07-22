@@ -68,16 +68,20 @@ QDialog {
         }
 
         AlarmDialogProperty {
-            id: snoozeStatus
+            id: repeatedStatus
             anchors.left: parent.left
             anchors.right: parent.right
 
-            status: false
-            text: "Snooze"
-            image: "\u003f"
+            status: alarm.repeated
+            text: "Repeated"
+            image: "\uf363"
 
-            trailing: QLabel {
-                text: "Not supported yet"
+            trailing: QToggleButton {
+                checked: alarm.repeated
+
+                onToggled: function (state) {
+                    alarm.repeated = state;
+                }
             }
         }
 

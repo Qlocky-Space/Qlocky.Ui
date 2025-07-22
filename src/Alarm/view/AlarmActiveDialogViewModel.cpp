@@ -28,6 +28,5 @@ void AlarmActiveDialogViewModel::snooze() {
 }
 
 void AlarmActiveDialogViewModel::dismiss() {
-    // TODO only false when the alarm is not repeated
-    m_alarmRepository.setAlarmState(m_item.getAlarmId(), false);
+    m_alarmRepository.setAlarmState(m_item.getAlarmId(), m_item.isRepeated());
 }

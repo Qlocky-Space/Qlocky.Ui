@@ -18,6 +18,7 @@ class AlarmItemViewModel : public QObject {
     Q_PROPERTY(uint32_t alarmId READ getAlarmId CONSTANT)
     Q_PROPERTY(QString displayName READ getDisplayName WRITE setDisplayName NOTIFY displayNameChanged)
     Q_PROPERTY(bool state READ getState WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(bool repeated READ isRepeated WRITE setRepeated NOTIFY repeatedChanged)
     Q_PROPERTY(uint32_t dueTime READ getDueTime WRITE setDueTime NOTIFY dueTimeChanged)
 
 public:
@@ -79,6 +80,20 @@ public:
     void setDueTime(uint32_t const dueTime);
 
     /**
+     * Checks if the alarm is set to repeat.
+     * @return True if the alarm is repeated, false otherwise.
+     */
+    bool isRepeated() const {
+        return m_repeated;
+    }
+
+    /**
+     * Sets whether the alarm should repeat.
+     * @param repeated True to enable repetition, false to disable.
+     */
+    void setRepeated(bool repeated);
+
+    /**
      * Updates this view model from another instance.
      * @param other The source view model to copy data from.
      */
@@ -88,12 +103,14 @@ signals:
     void displayNameChanged();
     void dueTimeChanged();
     void stateChanged();
+    void repeatedChanged();
 
 private:
 
     uint32_t m_id;
     uint32_t m_dueTime;
     bool m_state;
+    bool m_repeated;
     QString m_displayName;
 };
 

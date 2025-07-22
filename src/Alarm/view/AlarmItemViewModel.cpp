@@ -28,12 +28,20 @@ void AlarmItemViewModel::setDueTime(uint32_t const dueTime) {
     }
 }
 
+void AlarmItemViewModel::setRepeated(bool repeated) {
+    if (m_repeated != repeated) {
+        m_repeated = repeated;
+        emit repeatedChanged();
+    }
+}
+
 void AlarmItemViewModel::updateFrom(AlarmItemViewModel const& other) {
     m_id = other.getAlarmId();
 
     setDisplayName(other.getDisplayName());
     setState(other.getState());
     setDueTime(other.getDueTime());
+    setRepeated(other.isRepeated());
 
     // @note: When adding new attributes to AlarmItemViewModel, add the mapping here.
 }

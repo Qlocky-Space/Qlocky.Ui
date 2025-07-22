@@ -21,9 +21,10 @@ struct AlarmEntity {
     std::string name;    // Name of the alarm
     bool isActive;       // Indicates if the alarm is currently active
     uint32_t dueTimeUtc; // Due time since 00:00 in UTC (seconds since start of day)
+    bool repeated;       // Indicates if the alarm is repeated
 
     // TODO add other attributes: Snooze time, volume, light, sound, recurrent date, etc
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(AlarmEntity, id, name, isActive, dueTimeUtc)
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(AlarmEntity, id, name, isActive, dueTimeUtc, repeated)
 };
 
 #endif
