@@ -23,8 +23,12 @@ struct AlarmEntity {
     uint32_t dueTimeUtc; // Due time since 00:00 in UTC (seconds since start of day)
     bool repeated;       // Indicates if the alarm is repeated
 
+    uint32_t snoozeTime {1U};    // Snooze time in minutes
+    uint8_t maxSnoozeCount {3U}; // Maximum number of snoozes allowed
+    uint8_t snoozeCount {0U};    // Current snooze count. Only temporary, not stored in the database.
+
     // TODO add other attributes: Snooze time, volume, light, sound, recurrent date, etc
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(AlarmEntity, id, name, isActive, dueTimeUtc, repeated)
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(AlarmEntity, id, name, isActive, dueTimeUtc, repeated, maxSnoozeCount, snoozeTime)
 };
 
 #endif

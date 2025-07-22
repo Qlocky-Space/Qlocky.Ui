@@ -1,3 +1,4 @@
+
 #ifndef ALARM_LIST_ITEM_VIEW_MODEL_H
 #define ALARM_LIST_ITEM_VIEW_MODEL_H
 
@@ -20,6 +21,9 @@ class AlarmItemViewModel : public QObject {
     Q_PROPERTY(bool state READ getState WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(bool repeated READ isRepeated WRITE setRepeated NOTIFY repeatedChanged)
     Q_PROPERTY(uint32_t dueTime READ getDueTime WRITE setDueTime NOTIFY dueTimeChanged)
+    Q_PROPERTY(uint32_t snoozeTime READ snoozeTime WRITE setSnoozeTime NOTIFY snoozeTimeChanged)
+    Q_PROPERTY(uint8_t maxSnoozeCount READ getMaxSnoozeCount WRITE setMaxSnoozeCount NOTIFY maxSnoozeCountChanged)
+    Q_PROPERTY(uint8_t snoozeCount READ getSnoozeCount WRITE setSnoozeCount NOTIFY snoozeCountChanged)
 
 public:
 
@@ -94,6 +98,48 @@ public:
     void setRepeated(bool repeated);
 
     /**
+     * Gets the snooze time in minutes.
+     * @return The snooze time in minutes.
+     */
+    uint32_t snoozeTime() const {
+        return m_snoozeTime;
+    }
+
+    /**
+     * Sets the snooze time in minutes.
+     * @param snoozeTime The new snooze time to set.
+     */
+    void setSnoozeTime(uint32_t snoozeTime);
+
+    /**
+     * Gets the maximum number of snoozes allowed.
+     * @return The maximum snooze count.
+     */
+    uint8_t getMaxSnoozeCount() const {
+        return m_maxSnoozeCount;
+    }
+
+    /**
+     * Sets the maximum number of snoozes allowed.
+     * @param maxSnoozeCount The new maximum snooze count to set.
+     */
+    void setMaxSnoozeCount(uint8_t maxSnoozeCount);
+
+    /**
+     * Gets the current snooze count.
+     * @return The current snooze count.
+     */
+    uint8_t getSnoozeCount() const {
+        return m_snoozeCount;
+    }
+
+    /**
+     * Sets the current snooze count.
+     * @param snoozeCount The new snooze count to set.
+     */
+    void setSnoozeCount(uint8_t snoozeCount);
+
+    /**
      * Updates this view model from another instance.
      * @param other The source view model to copy data from.
      */
@@ -104,6 +150,9 @@ signals:
     void dueTimeChanged();
     void stateChanged();
     void repeatedChanged();
+    void snoozeTimeChanged();
+    void maxSnoozeCountChanged();
+    void snoozeCountChanged();
 
 private:
 
@@ -112,6 +161,9 @@ private:
     bool m_state;
     bool m_repeated;
     QString m_displayName;
+    uint32_t m_snoozeTime;
+    uint8_t m_maxSnoozeCount;
+    uint8_t m_snoozeCount;
 };
 
 #endif

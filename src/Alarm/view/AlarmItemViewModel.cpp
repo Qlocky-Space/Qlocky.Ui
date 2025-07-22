@@ -4,7 +4,11 @@ AlarmItemViewModel::AlarmItemViewModel(uint32_t const id) :
     m_id {id},
     m_dueTime {},
     m_state {},
-    m_displayName {} {
+    m_repeated {},
+    m_displayName {},
+    m_snoozeTime {},
+    m_maxSnoozeCount {},
+    m_snoozeCount {} {
 }
 
 void AlarmItemViewModel::setDisplayName(QString const& displayName) {
@@ -35,6 +39,27 @@ void AlarmItemViewModel::setRepeated(bool repeated) {
     }
 }
 
+void AlarmItemViewModel::setSnoozeTime(uint32_t snoozeTime) {
+    if (m_snoozeTime != snoozeTime) {
+        m_snoozeTime = snoozeTime;
+        emit snoozeTimeChanged();
+    }
+}
+
+void AlarmItemViewModel::setMaxSnoozeCount(uint8_t maxSnoozeCount) {
+    if (m_maxSnoozeCount != maxSnoozeCount) {
+        m_maxSnoozeCount = maxSnoozeCount;
+        emit maxSnoozeCountChanged();
+    }
+}
+
+void AlarmItemViewModel::setSnoozeCount(uint8_t snoozeCount) {
+    if (m_snoozeCount != snoozeCount) {
+        m_snoozeCount = snoozeCount;
+        emit snoozeCountChanged();
+    }
+}
+
 void AlarmItemViewModel::updateFrom(AlarmItemViewModel const& other) {
     m_id = other.getAlarmId();
 
@@ -42,6 +67,9 @@ void AlarmItemViewModel::updateFrom(AlarmItemViewModel const& other) {
     setState(other.getState());
     setDueTime(other.getDueTime());
     setRepeated(other.isRepeated());
+    setSnoozeTime(other.snoozeTime());
+    setMaxSnoozeCount(other.getMaxSnoozeCount());
+    setSnoozeCount(other.getSnoozeCount());
 
     // @note: When adding new attributes to AlarmItemViewModel, add the mapping here.
 }

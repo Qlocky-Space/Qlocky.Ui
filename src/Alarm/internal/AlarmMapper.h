@@ -27,6 +27,9 @@ public:
         viewModel->setState(entity.isActive);
         viewModel->setDueTime(entity.dueTimeUtc);
         viewModel->setRepeated(entity.repeated);
+        viewModel->setSnoozeTime(entity.snoozeTime);
+        viewModel->setMaxSnoozeCount(entity.maxSnoozeCount);
+        viewModel->setSnoozeCount(entity.snoozeCount);
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.
@@ -46,6 +49,9 @@ public:
             viewModel.getState(),
             viewModel.getDueTime(),
             viewModel.isRepeated(),
+            viewModel.snoozeTime(),
+            viewModel.getMaxSnoozeCount(),
+            viewModel.getSnoozeCount(),
         };
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,

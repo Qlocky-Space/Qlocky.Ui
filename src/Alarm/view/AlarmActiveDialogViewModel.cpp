@@ -24,7 +24,7 @@ void AlarmActiveDialogViewModel::loadAlarm(uint32_t const alarmId) {
 }
 
 void AlarmActiveDialogViewModel::snooze() {
-    // TODO
+    m_alarmRepository.snooze(m_item.getAlarmId());
 }
 
 void AlarmActiveDialogViewModel::dismiss() {

@@ -67,7 +67,10 @@ bool AlarmService::shouldActivateAlarm(AlarmEntity const& alarm, DateTime const 
     // TODO check also recurrent dates, e.g. every day at 8:00
     // For now, we only check if the hours and minutes match
 
-    if (alarm.dueTimeUtc == currentTimeUtc) {
+    uint32_t const alarmSnoozeOffset {alarm.snoozeCount * alarm.snoozeTime * 60U};
+    uint32_t const alarmDueTime {alarm.dueTimeUtc + alarmSnoozeOffset};
+
+    if (alarmDueTime == currentTimeUtc) {
         return true;
     }
 

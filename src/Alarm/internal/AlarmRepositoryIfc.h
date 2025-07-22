@@ -42,6 +42,12 @@ public:
     virtual void setAlarmState(AlarmId const id, bool isActive) = 0;
 
     /**
+     * Snoozes an alarm.
+     * @param alarmId The unique identifier of the alarm to snooze.
+     */
+    virtual void snooze(AlarmId const alarmId) = 0;
+
+    /**
      * Retrieves all alarms.
      * @return Vector of all alarms.
      */

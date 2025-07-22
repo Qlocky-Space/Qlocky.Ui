@@ -84,11 +84,38 @@ void AlarmRepository::setAlarmState(AlarmId const id, bool isActive) {
 
     // update the state
     it->isActive = isActive;
+    it->snoozeCount = 0;
 
     ResultVoid const result {updateObject(*it)};
     if (result.isError()) {
         // TODO log error
-        std::cerr << "Failed to update alarm: " << result.error() << std::endl;
+        std::cerr << "Failed to change alarm state: " << result.error() << std::endl;
+        return;
+    }
+
+    m_mediator.notify(AlarmUpdatedEvent {*it});
+}
+
+void AlarmRepository::snooze(AlarmId const alarmId) {
+    auto it {std::find_if(m_alarms.begin(), m_alarms.end(),
+        [alarmId](AlarmEntity const& a) { return a.id == alarmId; })};
+
+    if (it == m_alarms.end()) {
+        return;
+    }
+
+    it->snoozeCount++;
+
+    // If snooze count exceeds max, reset to repeated state and reset snooze count
+    if (it->snoozeCount > it->maxSnoozeCount) {
+        it->isActive = it->repeated;
+        it->snoozeCount = 0;
+    }
+
+    ResultVoid const result {updateObject(*it)};
+    if (result.isError()) {
+        // TODO log error
+        std::cerr << "Failed to snooze alarm: " << result.error() << std::endl;
         return;
     }
 

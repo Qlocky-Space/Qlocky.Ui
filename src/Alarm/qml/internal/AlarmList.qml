@@ -25,6 +25,7 @@ Item {
             displayName: alarm.displayName
             isEnabled: alarm.state
             time: TimeConverter.asTime(alarm.dueTime)
+            isSnoozing: alarm.snoozeCount > 0
 
             width: listView.width
 
