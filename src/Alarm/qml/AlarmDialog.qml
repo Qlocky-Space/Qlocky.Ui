@@ -28,7 +28,7 @@ QDialog {
         close();
     }
 
-    ColumnLayout {
+    Column {
         id: content
         anchors.fill: parent
         spacing: 15
@@ -38,8 +38,10 @@ QDialog {
             time: TimeConverter.utcToRelativeTime(alarm.dueTime)
             width: root.implicitWidth
 
-            Layout.topMargin: 10
-            Layout.bottomMargin: 10
+            anchors.topMargin: 50
+            anchors.bottomMargin: 10
+            anchors.right: parent.right
+            anchors.left: parent.left
 
             onClicked: function(time) {
                 alarm.dueTime = TimeConverter.relativeTimeToUtc(time)
@@ -48,7 +50,9 @@ QDialog {
 
         AlarmDialogProperty {
             id: activeStatus
-            Layout.fillWidth: true
+
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             status: alarm.state
             text: "Active"
@@ -65,7 +69,8 @@ QDialog {
 
         AlarmDialogProperty {
             id: snoozeStatus
-            Layout.fillWidth: true
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             status: false
             text: "Snooze"
@@ -78,7 +83,8 @@ QDialog {
 
         AlarmDialogProperty {
             id: musicStatus
-            Layout.fillWidth: true
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             status: false
             text: "Music"
@@ -91,7 +97,8 @@ QDialog {
 
         AlarmDialogProperty {
             id: lightStatus
-            Layout.fillWidth: true
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             status: false
             text: "Light"

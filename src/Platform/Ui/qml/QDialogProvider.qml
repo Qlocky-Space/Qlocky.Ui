@@ -100,15 +100,19 @@ Item {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
         // Min height/width
-        height: Math.max(contentItem.implicitHeight + 40, 500)
-        width: Math.max(contentItem.implicitWidth + 40, 700)
+        height: Math.max(contentItem.implicitHeight, 500)
+        width: Math.max(contentItem.implicitWidth, 700)
 
         background: Rectangle {
+            anchors.fill: parent
+
             color: ThemeManager.theme.backgroundSecondary
             radius: 30
         }
 
         contentItem: Loader {
+            anchors.fill: parent
+
             id: contentLoader
         }
 

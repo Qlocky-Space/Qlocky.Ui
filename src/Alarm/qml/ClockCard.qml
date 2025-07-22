@@ -52,5 +52,15 @@ Widget {
                 });
             }
         }
+
+        QButton {
+            text: "Alarm"
+
+            onClicked: {
+                CommandExecutor.dispatch("nav-to", {
+                    "uri": "qlocky://alarmActiveDialog"
+                });
+            }
+        }
     }
 }
