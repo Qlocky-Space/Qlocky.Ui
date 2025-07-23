@@ -72,12 +72,12 @@ bool AlarmService::shouldActivateAlarm(AlarmEntity const& alarm, DateTime const 
 
     // Convert the current timestamp to relative UTC time. Start of day is 00:00 UTC.
     // This is the number of seconds since the start of the day in UTC.
-    uint32_t const currentTimeUtc {time.time().msecsSinceStartOfDay() / 1000U};
+    uint32_t const currentTimeS {time.time().msecsSinceStartOfDay() / 1000U};
 
     uint32_t const alarmSnoozeOffset {alarm.snoozeCount * alarm.snoozeTime * 60U};
-    uint32_t const alarmDueTime {(alarm.dueTimeUtc + alarmSnoozeOffset) % (24 * 3600)}; // Wrap around to handle next day
+    uint32_t const alarmDueTimeS {(alarm.dueTimeUtc + alarmSnoozeOffset) % (24 * 3600)}; // Wrap around to handle next day
 
-    if (alarmDueTime == currentTimeUtc) {
+    if (alarmDueTimeS == currentTimeS) {
         return true;
     }
 

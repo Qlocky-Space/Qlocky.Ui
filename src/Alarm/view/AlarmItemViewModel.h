@@ -3,10 +3,11 @@
 #define ALARM_LIST_ITEM_VIEW_MODEL_H
 
 #include <api/Mediator.h>
-#include <DayOfWeekViewModel.h>
 #include <QDateTime>
 #include <QObject>
 #include <QString>
+
+#include "DayOfWeekViewModel.h"
 
 /**
  * ViewModel representing a single alarm item.

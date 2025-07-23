@@ -21,13 +21,13 @@ Item {
         Repeater {
 
             model: [
-                { label: qsTr("Mon"), value: DayOfWeek.Monday },
-                { label: qsTr("Tue"), value: DayOfWeek.Tuesday },
-                { label: qsTr("Wed"), value: DayOfWeek.Wednesday },
-                { label: qsTr("Thu"), value: DayOfWeek.Thursday },
-                { label: qsTr("Fri"), value: DayOfWeek.Friday },
-                { label: qsTr("Sat"), value: DayOfWeek.Saturday },
-                { label: qsTr("Sun"), value: DayOfWeek.Sunday }
+                { label: qsTr("Mon"), value: DayOfWeekViewModel.Monday },
+                { label: qsTr("Tue"), value: DayOfWeekViewModel.Tuesday },
+                { label: qsTr("Wed"), value: DayOfWeekViewModel.Wednesday },
+                { label: qsTr("Thu"), value: DayOfWeekViewModel.Thursday },
+                { label: qsTr("Fri"), value: DayOfWeekViewModel.Friday },
+                { label: qsTr("Sat"), value: DayOfWeekViewModel.Saturday },
+                { label: qsTr("Sun"), value: DayOfWeekViewModel.Sunday }
             ]
 
             delegate: RowLayout {

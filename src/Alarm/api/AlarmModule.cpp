@@ -39,8 +39,8 @@ void AlarmModule::registerQmlTypes() {
     qmlRegisterType<AlarmItemViewModel>("Alarm", 1, 0, "AlarmItemViewModel");
     qmlRegisterType<AlarmListModel>("Alarm", 1, 0, "AlarmListModel");
 
-    qmlRegisterUncreatableType<DayOfWeekViewModel>("Alarm", 1, 0, "DayOfWeek", "DayOfWeekViewModel is uncreatable"
-                                                                               " because it is an enum class. Use DayOfWeekViewModel::Days instead.");
+    qmlRegisterUncreatableType<DayOfWeekViewModel>("Alarm", 1, 0, "DayOfWeekViewModel", "DayOfWeekViewModel is uncreatable"
+                                                                                        " because it is an enum class. Use DayOfWeekViewModel::Days instead.");
 }
 
 void AlarmModule::onInitialize() {
