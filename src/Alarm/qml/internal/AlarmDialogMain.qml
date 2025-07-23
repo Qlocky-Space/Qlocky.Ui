@@ -58,7 +58,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            status: alarm.daysOfWeek !== DayOfWeek.None
+            status: alarm.daysOfWeek !== DayOfWeekViewModel.None
             text: "Repeat"
             image: "\uf363"
 
