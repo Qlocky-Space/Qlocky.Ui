@@ -25,6 +25,15 @@ Item {
             }
         }
 
+        QButton {
+            text: "Theme"
+            image: "\uf1b9"
+
+            onClicked: {
+                ThemeManager.toggleTheme()
+            }
+        }
+
         Text {
             text: "Settings"
             font.pixelSize: 24

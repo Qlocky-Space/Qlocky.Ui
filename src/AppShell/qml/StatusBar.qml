@@ -98,11 +98,16 @@ Item {
             anchors.margins: 20
 
             // TODO extract into sepearte component and may replace it with a Drawer?
-            Text {
-                text: "Not Implemented yet"
-                color: ThemeManager.theme.labelPrimary
-                font.pointSize: 16
+            QButton {
+                image: "\uf1b9"
+                text: "To Settings"
                 Layout.alignment: Qt.AlignHCenter
+
+                onClicked: {
+                    CommandExecutor.dispatch("nav-to", {
+                        "uri": "qlocky://settings"
+                    });
+                }
             }
         }
 
@@ -113,6 +118,16 @@ Item {
             drag.axis: Drag.YAxis
             drag.minimumY: -overlay.height
             drag.maximumY: 0
+
+            acceptedButtons: Qt.AllButtons
+            propagateComposedEvents: true
+
+            onClicked: function(mouse) {
+                mouse.accepted = false; // Pass click through to items below
+            }
+            onPressed: function(mouse) {
+                mouse.accepted = false;
+            }
 
             onReleased: {
                 if (overlay.y < -overlay.height / 3) {

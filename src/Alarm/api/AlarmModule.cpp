@@ -10,7 +10,6 @@
 #include "internal/AlarmPreferencesRepository.h"
 #include "internal/AlarmRepository.h"
 #include "internal/AlarmService.h"
-#include "internal/PingCommand.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
 #include "view/AlarmActiveDialogViewModel.h"
@@ -23,7 +22,6 @@
 #include "view/TimeConverter.h"
 
 void AlarmModule::registerExports(Injector& container) {
-    container.install(boost::di::bind<PingCommand>());
     container.install(boost::di::bind<AlarmServiceIfc>().to<AlarmService>());
     container.install(boost::di::bind<AlarmRepositoryIfc>().to<AlarmRepository>());
     container.install(boost::di::bind<AlarmPreferencesRepositoryIfc>().to<AlarmPreferencesRepository>());
