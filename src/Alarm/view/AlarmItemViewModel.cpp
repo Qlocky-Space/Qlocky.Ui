@@ -4,7 +4,6 @@ AlarmItemViewModel::AlarmItemViewModel(uint32_t const id) :
     m_id {id},
     m_dueTime {},
     m_state {},
-    m_repeated {},
     m_displayName {},
     m_snoozeTime {},
     m_maxSnoozeCount {},
@@ -30,13 +29,6 @@ void AlarmItemViewModel::setDueTime(uint32_t const dueTime) {
     if (m_dueTime != dueTime) {
         m_dueTime = dueTime;
         emit dueTimeChanged();
-    }
-}
-
-void AlarmItemViewModel::setRepeated(bool repeated) {
-    if (m_repeated != repeated) {
-        m_repeated = repeated;
-        emit repeatedChanged();
     }
 }
 
@@ -74,7 +66,6 @@ void AlarmItemViewModel::updateFrom(AlarmItemViewModel const& other) {
     setDisplayName(other.getDisplayName());
     setState(other.getState());
     setDueTime(other.getDueTime());
-    setRepeated(other.isRepeated());
     setSnoozeTime(other.snoozeTime());
     setMaxSnoozeCount(other.getMaxSnoozeCount());
     setSnoozeCount(other.getSnoozeCount());

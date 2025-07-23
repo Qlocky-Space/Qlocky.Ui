@@ -53,6 +53,8 @@ set(MODULE_QML_SRC
     qml/internal/AlarmList.qml
     qml/internal/AlarmListItem.qml
     qml/internal/AlarmSwipeButton.qml
+    qml/internal/AlarmDialogRepeated.qml
+    qml/internal/AlarmDialogMain.qml
     qml/internal/AlarmDialogProperty.qml
     qml/AlarmListCard.qml
 )

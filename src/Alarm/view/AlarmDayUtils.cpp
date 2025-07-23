@@ -45,7 +45,7 @@ QString AlarmDayUtils::getDaysDisplay(DayOfWeekViewModel::Days const flags) {
     }
 
     if (parts.isEmpty()) {
-        return QCoreApplication::translate("AlarmDayUtils", "No days selected");
+        return QCoreApplication::translate("AlarmDayUtils", "Only ring once");
     }
 
     return parts.join(", ");

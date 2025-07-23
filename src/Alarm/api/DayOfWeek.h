@@ -18,4 +18,14 @@ enum class DayOfWeek : uint8_t {
     Sunday = 1 << 6
 };
 
+/**
+ * Checks if a specific day is set in the given days of the week.
+ * @param days The days of the week to check.
+ * @param day The specific day to check.
+ * @return True if the specific day is set in the days of the week, false otherwise
+ */
+inline bool isDayOfWeekSet(DayOfWeek days, DayOfWeek day) {
+    return static_cast<uint8_t>(days) & static_cast<uint8_t>(day);
+}
+
 #endif

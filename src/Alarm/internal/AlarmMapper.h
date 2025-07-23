@@ -26,7 +26,6 @@ public:
         viewModel->setDisplayName(QString::fromStdString(entity.name));
         viewModel->setState(entity.isActive);
         viewModel->setDueTime(entity.dueTimeUtc);
-        viewModel->setRepeated(entity.repeated);
         viewModel->setDaysOfWeek(DayOfWeekViewModel::Days::fromInt(static_cast<int>(entity.daysOfWeek)));
         viewModel->setSnoozeTime(entity.snoozeTime);
         viewModel->setMaxSnoozeCount(entity.maxSnoozeCount);
@@ -49,7 +48,6 @@ public:
             viewModel.getDisplayName().toStdString(),
             viewModel.getState(),
             viewModel.getDueTime(),
-            viewModel.isRepeated(),
             static_cast<DayOfWeek>(viewModel.getDaysOfWeek().toInt()),
             viewModel.snoozeTime(),
             viewModel.getMaxSnoozeCount(),

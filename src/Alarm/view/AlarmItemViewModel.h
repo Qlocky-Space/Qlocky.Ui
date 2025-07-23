@@ -20,7 +20,6 @@ class AlarmItemViewModel : public QObject {
     Q_PROPERTY(uint32_t alarmId READ getAlarmId CONSTANT)
     Q_PROPERTY(QString displayName READ getDisplayName WRITE setDisplayName NOTIFY displayNameChanged)
     Q_PROPERTY(bool state READ getState WRITE setState NOTIFY stateChanged)
-    Q_PROPERTY(bool repeated READ isRepeated WRITE setRepeated NOTIFY repeatedChanged)
     Q_PROPERTY(uint32_t dueTime READ getDueTime WRITE setDueTime NOTIFY dueTimeChanged)
     Q_PROPERTY(uint32_t snoozeTime READ snoozeTime WRITE setSnoozeTime NOTIFY snoozeTimeChanged)
     Q_PROPERTY(uint8_t maxSnoozeCount READ getMaxSnoozeCount WRITE setMaxSnoozeCount NOTIFY maxSnoozeCountChanged)
@@ -90,14 +89,8 @@ public:
      * @return True if the alarm is repeated, false otherwise.
      */
     bool isRepeated() const {
-        return m_repeated;
+        return m_daysOfWeek != DayOfWeekViewModel::Day::None;
     }
-
-    /**
-     * Sets whether the alarm should repeat.
-     * @param repeated True to enable repetition, false to disable.
-     */
-    void setRepeated(bool repeated);
 
     /**
      * Gets the snooze time in minutes.
@@ -165,7 +158,6 @@ signals:
     void displayNameChanged();
     void dueTimeChanged();
     void stateChanged();
-    void repeatedChanged();
     void snoozeTimeChanged();
     void maxSnoozeCountChanged();
     void snoozeCountChanged();
@@ -176,7 +168,6 @@ private:
     uint32_t m_id;
     uint32_t m_dueTime;
     bool m_state;
-    bool m_repeated;
     QString m_displayName;
     uint32_t m_snoozeTime;
     uint8_t m_maxSnoozeCount;

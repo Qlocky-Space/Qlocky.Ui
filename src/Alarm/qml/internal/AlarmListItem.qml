@@ -32,7 +32,7 @@ SwipeDelegate {
                 }
 
                 QLabel {
-                    text: root.dayOfWeek
+                    text: displayName + ", " + root.dayOfWeek
                     font.pixelSize: 32
                 }
             }

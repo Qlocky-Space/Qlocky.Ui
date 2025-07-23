@@ -108,7 +108,7 @@ void AlarmRepository::snooze(AlarmId const alarmId) {
 
     // If snooze count exceeds max, reset to repeated state and reset snooze count
     if (it->snoozeCount > it->maxSnoozeCount) {
-        it->isActive = it->repeated;
+        it->isActive = it->daysOfWeek != DayOfWeek::None;
         it->snoozeCount = 0;
     }
 
