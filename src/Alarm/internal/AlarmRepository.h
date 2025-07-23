@@ -38,6 +38,11 @@ public:
     void setAlarmState(AlarmId const id, bool isActive) final;
 
     /**
+     * @see AlarmRepositoryIfc::snooze
+     */
+    void snooze(AlarmId const alarmId) final;
+
+    /**
      * @see AlarmRepositoryIfc::alarms
      */
     std::vector<AlarmEntity> alarms() final {

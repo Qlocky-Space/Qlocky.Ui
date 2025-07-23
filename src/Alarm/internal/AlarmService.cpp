@@ -60,14 +60,24 @@ bool AlarmService::shouldActivateAlarm(AlarmEntity const& alarm, DateTime const 
         return false;
     }
 
+    QDateTime const time {QDateTime::fromSecsSinceEpoch(currentTimestamp, QTimeZone::UTC)};
+
+    // Check if the current day of the week matches the alarm's days of the week
+    DayOfWeek const day {static_cast<DayOfWeek>(1 << (time.date().dayOfWeek() - 1))};
+    if (alarm.daysOfWeek != DayOfWeek::None) {
+        if (!isDayOfWeekSet(alarm.daysOfWeek, day)) {
+            return false;
+        }
+    }
+
     // Convert the current timestamp to relative UTC time. Start of day is 00:00 UTC.
     // This is the number of seconds since the start of the day in UTC.
-    uint32_t const currentTimeUtc {QDateTime::fromSecsSinceEpoch(currentTimestamp, QTimeZone::utc()).time().msecsSinceStartOfDay() / 1000U};
+    uint32_t const currentTimeS {time.time().msecsSinceStartOfDay() / 1000U};
 
-    // TODO check also recurrent dates, e.g. every day at 8:00
-    // For now, we only check if the hours and minutes match
+    uint32_t const alarmSnoozeOffset {alarm.snoozeCount * alarm.snoozeTime * 60U};
+    uint32_t const alarmDueTimeS {(alarm.dueTimeUtc + alarmSnoozeOffset) % (24 * 3600)}; // Wrap around to handle next day
 
-    if (alarm.dueTimeUtc == currentTimeUtc) {
+    if (alarmDueTimeS == currentTimeS) {
         return true;
     }
 

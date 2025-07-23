@@ -26,6 +26,10 @@ public:
         viewModel->setDisplayName(QString::fromStdString(entity.name));
         viewModel->setState(entity.isActive);
         viewModel->setDueTime(entity.dueTimeUtc);
+        viewModel->setDaysOfWeek(DayOfWeekViewModel::Days::fromInt(static_cast<int>(entity.daysOfWeek)));
+        viewModel->setSnoozeTime(entity.snoozeTime);
+        viewModel->setMaxSnoozeCount(entity.maxSnoozeCount);
+        viewModel->setSnoozeCount(entity.snoozeCount);
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.
@@ -43,7 +47,12 @@ public:
             viewModel.getAlarmId(),
             viewModel.getDisplayName().toStdString(),
             viewModel.getState(),
-            viewModel.getDueTime()};
+            viewModel.getDueTime(),
+            static_cast<DayOfWeek>(viewModel.getDaysOfWeek().toInt()),
+            viewModel.snoozeTime(),
+            viewModel.getMaxSnoozeCount(),
+            viewModel.getSnoozeCount(),
+        };
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.

@@ -6,6 +6,8 @@
 #include <optional>
 #include <string>
 
+#include "DayOfWeek.h"
+
 /**
  * Represents unique identifier for an alarm.
  */
@@ -17,13 +19,18 @@ using AlarmId = uint32_t;
  * This struct encapsulates the properties of an alarm.
  */
 struct AlarmEntity {
-    AlarmId id;          // Unique identifier for the alarm
-    std::string name;    // Name of the alarm
-    bool isActive;       // Indicates if the alarm is currently active
-    uint32_t dueTimeUtc; // Due time since 00:00 in UTC (seconds since start of day)
+    AlarmId id;           // Unique identifier for the alarm
+    std::string name;     // Name of the alarm
+    bool isActive;        // Indicates if the alarm is currently active
+    uint32_t dueTimeUtc;  // Due time since 00:00 in UTC (seconds since start of day)
+    DayOfWeek daysOfWeek; // Days of the week when the alarm is active
 
-    // TODO add other attributes: Snooze time, volume, light, sound, recurrent date, etc
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(AlarmEntity, id, name, isActive, dueTimeUtc)
+    uint32_t snoozeTime;    // Snooze time in minutes
+    uint8_t maxSnoozeCount; // Maximum number of snoozes allowed
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(AlarmEntity, id, name, isActive, dueTimeUtc, daysOfWeek, maxSnoozeCount, snoozeTime)
+
+    uint8_t snoozeCount; // Current snooze count. Only temporary, not stored in the database.
 };
 
 #endif

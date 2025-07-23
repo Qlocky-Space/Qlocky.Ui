@@ -24,6 +24,8 @@ void AlarmDialogViewModel::loadAlarm(uint32_t const alarmId) {
     pItem->setDisplayName("Alarm");
     pItem->setState(true);
     pItem->setDueTime(defaultDueTime());
+    pItem->setSnoozeTime(5);
+    pItem->setMaxSnoozeCount(3);
 
     for (auto const& alarm : m_alarmRepository.alarms()) {
         if (alarm.id == alarmId) {

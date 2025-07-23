@@ -13,7 +13,6 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/events/AlarmRemovedEvent.h
     ${CMAKE_CURRENT_LIST_DIR}/api/events/AlarmActivatedEvent.h
 
-    ${CMAKE_CURRENT_LIST_DIR}/internal/PingCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmService.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmService.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmMapper.h
@@ -40,6 +39,10 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmActiveDialogViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDayUtils.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDayUtils.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/DayOfWeekViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/DayOfWeekViewModel.h
 )
 
 set(MODULE_QML_SRC
@@ -49,6 +52,8 @@ set(MODULE_QML_SRC
     qml/internal/AlarmList.qml
     qml/internal/AlarmListItem.qml
     qml/internal/AlarmSwipeButton.qml
+    qml/internal/AlarmDialogRepeated.qml
+    qml/internal/AlarmDialogMain.qml
     qml/internal/AlarmDialogProperty.qml
     qml/AlarmListCard.qml
 )

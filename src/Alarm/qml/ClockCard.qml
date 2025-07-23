@@ -31,36 +31,4 @@ Widget {
             color: ThemeManager.theme.labelPrimary
         }
     }
-
-    RowLayout {
-        QButton {
-            text: "Theme"
-            image: "\uf1b9"
-
-            onClicked: {
-                ThemeManager.toggleTheme()
-            }
-        }
-
-        QButton {
-            image: "\uf1b9"
-            text: "To Settings"
-
-            onClicked: {
-                CommandExecutor.dispatch("nav-to", {
-                    "uri": "qlocky://settings"
-                });
-            }
-        }
-
-        QButton {
-            text: "Alarm"
-
-            onClicked: {
-                CommandExecutor.dispatch("nav-to", {
-                    "uri": "qlocky://alarmActiveDialog"
-                });
-            }
-        }
-    }
 }

@@ -12,6 +12,8 @@ SwipeDelegate {
     property string displayName: "Label"
     property bool isEnabled: false
     property string time: "00:00"
+    property bool isSnoozing: false
+    property string dayOfWeek: ""
 
     signal activationToggled(bool isEnabled)
 
@@ -30,13 +32,13 @@ SwipeDelegate {
                 }
 
                 QLabel {
-                    text: root.displayName
+                    text: displayName + ", " + root.dayOfWeek
                     font.pixelSize: 32
                 }
             }
 
             QLabel {
-                text: ""
+                text: root.isSnoozing ? qsTr("Snoozing") : ""
                 Layout.fillWidth: true
             }
 

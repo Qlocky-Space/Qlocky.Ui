@@ -13,7 +13,7 @@ QDialog {
     property string alarmId
 
     implicitWidth: 800
-    implicitHeight: content.implicitHeight + 180
+    implicitHeight: contentLoader.implicitHeight + 180
 
     onOpened: {
         viewModel.loadAlarm(alarmId);
@@ -28,85 +28,39 @@ QDialog {
         close();
     }
 
-    Column {
-        id: content
+    Connections {
+        target: contentLoader.item
+
+        function onDone() {
+            contentLoader.sourceComponent = mainComponent;
+        }
+    }
+
+    Component {
+        id: repeatedComponent
+        AlarmDialogRepeated {
+            alarm: root.alarm
+        }
+    }
+
+    Component {
+        id: mainComponent
+
+        AlarmDialogMain {
+            anchors.fill: parent
+            alarm: root.alarm
+
+            onShowComponent: function(component) {
+                contentLoader.sourceComponent = component;
+            }
+        }
+    }
+
+    Loader {
+        id: contentLoader
         anchors.fill: parent
-        spacing: 15
 
-        QTimePicker {
-            id: timePicker
-            time: TimeConverter.utcToRelativeTime(alarm.dueTime)
-            width: root.implicitWidth
-
-            anchors.topMargin: 50
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.left: parent.left
-
-            onClicked: function(time) {
-                alarm.dueTime = TimeConverter.relativeTimeToUtc(time)
-            }
-        }
-
-        AlarmDialogProperty {
-            id: activeStatus
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            status: alarm.state
-            text: "Active"
-            image: "\uf00c"
-
-            trailing: QToggleButton {
-                checked: alarm.state
-
-                onToggled: function (state) {
-                    alarm.state = state;
-                }
-            }
-        }
-
-        AlarmDialogProperty {
-            id: snoozeStatus
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            status: false
-            text: "Snooze"
-            image: "\u003f"
-
-            trailing: QLabel {
-                text: "Not supported yet"
-            }
-        }
-
-        AlarmDialogProperty {
-            id: musicStatus
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            status: false
-            text: "Music"
-            image: "\uf001"
-
-            trailing: QLabel {
-                text: "Not supported yet"
-            }
-        }
-
-        AlarmDialogProperty {
-            id: lightStatus
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            status: false
-            text: "Light"
-            image: "\uf0eb"
-
-            trailing: QLabel {
-                text: "Not supported yet"
-            }
-        }
+        sourceComponent: mainComponent
+        active: true
     }
 }

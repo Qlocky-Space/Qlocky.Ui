@@ -52,6 +52,7 @@ QDialog {
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
+            spacing: 48
 
             QConfirmationSlider {
                 id: dismissButton
