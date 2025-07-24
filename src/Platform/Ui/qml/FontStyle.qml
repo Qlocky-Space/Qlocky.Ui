@@ -13,4 +13,5 @@ QtObject {
 
     readonly property font body:  Qt.font({ family: sfProFont.name, pointSize: 42 })
     readonly property font caption: Qt.font({ family: sfProFont.name, pointSize: 32 })
+    readonly property font subCaption: Qt.font({ family: sfProFont.name, pointSize: 28 })
 }

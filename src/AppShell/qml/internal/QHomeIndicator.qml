@@ -8,8 +8,10 @@ Item {
     height: 12
     width: 460
 
-    Rectangle {
+    QRoundedRectangle {
         anchors.fill: parent
+        cornerSide: QRoundedRectangle.Direction.All
+        radius: 6
         color: ThemeManager.theme.white
     }
 }

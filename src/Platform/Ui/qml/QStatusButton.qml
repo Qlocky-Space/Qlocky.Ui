@@ -14,23 +14,10 @@ T.Button {
     property color borderColor: "transparent"
 
     property string image: ""
+    property string imageInactive: image
 
     property bool status: false
-    property real radius:20
-
-    function getBackgroundColor() {
-        if (!control.status) {
-            return control.backgroundColorDisabled;
-        }
-        return control.backgroundColor;
-    }
-
-    function getFontColor() {
-        if (!control.status) {
-            return control.fontColorDisabled;
-        }
-        return control.fontColor;
-    }
+    property real radius: 20
 
     font: FontStyle.caption
     padding: 10
@@ -53,8 +40,8 @@ T.Button {
                 id: iconText
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
-                icon: control.image
-                color: control.getFontColor()
+                icon: control.status ? control.image : control.imageInactive
+                color: control.status ? control.fontColor : control.fontColorDisabled
                 size: Math.max(32, parent.height * 0.4)
                 visible: control.image !== "" && control.image !== null
             }
@@ -68,7 +55,7 @@ T.Button {
         implicitHeight: control.implicitHeight
         implicitWidth: control.implicitWidth
 
-        color: control.getBackgroundColor()
+        color: control.status ? control.backgroundColor : control.backgroundColorDisabled
         radius: control.radius
 
         border.color: control.borderColor

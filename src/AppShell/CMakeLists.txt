@@ -21,8 +21,12 @@ set(MODULE_SRC
 )
 
 set(MODULE_QML_SRC
+    qml/internal/QStatusBarAction.qml
+    qml/internal/QStatusBarIcon.qml
+    qml/internal/QStatusBarGroup.qml
     qml/internal/QNetworkIcon.qml
-    qml/internal/HomeIndicator.qml
+    qml/internal/QHomeIndicator.qml
+    qml/internal/IconUtil.qml
     qml/Main.qml
     qml/AppWindow.qml
     qml/MainPage.qml
@@ -31,6 +35,8 @@ set(MODULE_QML_SRC
     qml/StatusBarOverlay.qml
     qml/StatusBarContent.qml
 )
+
+set_source_files_properties(qml/internal/IconUtil.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
 set(MODULE_QML_RESOURCES
     resources/wallpaper-light.jpg
