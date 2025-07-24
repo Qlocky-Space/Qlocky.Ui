@@ -16,7 +16,6 @@ AppWindow {
 
     QDialogProvider {
         id: dialogProvider
-        backgroundSourceItem: pageProvider
     }
 
     QInteractiveProvider {
