@@ -2,9 +2,9 @@
 
 #include "MainPageViewModel.h"
 
-MainPageViewModel::MainPageViewModel(Mediator& mediator, WidgetListModel& widgetModel) :
+MainPageViewModel::MainPageViewModel(Mediator& mediator) :
     QObject {nullptr},
-    m_widgets {widgetModel} {
+    m_widgets {} {
     mediator.subscribe<WidgetLoadedEvent>(this, &MainPageViewModel::onWidgetLoaded);
 }
 

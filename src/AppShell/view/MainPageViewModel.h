@@ -22,12 +22,12 @@ class MainPageViewModel : public QObject {
 
 public:
 
-    explicit MainPageViewModel(Mediator& mediator, WidgetListModel& widgetModel);
+    explicit MainPageViewModel(Mediator& mediator);
 
     /**
      * Returns the widget list model.
      */
-    WidgetListModel* getWidgets() const {
+    WidgetListModel* getWidgets() {
         return &m_widgets;
     }
 
@@ -35,7 +35,7 @@ private:
 
     void onWidgetLoaded(WidgetLoadedEvent const& e);
 
-    WidgetListModel& m_widgets;
+    WidgetListModel m_widgets;
 };
 
 #endif
