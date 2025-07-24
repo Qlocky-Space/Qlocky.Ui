@@ -6,6 +6,8 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/view/MainWindowViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/MainWindowViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/StatusBarViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/StatusBarViewModel.h
 
     ${CMAKE_CURRENT_LIST_DIR}/view/MainPageViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/MainPageViewModel.h
@@ -19,16 +21,18 @@ set(MODULE_SRC
 )
 
 set(MODULE_QML_SRC
+    qml/internal/QNetworkIcon.qml
+    qml/internal/HomeIndicator.qml
     qml/Main.qml
     qml/AppWindow.qml
     qml/MainPage.qml
     qml/SettingPage.qml
     qml/StatusBar.qml
+    qml/StatusBarOverlay.qml
+    qml/StatusBarContent.qml
 )
 
 set(MODULE_QML_RESOURCES
-    resources/settings.png
-    resources/signal.png
     resources/wallpaper-light.jpg
     resources/wallpaper-dark.png
 )
