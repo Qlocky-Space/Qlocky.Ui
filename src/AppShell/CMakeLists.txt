@@ -6,6 +6,8 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/view/MainWindowViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/MainWindowViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/StatusBarViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/StatusBarViewModel.h
 
     ${CMAKE_CURRENT_LIST_DIR}/view/MainPageViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/MainPageViewModel.h
@@ -19,6 +21,15 @@ set(MODULE_SRC
 )
 
 set(MODULE_QML_SRC
+    qml/internal/QStatusBarAction.qml
+    qml/internal/QStatusBarIcon.qml
+    qml/internal/QStatusBarGroup.qml
+    qml/internal/QStatusBarSlider.qml
+    qml/internal/QStatusBarSliderWithButton.qml
+    qml/internal/QStatusBarOverlay.qml
+    qml/internal/QStatusBarContent.qml
+    qml/internal/QHomeIndicator.qml
+    qml/internal/IconUtil.qml
     qml/Main.qml
     qml/AppWindow.qml
     qml/MainPage.qml
@@ -26,9 +37,9 @@ set(MODULE_QML_SRC
     qml/StatusBar.qml
 )
 
+set_source_files_properties(qml/internal/IconUtil.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 set(MODULE_QML_RESOURCES
-    resources/settings.png
-    resources/signal.png
     resources/wallpaper-light.jpg
     resources/wallpaper-dark.png
 )

@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 
-import AppShell 1.0
 import Ui
 
 AppWindow {
@@ -16,7 +15,6 @@ AppWindow {
 
     QDialogProvider {
         id: dialogProvider
-        backgroundSourceItem: pageProvider
     }
 
     QInteractiveProvider {

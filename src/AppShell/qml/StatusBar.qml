@@ -1,140 +1,125 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 
 import Ui
 
 Item {
     id: titlebar
-    width: parent.width
+
+    anchors.fill: parent
+
+    property var viewModel: StatusBarViewModel
 
     property color fontColor: ThemeManager.theme.labelPrimary
-    property bool background: false
 
-    Rectangle {
-        id: statusBar
-        anchors.fill: parent
-        color: titlebar.background ? titlebar.backgroundSecondary : "transparent"
+    // Status bar content
+    QStatusBarContent {
+        id: statusBarContent
+        viewModel: titlebar.viewModel
 
-        Item {
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+    }
 
-            Image {
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 30
+    // Custom swipe gesture where pointer must be draged at least 200pixel
+    // to open the overlay
+    MouseArea {
+        id: swipeArea
+        anchors.fill: statusBarContent
+        drag.target: statusBarContent
+        drag.axis: Drag.YAxis
+        drag.threshold: 20
 
-                // TODO replace with Font Awesome
-                source: "/AppShell/resources/signal.png"
-                height: 30
-                width: 35
-            }
+        property real startY: 0
+        property real distanceY: 0
+        property real maxDistance: 200
+        property real threshold: 0.97
+
+        onPressed: function(mouse) {
+            startY = mouse.y;
         }
 
-        Item {
-            anchors.centerIn: parent
+        onPositionChanged: {
+            var raw = (swipeArea.mouseY - startY) / maxDistance;
+            distanceY = Math.max(0, Math.min(threshold, raw));
 
-            Text {
-                anchors.centerIn: parent
-
-                color: titlebar.fontColor
-
-                text: qsTr("Title")
-                font.pointSize: 20
-            }
+            overlayBackground.opacity = distanceY
         }
 
-        Item {
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-
-            Image {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.rightMargin: 30
-
-                // TODO replace with Font Awesome
-                source: "/AppShell/resources/settings.png"
-                height: 35
-                width: 35
+        onReleased:  function(mouse) {
+            if (distanceY < threshold) {
+                overlay.close()
+                overlayBackground.opacity = 0
             }
-        }
-
-        MouseArea {
-            id: swipeArea
-            anchors.fill: parent
-            drag.target: overlay
-            drag.axis: Drag.YAxis
-            drag.minimumY: -overlay.height
-            drag.maximumY: 0
-
-            onReleased: {
-                if (overlay.y > -(overlay.height - titlebar.height)) {
-                    overlay.y = 0;
-                } else {
-                    overlay.y = -overlay.height;
-                }
+            else {
+                overlay.open()
             }
         }
     }
 
-    Rectangle {
+    // The overlay background
+    Item {
+        id: overlayBackground
+        opacity: 0
+        anchors.fill: parent
+
+        Image {
+            anchors.fill: parent
+            source:  ThemeManager.currentTheme == ThemeManager.ThemeMode.Light ? "/AppShell/resources/wallpaper-light.jpg" : "/AppShell/resources/wallpaper-dark.png"
+            fillMode: Image.PreserveAspectCrop
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: ThemeManager.theme.black
+            opacity: Math.max(0, overlayBackground.opacity - 0.8)
+        }
+
+        QHomeIndicator {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+        }
+
+        QStatusBarContent {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            viewModel: titlebar.viewModel
+        }
+
+        Behavior on opacity {
+            NumberAnimation { duration: 400; easing.type: Easing.OutQuad }
+        }
+    }
+
+    // The overlay content
+    Popup {
         id: overlay
-        width: parent.width
-        height: 1080
-        color: "#303030"
-        y: -height
+        x: parent.width / 2 - width / 2
+        y: 100
+        focus: true
+        modal: true
+        dim: false
 
-        Behavior on y {
-            NumberAnimation {
-                duration: 200
-            }
+        // Min height/width
+        height: Math.max(contentItem.implicitHeight, 500)
+        width: Math.max(contentItem.implicitWidth, 700)
+
+        background: null
+
+        contentItem: QStatusBarOverlay {
+            anchors.fill: parent
+            viewModel: titlebar.viewModel
         }
 
-        ColumnLayout {
-            anchors.fill: parent
-            spacing: 10
-            anchors.margins: 20
-
-            // TODO extract into sepearte component and may replace it with a Drawer?
-            QButton {
-                image: "\uf1b9"
-                text: "To Settings"
-                Layout.alignment: Qt.AlignHCenter
-
-                onClicked: {
-                    CommandExecutor.dispatch("nav-to", {
-                        "uri": "qlocky://settings"
-                    });
-                }
-            }
-        }
-
-        MouseArea {
-            id: overlaySwipeArea
-            anchors.fill: parent
-            drag.target: overlay
-            drag.axis: Drag.YAxis
-            drag.minimumY: -overlay.height
-            drag.maximumY: 0
-
-            acceptedButtons: Qt.AllButtons
-            propagateComposedEvents: true
-
-            onClicked: function(mouse) {
-                mouse.accepted = false; // Pass click through to items below
-            }
-            onPressed: function(mouse) {
-                mouse.accepted = false;
-            }
-
-            onReleased: {
-                if (overlay.y < -overlay.height / 3) {
-                    overlay.y = -overlay.height;
-                } else {
-                    overlay.y = 0;
-                }
+        onVisibleChanged: {
+            if (!visible) {
+                overlayBackground.opacity = 0
             }
         }
     }

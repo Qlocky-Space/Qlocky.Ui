@@ -18,16 +18,16 @@
  */
 class MainPageViewModel : public QObject {
     Q_OBJECT
-    Q_PROPERTY(WidgetListModel* widgets READ getWidgets CONSTANT)
+    Q_PROPERTY(WidgetListModel const* widgets READ getWidgets CONSTANT)
 
 public:
 
-    explicit MainPageViewModel(Mediator& mediator, WidgetListModel& widgetModel);
+    explicit MainPageViewModel(Mediator& mediator);
 
     /**
      * Returns the widget list model.
      */
-    WidgetListModel* getWidgets() const {
+    WidgetListModel const* getWidgets() const {
         return &m_widgets;
     }
 
@@ -35,7 +35,7 @@ private:
 
     void onWidgetLoaded(WidgetLoadedEvent const& e);
 
-    WidgetListModel& m_widgets;
+    WidgetListModel m_widgets;
 };
 
 #endif

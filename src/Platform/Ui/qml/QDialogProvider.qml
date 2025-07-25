@@ -9,7 +9,6 @@ Item {
 
     anchors.fill: parent
 
-    property Item backgroundSourceItem
 
     function open() {
         blurEffect.opacity = 0.8
