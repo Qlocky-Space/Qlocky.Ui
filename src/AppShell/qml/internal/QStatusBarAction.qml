@@ -7,7 +7,7 @@ Item {
     id: root
 
     property real size: 80
-    property string icon
+    property string image
 
     signal clicked()
 
@@ -19,7 +19,7 @@ Item {
         id: button
         anchors.centerIn: parent
 
-        image: root.icon
+        image: root.image
         onClicked: root.clicked()
         buttonStyle: QButton.ButtonStyle.Plain
         imageSize: size - 32

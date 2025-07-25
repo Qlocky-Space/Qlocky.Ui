@@ -24,7 +24,8 @@ set(MODULE_QML_SRC
     qml/internal/QStatusBarAction.qml
     qml/internal/QStatusBarIcon.qml
     qml/internal/QStatusBarGroup.qml
-    qml/internal/QNetworkIcon.qml
+    qml/internal/QStatusBarSlider.qml
+    qml/internal/QStatusBarSliderWithButton.qml
     qml/internal/QHomeIndicator.qml
     qml/internal/IconUtil.qml
     qml/Main.qml

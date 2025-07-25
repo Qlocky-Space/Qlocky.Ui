@@ -6,8 +6,8 @@ import Ui
 RowLayout {
     id: root
 
-    property string icon
-    property string iconInactive: icon
+    property string image
+    property string imageInactive: image
 
     property string title
     property string description
@@ -24,8 +24,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
 
         status: root.isActive
-        image: root.icon
-        imageInactive: root.iconInactive
+        image: root.image
+        imageInactive: root.imageInactive
 
         onClicked: {
             root.clicked(!root.isActive)

@@ -78,6 +78,12 @@ Item {
             opacity: overlayBackground.opacity - 0.8
         }
 
+        QHomeIndicator {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+        }
+
         StatusBarContent {
             anchors.top: parent.top
             anchors.left: parent.left
@@ -94,7 +100,8 @@ Item {
     // The overlay content
     Popup {
         id: overlay
-        anchors.centerIn: parent
+        x: parent.width / 2 - width / 2
+        y: 100
         focus: true
         modal: true
         dim: false

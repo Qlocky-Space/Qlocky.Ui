@@ -17,11 +17,11 @@ RowLayout {
         spacing: 30
         Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
-        QNetworkIcon {
+        QIcon {
             id: networkIcon
 
             visible: !viewModel.isAirplaneModeEnabled
-            strength: viewModel.networkStrength
+            icon: IconUtil.toNetworkStrength(viewModel.networkStrength)
         }
 
         QIcon {

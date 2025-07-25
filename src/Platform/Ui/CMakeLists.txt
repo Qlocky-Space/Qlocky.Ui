@@ -50,7 +50,7 @@ set(MODULE_QML_SRC
 set(MODULE_QML_RESOURCES
     resources/SF-Pro-Display-Regular.otf
     resources/Font-Awesome-6-Solid-900.otf
-    resources/fa-solid-900.ttf
+    resources/custom-fa-solid-900.ttf
 )
 
 set(MODULE_SHADERS

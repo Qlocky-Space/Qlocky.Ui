@@ -1,10 +1,27 @@
 #ifndef QLOCKY_STATUS_BAR_VIEWMODEL_H
 #define QLOCKY_STATUS_BAR_VIEWMODEL_H
 
+#include <QFloat16>
 #include <QObject>
 #include <QString>
 
 #include "api/Mediator.h"
+
+/**
+ * VolumeType is an enumeration representing the different types of volume settings.
+ */
+class VolumeType : public QObject {
+    Q_OBJECT
+
+public:
+
+    enum class Level {
+        Mute,
+        Vibration,
+        Acoustic
+    };
+    Q_ENUM(Level)
+};
 
 /**
  * StatusBarViewModel is responsible for managing the status bar view model.
@@ -16,6 +33,9 @@ class StatusBarViewModel : public QObject {
     Q_PROPERTY(bool isAirplaneModeEnabled READ isAirplaneModeEnabled WRITE setAirplaneMode NOTIFY airplaneModeChanged)
     Q_PROPERTY(bool lightMode READ isLightModeEnabled WRITE setLightMode NOTIFY lightModeChanged)
     Q_PROPERTY(QString title READ getTitle NOTIFY titleChanged)
+    Q_PROPERTY(float brightness READ getBrightness WRITE setBrightness NOTIFY brightnessChanged)
+    Q_PROPERTY(float volume READ getVolume WRITE setVolume NOTIFY volumeChanged)
+    Q_PROPERTY(VolumeType::Level volumeType READ getVolumeType WRITE setVolumeType NOTIFY volumeTypeChanged)
 
 public:
 
@@ -67,11 +87,53 @@ public:
      */
     void setLightMode(bool enabled);
 
+    /**
+     * Returns the current brightness level.
+     */
+    float getBrightness() const {
+        return m_brightness;
+    }
+
+    /**
+     * Returns the current volume level.
+     */
+    float getVolume() const {
+        return m_volume;
+    }
+
+    /**
+     * Sets the brightness level.
+     * @param value The brightness level to set.
+     */
+    void setBrightness(float value);
+
+    /**
+     * Sets the volume level.
+     * @param value The volume level to set.
+     */
+    void setVolume(float value);
+
+    /**
+     * Returns the current volume type.
+     */
+    VolumeType::Level getVolumeType() const {
+        return m_volumeType;
+    }
+
+    /**
+     * Sets the volume type.
+     * @param type The volume type to set.
+     */
+    void setVolumeType(VolumeType::Level type);
+
 signals:
     void titleChanged();
     void networkStrengthChanged();
     void airplaneModeChanged();
     void lightModeChanged();
+    void brightnessChanged();
+    void volumeChanged();
+    void volumeTypeChanged();
 
 private:
 
@@ -79,6 +141,9 @@ private:
     int32_t m_networkStrength; // -1 to 100, -1 means no network
     bool m_airplaneMode;
     bool m_lightMode;
+    float m_brightness;
+    float m_volume;
+    VolumeType::Level m_volumeType;
 };
 
 #endif

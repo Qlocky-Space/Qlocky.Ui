@@ -7,29 +7,31 @@ import Ui
 Item {
     property var viewModel: StatusBarViewModel
 
-    implicitHeight: 950
-    implicitWidth: 1100
-
     ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 60
+        spacing: 20
+
+        anchors.top: parent.top
+
+        implicitHeight: 850
+        implicitWidth: 1000
 
         Row {
             spacing: 48
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
+            Layout.bottomMargin: 30
 
             QStatusBarAction {
-                icon: "\uf023"
-                onClicked: ThemeManager.toggleTheme()
+                image: "\uf023"
+                onClicked: console.log("Lock clicked")
             }
 
             QStatusBarAction {
-                icon: "\uf011"
+                image: "\uf011"
                 onClicked: console.log("Shutdown clicked")
             }
 
             QStatusBarAction {
-                icon: "\uf013"
+                image: "\uf013"
                 onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://settings" })
             }
         }
@@ -40,8 +42,8 @@ Item {
 
                 QStatusBarIcon {
                     isActive: viewModel.networkStrength > 0
-                    icon: IconUtil.toIcon(viewModel.networkStrength)
-                    iconInactive: "\uf6ac"
+                    image: IconUtil.toNetworkStrength(viewModel.networkStrength)
+                    imageInactive: "\uf6ac"
                     onClicked: function(state) {
                         viewModel.setNetworkState(state)
                     }
@@ -52,7 +54,7 @@ Item {
 
             QStatusBarGroup {
                 QStatusBarIcon {
-                    icon: "\uf072"
+                    image: "\uf072"
                     isActive: viewModel.isAirplaneModeEnabled
                     onClicked: function(state) {
                         viewModel.isAirplaneModeEnabled = state
@@ -60,7 +62,7 @@ Item {
                 }
 
                 QStatusBarIcon {
-                    icon: "\uf0eb"
+                    image: "\uf0eb"
                     isActive: viewModel.lightMode
                     onClicked: function(state) {
                         viewModel.lightMode = state
@@ -70,30 +72,48 @@ Item {
         }
 
         QStatusBarGroup {
-            QStatusBarIcon {
-                icon: "\uf0e8"
-                onClicked: console.log("Battery clicked")
-                title: "Battery"
-                description: "Battery status"
+            rowMode: false
+            Layout.fillWidth: true
+            spacing: 32
+
+            QStatusBarSliderWithButton {
+                sliderImage:  IconUtil.toVolume(viewModel.volume)
+                image: IconUtil.toVolumeType(viewModel.volumeType, viewModel.volume)
+                status: IconUtil.toVolumeTypeStatus(viewModel.volumeType)
+                value: viewModel.volume
+
+                onClicked: {
+                    switch (viewModel.volumeType) {
+                        case VolumeType.Mute:
+                            viewModel.volumeType = VolumeType.Vibration;
+                            break;
+                        case VolumeType.Vibration:
+                            viewModel.volumeType = VolumeType.Acoustic;
+                            break;
+                        case VolumeType.Acoustic:
+                            viewModel.volumeType = VolumeType.Mute;
+                            break;
+                    }
+                }
+                onValueUpdated: function(value) {
+                    viewModel.volume = value;
+                }
             }
 
-            QStatusBarIcon {
-                icon: "\uf2b9"
-                onClicked: console.log("Bluetooth clicked")
-                title: "Bluetooth"
-            }
-
-            QStatusBarIcon {
-                icon: "\uf1eb"
-                onClicked: console.log("Wi-Fi clicked")
-                title: "Wi-Fi"
+            QStatusBarSliderWithButton {
+                id: brightnessSlider
+                sliderImage: "\ue0c9"
+                image: "\ue0c9"
+                imageInactive: "\uf186"
+                status: ThemeManager.isLightMode()
+                value: viewModel.brightness
+                onClicked: {
+                    ThemeManager.toggleTheme()
+                }
+                onValueUpdated: function(value) {
+                    viewModel.brightness = value;
+                }
             }
         }
-    }
-
-    QHomeIndicator {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: -30 // must be negative to be outside, so status overlay popup is closed
     }
 }

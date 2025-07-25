@@ -5,7 +5,8 @@ StatusBarViewModel::StatusBarViewModel(Mediator& mediator) :
     m_networkStrength {-1},
     m_title {"Qlocky"},
     m_airplaneMode {false},
-    m_lightMode {false} {
+    m_lightMode {false},
+    m_volumeType {VolumeType::Level::Mute} {
     // TODO register events for NetworkStatus, AirplaneMode, LightMode
 }
 
@@ -39,5 +40,28 @@ void StatusBarViewModel::setLightMode(bool enabled) {
     if (m_lightMode != enabled) {
         m_lightMode = enabled;
         emit lightModeChanged();
+    }
+}
+
+void StatusBarViewModel::setBrightness(float value) {
+    setVolume(value); // Assuming brightness and volume are linked
+
+    if (m_brightness != value) {
+        m_brightness = value;
+        emit brightnessChanged();
+    }
+}
+
+void StatusBarViewModel::setVolume(float value) {
+    if (m_volume != value) {
+        m_volume = value;
+        emit volumeChanged();
+    }
+}
+
+void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
+    if (m_volumeType != type) {
+        m_volumeType = type;
+        emit volumeTypeChanged();
     }
 }

@@ -21,4 +21,12 @@ QtObject {
             currentTheme = mode
         }
     }
+
+    function isLightMode() {
+        return currentTheme === ThemeManager.ThemeMode.Light
+    }
+
+    function isDarkMode() {
+        return currentTheme === ThemeManager.ThemeMode.Dark
+    }
 }

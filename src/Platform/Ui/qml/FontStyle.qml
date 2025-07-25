@@ -4,7 +4,7 @@ import QtQuick
 
 QtObject {
     readonly property FontLoader sfProFont: FontLoader { source: "/Ui/resources/SF-Pro-Display-Regular.otf" }
-    readonly property FontLoader fontAwesomeFont: FontLoader { source: "/Ui/resources/fa-solid-900.ttf" }
+    readonly property FontLoader fontAwesomeFont: FontLoader { source: "/Ui/resources/custom-fa-solid-900.ttf" }
 
     readonly property font fontAwesome: Qt.font({ family: fontAwesomeFont.name, pointSize: 42 })
 
