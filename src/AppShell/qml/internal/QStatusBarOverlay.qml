@@ -41,14 +41,17 @@ Item {
                 Layout.fillWidth: true
 
                 QStatusBarIcon {
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                    Layout.fillWidth: true
+
                     isActive: viewModel.networkStrength > 0
                     image: IconUtil.toNetworkStrength(viewModel.networkStrength)
                     imageInactive: "\uf6ac"
                     onClicked: function(state) {
                         viewModel.setNetworkState(state)
                     }
-                    title: "Network long"
-                    description: "Network status"
+                    title: qsTr("WLAN")
+                    description: viewModel.ssid
                 }
             }
 

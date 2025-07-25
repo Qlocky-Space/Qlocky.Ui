@@ -17,8 +17,17 @@ void StatusBarViewModel::setNetworkState(bool enabled) {
 
     // TODO forward to service
 
-    m_networkStrength = enabled ? 100 : -1; // Simulate network strength
+    m_networkStrength = enabled ? 100 : -1;  // Simulate network strength
+    setSsid(enabled ? "QlockyNetwork" : ""); // Simulate SSID
+
     emit networkStrengthChanged();
+}
+
+void StatusBarViewModel::setSsid(QString const& ssid) {
+    if (m_ssid != ssid) {
+        m_ssid = ssid;
+        emit ssidChanged();
+    }
 }
 
 void StatusBarViewModel::setAirplaneMode(bool enabled) {
