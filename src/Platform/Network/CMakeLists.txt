@@ -12,6 +12,7 @@ set(MODULE_SRC
 
 set(MODULE_LINK
     qlocky::Os
+    qlocky::Persistence
 )
 
 setup_module()

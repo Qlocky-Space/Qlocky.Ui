@@ -3,7 +3,10 @@
 
 #include <Mediator.h>
 
-#include "api/NetworkServiceIfc.h"
+#include "KeyValueDatabaseIfc.h"
+#include "NetworkServiceIfc.h"
+#include "PersistenceKey.h"
+#include "PersistenceServiceIfc.h"
 
 /**
  * Network service implementation.
@@ -13,9 +16,18 @@
 class NetworkService final : public NetworkServiceIfc {
 public:
 
-    NetworkService(Mediator& mediator);
+    /**
+     * Constructor for NetworkService.
+     * @param mediator The mediator instance used for event notification.
+     */
+    NetworkService(Mediator& mediator, PersistenceServiceIfc& persistenceService);
 
     ~NetworkService() final = default;
+
+    /**
+     * @see NetworkServiceIfc::initialize
+     */
+    void initialize() final;
 
     /**
      * @see NetworkServiceIfc::enable
@@ -34,9 +46,18 @@ public:
 
 private:
 
+    inline static PersistenceKey const AirplaneModeKey {"AirplaneMode"};
+    inline static PersistenceKey const NetworkEnabledKey {"NetworkEnabled"};
+
+    KeyValueDatabaseIfc& getDatabase() {
+        return m_persistency.getContext("NetworkService");
+    }
+
     void updateNetworkStatus();
+    void setServiceEnable(bool const enable);
 
     Mediator& m_mediator;
+    PersistenceServiceIfc& m_persistency;
     bool m_serviceEnabled;
     bool m_airplaneMode;
 };

@@ -11,6 +11,12 @@ public:
     virtual ~NetworkServiceIfc() = default;
 
     /**
+     * Initializes the network service.
+     * This method should be called to set up any necessary resources or configurations
+     */
+    virtual void initialize() = 0;
+
+    /**
      * Enables the network service.
      */
     virtual void enable() = 0;

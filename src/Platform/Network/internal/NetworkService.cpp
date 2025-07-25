@@ -2,10 +2,18 @@
 
 #include "events/NetworkStatusEvent.h"
 
-NetworkService::NetworkService(Mediator& mediator) :
+NetworkService::NetworkService(Mediator& mediator, PersistenceServiceIfc& persistenceService) :
     m_mediator {mediator},
+    m_persistency {persistenceService},
     m_airplaneMode {false},
     m_serviceEnabled {false} {
+}
+
+void NetworkService::initialize() {
+    m_airplaneMode = getDatabase().getBool(AirplaneModeKey).valueOr(false);
+    m_serviceEnabled = getDatabase().getBool(NetworkEnabledKey).valueOr(false);
+
+    updateNetworkStatus();
 }
 
 void NetworkService::enable() {
@@ -19,9 +27,7 @@ void NetworkService::enable() {
         return;
     }
 
-    m_serviceEnabled = true;
-
-    updateNetworkStatus();
+    setServiceEnable(true);
 }
 
 void NetworkService::disable() {
@@ -30,9 +36,7 @@ void NetworkService::disable() {
         return;
     }
 
-    m_serviceEnabled = false;
-
-    updateNetworkStatus();
+    setServiceEnable(false);
 }
 
 void NetworkService::setAirplaneMode(bool enabled) {
@@ -44,6 +48,7 @@ void NetworkService::setAirplaneMode(bool enabled) {
         disable();
     }
 
+    getDatabase().setBool(AirplaneModeKey, m_airplaneMode);
     updateNetworkStatus();
 }
 
@@ -56,4 +61,16 @@ void NetworkService::updateNetworkStatus() {
 
     NetworkStatusEvent event {ssid, m_airplaneMode, networkStrength};
     m_mediator.notify(event);
+}
+
+void NetworkService::setServiceEnable(bool const enable) {
+    if (enable == m_serviceEnabled) {
+        // No change in service state
+        return;
+    }
+
+    m_serviceEnabled = enable;
+
+    getDatabase().setBool(NetworkEnabledKey, m_serviceEnabled);
+    updateNetworkStatus();
 }
