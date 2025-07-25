@@ -47,5 +47,6 @@ set(MODULE_QML_RESOURCES
 set(MODULE_LINK
     qlocky::Ui
     qlocky::Widget
+    qlocky::Network
 )
 setup_module()

@@ -1,29 +1,34 @@
 #include "StatusBarViewModel.h"
 
-StatusBarViewModel::StatusBarViewModel(Mediator& mediator) :
+StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService) :
     QObject {nullptr},
+    m_networkService {networkService},
     m_title {"Qlocky"},
     m_ssid {""},
     m_networkStrength {-1},
     m_airplaneMode {false},
     m_lightMode {false},
-    m_brightness {0.5f},
-    m_volume {0.5f},
+    m_brightness {100.F},
+    m_volume {100.F},
     m_volumeType {VolumeType::Level::Mute} {
-    // TODO register events for NetworkStatus, AirplaneMode, LightMode
+
+    mediator.subscribe<NetworkStatusEvent>(this, &StatusBarViewModel::updateNetworkStatus);
+    // TODO register events for LightMode, AudioVolume, Brightness, etc.
 }
 
 void StatusBarViewModel::setNetworkState(bool enabled) {
+    // just for user convenience, this will toggle the network state to on,
+    // if airplane mode is enabled, it will disable it first
     if (enabled && m_airplaneMode) {
         setAirplaneMode(false);
     }
 
-    // TODO forward to service
-
-    m_networkStrength = enabled ? 100 : -1;  // Simulate network strength
-    setSsid(enabled ? "QlockyNetwork" : ""); // Simulate SSID
-
-    emit networkStrengthChanged();
+    if (enabled) {
+        m_networkService.enable();
+    }
+    else {
+        m_networkService.disable();
+    }
 }
 
 void StatusBarViewModel::setSsid(QString const& ssid) {
@@ -34,16 +39,7 @@ void StatusBarViewModel::setSsid(QString const& ssid) {
 }
 
 void StatusBarViewModel::setAirplaneMode(bool enabled) {
-    if (enabled) {
-        setNetworkState(false);
-    }
-
-    // TODO forward to service
-
-    if (m_airplaneMode != enabled) {
-        m_airplaneMode = enabled;
-        emit airplaneModeChanged();
-    }
+    m_networkService.setAirplaneMode(enabled);
 }
 
 void StatusBarViewModel::setLightMode(bool enabled) {
@@ -79,5 +75,19 @@ void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
     if (m_volumeType != type) {
         m_volumeType = type;
         emit volumeTypeChanged();
+    }
+}
+
+void StatusBarViewModel::updateNetworkStatus(NetworkStatusEvent const& event) {
+    setSsid(QString::fromStdString(event.ssid()));
+
+    if (m_networkStrength != event.networkStrength()) {
+        m_networkStrength = event.networkStrength();
+        emit networkStrengthChanged();
+    }
+
+    if (m_airplaneMode != event.airplaneMode()) {
+        m_airplaneMode = event.airplaneMode();
+        emit airplaneModeChanged();
     }
 }

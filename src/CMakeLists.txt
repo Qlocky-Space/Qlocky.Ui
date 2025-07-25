@@ -2,6 +2,7 @@
 set(QLOCKY_MODULES_PLATFORM
     Global
     Os
+    Network
     Persistence
     Languages
     Ui

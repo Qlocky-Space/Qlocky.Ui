@@ -6,6 +6,8 @@
 #include <QString>
 
 #include "api/Mediator.h"
+#include "events/NetworkStatusEvent.h"
+#include "NetworkServiceIfc.h"
 
 /**
  * VolumeType is an enumeration representing the different types of volume settings.
@@ -40,7 +42,7 @@ class StatusBarViewModel : public QObject {
 
 public:
 
-    explicit StatusBarViewModel(Mediator& mediator);
+    explicit StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService);
 
     /**
      * Returns the current network strength.
@@ -152,6 +154,10 @@ signals:
     void ssidChanged();
 
 private:
+
+    void updateNetworkStatus(NetworkStatusEvent const& event);
+
+    NetworkServiceIfc& m_networkService;
 
     QString m_title;
     QString m_ssid;
