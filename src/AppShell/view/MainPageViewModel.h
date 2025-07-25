@@ -18,7 +18,7 @@
  */
 class MainPageViewModel : public QObject {
     Q_OBJECT
-    Q_PROPERTY(WidgetListModel* widgets READ getWidgets CONSTANT)
+    Q_PROPERTY(WidgetListModel const* widgets READ getWidgets CONSTANT)
 
 public:
 
@@ -27,7 +27,7 @@ public:
     /**
      * Returns the widget list model.
      */
-    WidgetListModel* getWidgets() {
+    WidgetListModel const* getWidgets() const {
         return &m_widgets;
     }
 

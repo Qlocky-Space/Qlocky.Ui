@@ -2,10 +2,13 @@
 
 StatusBarViewModel::StatusBarViewModel(Mediator& mediator) :
     QObject {nullptr},
-    m_networkStrength {-1},
     m_title {"Qlocky"},
+    m_ssid {""},
+    m_networkStrength {-1},
     m_airplaneMode {false},
     m_lightMode {false},
+    m_brightness {0.5f},
+    m_volume {0.5f},
     m_volumeType {VolumeType::Level::Mute} {
     // TODO register events for NetworkStatus, AirplaneMode, LightMode
 }

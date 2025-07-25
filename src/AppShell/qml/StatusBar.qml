@@ -75,7 +75,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             color: ThemeManager.theme.black
-            opacity: overlayBackground.opacity - 0.8
+            opacity: Math.max(0, overlayBackground.opacity - 0.8)
         }
 
         QHomeIndicator {
