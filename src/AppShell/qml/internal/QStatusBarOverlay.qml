@@ -42,7 +42,6 @@ Item {
 
                 QStatusBarIcon {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                    Layout.fillWidth: true
 
                     isActive: viewModel.networkStrength > 0
                     image: IconUtil.toNetworkStrength(viewModel.networkStrength)

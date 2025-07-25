@@ -9,11 +9,11 @@ Item {
     default property alias content: contentRow.data
 
     property bool rowMode: true
-    property real spacing: 16
+    property real spacing: 20
 
     // Set implicit size based on children
-    implicitWidth: contentRow.implicitWidth + 40
-    implicitHeight: contentRow.implicitHeight + 40
+    implicitWidth: contentRow.implicitWidth + spacing * 2
+    implicitHeight: contentRow.implicitHeight + spacing * 2
 
     QRoundedRectangle {
         anchors.fill: parent
@@ -24,7 +24,9 @@ Item {
 
     GridLayout {
         id: contentRow
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: root.spacing
         anchors.verticalCenter: parent.verticalCenter
         flow: rowMode ? GridLayout.LeftToRight : GridLayout.TopToBottom
         columnSpacing: root.spacing
