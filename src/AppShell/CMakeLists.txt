@@ -26,6 +26,8 @@ set(MODULE_QML_SRC
     qml/internal/QStatusBarGroup.qml
     qml/internal/QStatusBarSlider.qml
     qml/internal/QStatusBarSliderWithButton.qml
+    qml/internal/QStatusBarOverlay.qml
+    qml/internal/QStatusBarContent.qml
     qml/internal/QHomeIndicator.qml
     qml/internal/IconUtil.qml
     qml/Main.qml
@@ -33,8 +35,6 @@ set(MODULE_QML_SRC
     qml/MainPage.qml
     qml/SettingPage.qml
     qml/StatusBar.qml
-    qml/StatusBarOverlay.qml
-    qml/StatusBarContent.qml
 )
 
 set_source_files_properties(qml/internal/IconUtil.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)

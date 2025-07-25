@@ -13,7 +13,7 @@ Item {
         anchors.top: parent.top
 
         implicitHeight: 850
-        implicitWidth: 1000
+        implicitWidth: 1100
 
         Row {
             spacing: 48

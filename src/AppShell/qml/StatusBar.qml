@@ -15,7 +15,7 @@ Item {
     property color fontColor: ThemeManager.theme.labelPrimary
 
     // Status bar content
-    StatusBarContent {
+    QStatusBarContent {
         id: statusBarContent
         viewModel: titlebar.viewModel
 
@@ -84,7 +84,7 @@ Item {
             anchors.bottomMargin: 30
         }
 
-        StatusBarContent {
+        QStatusBarContent {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
@@ -112,7 +112,7 @@ Item {
 
         background: null
 
-        contentItem: StatusBarOverlay {
+        contentItem: QStatusBarOverlay {
             anchors.fill: parent
             viewModel: titlebar.viewModel
         }

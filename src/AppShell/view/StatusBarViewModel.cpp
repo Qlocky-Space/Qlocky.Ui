@@ -44,7 +44,7 @@ void StatusBarViewModel::setLightMode(bool enabled) {
 }
 
 void StatusBarViewModel::setBrightness(float value) {
-    setVolume(value); // Assuming brightness and volume are linked
+    // TODO forward to service
 
     if (m_brightness != value) {
         m_brightness = value;
@@ -53,6 +53,8 @@ void StatusBarViewModel::setBrightness(float value) {
 }
 
 void StatusBarViewModel::setVolume(float value) {
+    // TODO forward to service
+
     if (m_volume != value) {
         m_volume = value;
         emit volumeChanged();
@@ -60,6 +62,8 @@ void StatusBarViewModel::setVolume(float value) {
 }
 
 void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
+    // TODO forward to service
+
     if (m_volumeType != type) {
         m_volumeType = type;
         emit volumeTypeChanged();

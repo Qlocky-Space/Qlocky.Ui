@@ -30,6 +30,11 @@ RowLayout {
             visible: viewModel.isAirplaneModeEnabled
             icon: "\uf072"
         }
+
+        QIcon {
+            id: volumeIcon
+            icon: IconUtil.toVolumeType(viewModel.volumeType, viewModel.volume)
+        }
     }
 
     Item {
