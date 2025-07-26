@@ -18,11 +18,8 @@ class Result {
 public:
 
     // Implicit constructor from T
-    Result(T const& value) :
-        Result {Ok {value}} {
-    }
-    Result(T&& value) :
-        Result {Ok {std::forward<T>(value)}} {
+    Result(T value) :
+        Result {Ok {std::move(value)}} {
     }
 
     /**
@@ -30,17 +27,8 @@ public:
      * @param value Success value.
      * @return Result containing the value.
      */
-    static Result success(T&& value) {
-        return Result {Ok {std::forward<T>(value)}};
-    }
-
-    /**
-     * Create a success result.
-     * @param value Success value.
-     * @return Result containing the value.
-     */
-    static Result success(T const& value) {
-        return Result {Ok {value}};
+    static Result success(T value) {
+        return Result {Ok {std::move(value)}};
     }
 
     /**
@@ -82,7 +70,7 @@ public:
      * @return Success value.
      * @throws std::logic_error if not success.
      */
-    T const& value() const {
+    T value() const {
         if (!isSuccess()) {
             throw std::logic_error {"Tried to access value on an error result."};
         }
@@ -94,7 +82,7 @@ public:
      * @param defaultValue Default value to return if error.
      * @return Success value or default value.
      */
-    T const& valueOr(T const& defaultValue) const {
+    T valueOr(T defaultValue) const {
         if (!isSuccess()) {
             return defaultValue;
         }

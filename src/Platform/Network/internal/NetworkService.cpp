@@ -1,19 +1,25 @@
 #include "NetworkService.h"
 
+#include <iostream>
+#include <unistd.h>
+
 #include "events/NetworkStatusEvent.h"
 
-NetworkService::NetworkService(Mediator& mediator, PersistenceServiceIfc& persistenceService) :
+NetworkService::NetworkService(Mediator& mediator, PersistenceServiceIfc& persistenceService,
+    NetworkDriverIfc& networkDriver) :
     m_mediator {mediator},
     m_persistency {persistenceService},
+    m_networkDriver {networkDriver},
     m_airplaneMode {false},
     m_serviceEnabled {false} {
 }
 
 void NetworkService::initialize() {
-    m_airplaneMode = getDatabase().getBool(AirplaneModeKey).valueOr(false);
-    m_serviceEnabled = getDatabase().getBool(NetworkEnabledKey).valueOr(false);
+    bool const airplaneMode {getDatabase().getBool(AirplaneModeKey).valueOr(false)};
+    bool const serviceEnabled {getDatabase().getBool(NetworkEnabledKey).valueOr(false)};
 
-    updateNetworkStatus();
+    setAirplaneMode(airplaneMode);
+    setServiceEnable(serviceEnabled);
 }
 
 void NetworkService::enable() {
@@ -70,6 +76,13 @@ void NetworkService::setServiceEnable(bool const enable) {
     }
 
     m_serviceEnabled = enable;
+
+    auto const result {enable ? m_networkDriver.up("wlan0") : m_networkDriver.down()};
+    if (result.isError()) {
+        // TODO log error
+        m_serviceEnabled = false;
+        std::cerr << "Failed to change network service state: " << result.error() << std::endl;
+    }
 
     getDatabase().setBool(NetworkEnabledKey, m_serviceEnabled);
     updateNetworkStatus();

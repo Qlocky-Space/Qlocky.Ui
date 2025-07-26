@@ -4,6 +4,7 @@
 #include <Mediator.h>
 
 #include "KeyValueDatabaseIfc.h"
+#include "NetworkDriverIfc.h"
 #include "NetworkServiceIfc.h"
 #include "PersistenceKey.h"
 #include "PersistenceServiceIfc.h"
@@ -19,8 +20,10 @@ public:
     /**
      * Constructor for NetworkService.
      * @param mediator The mediator instance used for event notification.
+     * @param persistenceService The persistence service instance for data storage.
+     * @param networkDriver The network driver instance for managing network operations.
      */
-    NetworkService(Mediator& mediator, PersistenceServiceIfc& persistenceService);
+    NetworkService(Mediator& mediator, PersistenceServiceIfc& persistenceService, NetworkDriverIfc& networkDriver);
 
     ~NetworkService() final = default;
 
@@ -58,6 +61,8 @@ private:
 
     Mediator& m_mediator;
     PersistenceServiceIfc& m_persistency;
+    NetworkDriverIfc& m_networkDriver;
+
     bool m_serviceEnabled;
     bool m_airplaneMode;
 };

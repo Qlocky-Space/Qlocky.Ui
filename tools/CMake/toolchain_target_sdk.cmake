@@ -2,6 +2,10 @@ set(CMAKE_TARGET_SDK Qlocky)
 
 include($ENV{OECORE_NATIVE_SYSROOT}/usr/share/cmake/OEToolchainConfig.cmake)
 
+set(CMAKE_CXX_FLAGS_DEBUG "-O1 -g")
+set(CMAKE_C_FLAGS_DEBUG "-O1 -g")
+
+
 # Read the contents of the file
 file(STRINGS /workspaces/.env ENV_FILE)
 foreach(VAR ${ENV_FILE})
