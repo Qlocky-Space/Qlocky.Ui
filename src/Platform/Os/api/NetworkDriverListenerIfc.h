@@ -3,9 +3,10 @@
 
 #include <cstdint>
 
-enum class NetworkStatus : uint8_t {
+enum class PhyStatus : uint8_t {
     UP,
-    DOWN
+    DOWN,
+    CONNECTED
 };
 
 /**
@@ -28,7 +29,7 @@ public:
      * Called when the network status changes.
      * @param status New network status.
      */
-    virtual void onNetStatusChanged(NetworkStatus const status) = 0;
+    virtual void onNetStatusChanged(PhyStatus const status) = 0;
 
     /**
      * Called when a network scan is completed.

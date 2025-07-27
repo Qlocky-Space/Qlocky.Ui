@@ -1,6 +1,7 @@
 #ifndef OBSERVER_BASE_H
 #define OBSERVER_BASE_H
 
+#include <algorithm>
 #include <vector>
 
 #include "SubjectIfc.h"

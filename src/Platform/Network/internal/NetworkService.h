@@ -6,8 +6,8 @@
 #include "KeyValueDatabaseIfc.h"
 #include "NetworkDriverIfc.h"
 #include "NetworkDriverListenerIfc.h"
-#include "NetworkInfo.h"
 #include "NetworkServiceIfc.h"
+#include "NetworkStateMachine.h"
 #include "PersistenceKey.h"
 #include "PersistenceServiceIfc.h"
 
@@ -52,7 +52,7 @@ public:
     /**
      * @see NetworkDriverListenerIfc::onNetStatusChanged
      */
-    void onNetStatusChanged(NetworkStatus const status) final;
+    void onNetStatusChanged(PhyStatus const status) final;
 
     /**
      * @see NetworkDriverListenerIfc::onScanCompleted
@@ -73,15 +73,12 @@ private:
         return m_persistency.getContext("NetworkService");
     }
 
-    void updateNetworkStatus();
-    void setServiceEnable(bool const enable);
+    void sendCommunicationStatus();
 
     Mediator& m_mediator;
     PersistenceServiceIfc& m_persistency;
-    NetworkDriverIfc& m_networkDriver;
+    NetworkStateMachine m_stateMachine;
 
-    NetworkInfo m_activeNetwork;
-    bool m_serviceEnabled;
     bool m_airplaneMode;
 };
 

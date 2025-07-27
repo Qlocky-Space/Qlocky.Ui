@@ -1,6 +1,7 @@
 #ifndef SRC_PLATFORM_GLOBAL_TYPES_RESULT_H
 #define SRC_PLATFORM_GLOBAL_TYPES_RESULT_H
 
+#include <functional>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -99,6 +100,30 @@ public:
             throw std::logic_error {"Tried to access error on a success result."};
         }
         return std::get<Err>(m_result).error;
+    }
+
+    /**
+     * Execute a callback if result is error.
+     * @param callback Callback to execute if error.
+     * @return Reference to this result for chaining.
+     */
+    Result<T, E>& onError(std::function<void(E const&)> callback) {
+        if (isError() && callback) {
+            callback(error());
+        }
+        return *this;
+    }
+
+    /**
+     * Execute a callback if result is success.
+     * @param callback Callback to execute if success.
+     * @return Reference to this result for chaining.
+     */
+    Result<T, E>& onSuccess(std::function<void(T const&)> callback) {
+        if (isSuccess() && callback) {
+            callback(value());
+        }
+        return *this;
     }
 
 private:

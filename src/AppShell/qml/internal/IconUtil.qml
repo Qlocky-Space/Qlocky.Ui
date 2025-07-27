@@ -8,21 +8,38 @@ QtObject {
     * @param {int} strength
     * @returns {string} The icon representation of the network strength.
     */
-    function toNetworkStrength(enabled, strength) {
-        if (!enabled) {
-            return "\ue2cf"; // disconnected
-        }
+    function toNetwork(state, strength) {
+        switch (state) {
+            case NetworkStateType.Disconnected:
+                return "\uf6ac";
+            case NetworkStateType.Connected:
+                return toNetworkStrength(strength);
+            case NetworkStateType.Searching:
+                return "\uf002";
+            case NetworkStateType.Error:
+                return "\uf071";
+            case NetworkStateType.Disabled:
+                return "\uf6ac";
 
-        if (strength <= 5) {
-            return "\uf6ac"; // no connection
-        } else if (strength < 20) {
+            default:
+                return "\uf071"; // default to error icon
+        }
+    }
+
+    /**
+     * Converts a network strength value to an icon.
+     * @param {int} strength
+     * @returns {string} The icon representation of the network strength.
+     */
+    function toNetworkStrength(strength) {
+        if (strength < 20) {
             return "\uf6aa"; // weak
         } else if (strength < 40) {
             return "\uf6ab"; // medium
         } else if (strength < 80) {
             return "\uf1eb"; // excellent
         } else {
-            return "\ue2cf"; // disconnected
+            return "\uf071"; // error
         }
     }
 

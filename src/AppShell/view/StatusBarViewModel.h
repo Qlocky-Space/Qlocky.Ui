@@ -6,6 +6,7 @@
 #include <QString>
 
 #include "api/Mediator.h"
+#include "events/CommunicationStatusEvent.h"
 #include "events/NetworkStatusEvent.h"
 #include "NetworkServiceIfc.h"
 
@@ -26,6 +27,24 @@ public:
 };
 
 /**
+ * NetworkStateType is an enumeration representing the different states of network connectivity.
+ */
+class NetworkStateType : public QObject {
+    Q_OBJECT
+
+public:
+
+    enum class State {
+        Disconnected,
+        Connected,
+        Searching,
+        Error,
+        Disabled
+    };
+    Q_ENUM(State)
+};
+
+/**
  * StatusBarViewModel is responsible for managing the status bar view model.
  */
 class StatusBarViewModel : public QObject {
@@ -33,7 +52,7 @@ class StatusBarViewModel : public QObject {
 
     Q_PROPERTY(int32_t networkStrength READ getNetworkStrength NOTIFY networkStrengthChanged)
     Q_PROPERTY(QString ssid READ ssid NOTIFY ssidChanged)
-    Q_PROPERTY(bool networkState READ getNetworkState NOTIFY networkStateChanged)
+    Q_PROPERTY(NetworkStateType::State networkState READ getNetworkState NOTIFY networkStateChanged)
     Q_PROPERTY(bool isAirplaneModeEnabled READ isAirplaneModeEnabled WRITE setAirplaneMode NOTIFY airplaneModeChanged)
     Q_PROPERTY(bool lightMode READ isLightModeEnabled WRITE setLightMode NOTIFY lightModeChanged)
     Q_PROPERTY(QString title READ getTitle NOTIFY titleChanged)
@@ -48,7 +67,7 @@ public:
     /**
      * Returns the current network state.
      */
-    bool getNetworkState() const {
+    NetworkStateType::State getNetworkState() const {
         return m_networkState;
     }
 
@@ -165,13 +184,14 @@ signals:
 private:
 
     void updateNetworkStatus(NetworkStatusEvent const& event);
+    void updateCommunicationStatus(CommunicationStatusEvent const& event);
 
     NetworkServiceIfc& m_networkService;
 
     QString m_title;
     QString m_ssid;
     int32_t m_networkStrength; // -1 to 100, -1 means no network
-    bool m_networkState;
+    NetworkStateType::State m_networkState;
     bool m_airplaneMode;
     bool m_lightMode;
     float m_brightness;

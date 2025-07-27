@@ -8,6 +8,8 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkService.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkService.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkStateMachine.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkStateMachine.h
 )
 
 set(MODULE_LINK

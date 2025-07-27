@@ -12,8 +12,8 @@ set(MODULE_SRC
 
 if (OS_IS_QLOCKY)
     list(APPEND MODULE_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/Nl80211Driver.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/Nl80211Driver.h
+        ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/WpaSupplicantDBusDriver.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/WpaSupplicantDBusDriver.h
     )
 else()
     list(APPEND MODULE_SRC

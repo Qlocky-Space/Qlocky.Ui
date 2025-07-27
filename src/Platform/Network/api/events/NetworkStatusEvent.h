@@ -4,6 +4,16 @@
 #include <EventIfc.h>
 #include <string>
 
+#include "NetworkInfo.h"
+
+enum class NetworkStatus : uint8_t {
+    UP,
+    DOWN,
+    CONNECTED,
+    SEARCHING,
+    ERROR
+};
+
 /**
  * Network status event class
  */
@@ -14,34 +24,15 @@ public:
     ~NetworkStatusEvent() final = default;
 
     /**
-     * Constructs a network status event with the given parameters.
-     *
-     * @param ssid The SSID of the connected network.
-     * @param airplaneMode Whether the airplane mode is enabled.
-     * @param networkState The current state of the network (enabled/disabled).
-     * @param networkStrength The strength of the network connection, -1 means no network.
+     * Constructor for NetworkStatusEvent.
+     * @param status The current network status.
+     * @param ssid The SSID of the connected network, if any.
+     * @param airplaneMode Indicates if airplane mode is enabled.
+     * @param signalStrength The signal strength of the connected network.
      */
-    NetworkStatusEvent(std::string ssid, bool const airplaneMode, bool const networkState, int32_t const networkStrength) :
-        m_ssid(std::move(ssid)),
-        m_airplaneMode(airplaneMode),
-        m_networkState(networkState),
-        m_networkStrength(networkStrength) {
-    }
-
-    /**
-     * Returns the SSID of the connected network.
-     * @return The SSID as a string.
-     */
-    std::string ssid() const {
-        return m_ssid;
-    }
-
-    /**
-     * Returns whether the airplane mode is enabled.
-     * @return True if airplane mode is enabled, false otherwise.
-     */
-    bool airplaneMode() const {
-        return m_airplaneMode;
+    NetworkStatusEvent(NetworkStatus status, NetworkInfo const& networkInfo) :
+        m_status(status),
+        m_networkInfo(networkInfo) {
     }
 
     /**
@@ -49,23 +40,37 @@ public:
      * @return The network strength as an integer, -1 means no network.
      */
     int32_t networkStrength() const {
-        return m_networkStrength;
+        if (m_status != NetworkStatus::CONNECTED) {
+            return -1;
+        }
+
+        return m_networkInfo.SignalStrength;
+    }
+
+    /**
+     * Returns the SSID of the connected network.
+     * @return The SSID as a string.
+     */
+    std::string ssid() const {
+        if (m_status != NetworkStatus::CONNECTED) {
+            return "";
+        }
+
+        return m_networkInfo.Ssid;
     }
 
     /**
      * Returns the current network state.
-     * @return True if the network is enabled, false otherwise.
+     * @return The current network state as a NetworkStatus enum.
      */
-    bool networkState() const {
-        return m_networkState;
+    NetworkStatus networkState() const {
+        return m_status;
     }
 
 private:
 
-    bool m_airplaneMode {false};
-    bool m_networkState {false};
-    int32_t m_networkStrength {-1};
-    std::string m_ssid {};
+    NetworkStatus m_status;
+    NetworkInfo m_networkInfo;
 };
 
 #endif

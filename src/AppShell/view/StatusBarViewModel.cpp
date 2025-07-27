@@ -1,5 +1,24 @@
 #include "StatusBarViewModel.h"
 
+namespace {
+constexpr NetworkStateType::State toType(NetworkStatus status) {
+    switch (status) {
+        case NetworkStatus::UP:
+            return NetworkStateType::State::Disconnected;
+        case NetworkStatus::DOWN:
+            return NetworkStateType::State::Disabled;
+        case NetworkStatus::SEARCHING:
+            return NetworkStateType::State::Searching;
+        case NetworkStatus::CONNECTED:
+            return NetworkStateType::State::Connected;
+        case NetworkStatus::ERROR:
+            return NetworkStateType::State::Error;
+        default:
+            return NetworkStateType::State::Error;
+    }
+}
+} // namespace
+
 StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService) :
     QObject {nullptr},
     m_networkService {networkService},
@@ -14,6 +33,7 @@ StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& ne
     m_volumeType {VolumeType::Level::Mute} {
 
     mediator.subscribe<NetworkStatusEvent>(this, &StatusBarViewModel::updateNetworkStatus);
+    mediator.subscribe<CommunicationStatusEvent>(this, &StatusBarViewModel::updateCommunicationStatus);
     // TODO register events for LightMode, AudioVolume, Brightness, etc.
 }
 
@@ -82,8 +102,10 @@ void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
 void StatusBarViewModel::updateNetworkStatus(NetworkStatusEvent const& event) {
     setSsid(QString::fromStdString(event.ssid()));
 
-    if (m_networkState != event.networkState()) {
-        m_networkState = event.networkState();
+    NetworkStateType::State networkState {toType(event.networkState())};
+
+    if (m_networkState != networkState) {
+        m_networkState = networkState;
         emit networkStateChanged();
     }
 
@@ -91,9 +113,16 @@ void StatusBarViewModel::updateNetworkStatus(NetworkStatusEvent const& event) {
         m_networkStrength = event.networkStrength();
         emit networkStrengthChanged();
     }
+}
 
-    if (m_airplaneMode != event.airplaneMode()) {
-        m_airplaneMode = event.airplaneMode();
+void StatusBarViewModel::updateCommunicationStatus(CommunicationStatusEvent const& event) {
+    if (m_airplaneMode != event.getAirplaneMode()) {
+        m_airplaneMode = event.getAirplaneMode();
         emit airplaneModeChanged();
+    }
+
+    if (!event.getNetworkEnabled()) {
+        m_networkState = NetworkStateType::State::Disabled;
+        emit networkStateChanged();
     }
 }

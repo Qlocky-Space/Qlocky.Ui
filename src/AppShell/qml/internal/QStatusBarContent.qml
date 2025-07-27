@@ -21,7 +21,7 @@ RowLayout {
             id: networkIcon
 
             visible: !viewModel.isAirplaneModeEnabled
-            icon: IconUtil.toNetworkStrength(viewModel.networkState, viewModel.networkStrength)
+            icon: IconUtil.toNetwork(viewModel.networkState, viewModel.networkStrength)
         }
 
         QIcon {

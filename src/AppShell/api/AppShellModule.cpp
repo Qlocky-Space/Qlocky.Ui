@@ -19,6 +19,7 @@ void AppShellModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<StatusBarViewModel>(*this, "StatusBarViewModel");
 
     qmlRegisterUncreatableType<VolumeType>("AppShell", 1, 0, "VolumeType", "Cannot create VolumeType in QML");
+    qmlRegisterUncreatableType<NetworkStateType>("AppShell", 1, 0, "NetworkStateType", "Cannot create NetworkStateType in QML");
 }
 
 void AppShellModule::onInitialize() {

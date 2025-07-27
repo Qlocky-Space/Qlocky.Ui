@@ -5,7 +5,7 @@
 
 // include platform specific drivers
 #ifdef OS_IS_QLOCKY
-#include "internal/qlocky/Nl80211Driver.h"
+#include "internal/qlocky/WpaSupplicantDBusDriver.h"
 #else
 #include "internal/mock/NetworkDriverStub.h"
 #endif
@@ -14,7 +14,7 @@ void OsModule::registerExports(Injector& container) {
     container.install(boost::di::bind<TimeProviderIfc>().to<TimeProvider>());
 
 #ifdef OS_IS_QLOCKY
-    container.install(boost::di::bind<NetworkDriverIfc>().to<Nl80211Driver>());
+    container.install(boost::di::bind<NetworkDriverIfc>().to<WpaSupplicantDBusDriver>());
 #else
     container.install(boost::di::bind<NetworkDriverIfc>().to<NetworkDriverStub>());
 #endif
