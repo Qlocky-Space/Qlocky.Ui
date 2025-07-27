@@ -8,6 +8,9 @@ enum class NetworkStatus : uint8_t {
     DOWN
 };
 
+/**
+ * ScanResult represents the result of a Wi-Fi scan.
+ */
 struct ScanResult {
     std::string ssid;
     int32_t signalStrength;
@@ -37,7 +40,7 @@ public:
      * Called when scan results are available.
      * @param results Scan results data.
      */
-    virtual void onScanResultsAvailable(ScanResult const& result) = 0;
+    virtual void onScanResultsAvailable(ScanResult& result) = 0;
 };
 
 #endif // NETWORK_DRIVER_LISTENER_IFC_H

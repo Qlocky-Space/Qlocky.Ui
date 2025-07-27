@@ -6,6 +6,7 @@ StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& ne
     m_title {"Qlocky"},
     m_ssid {""},
     m_networkStrength {-1},
+    m_networkState {false},
     m_airplaneMode {false},
     m_lightMode {false},
     m_brightness {100.F},
@@ -80,6 +81,11 @@ void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
 
 void StatusBarViewModel::updateNetworkStatus(NetworkStatusEvent const& event) {
     setSsid(QString::fromStdString(event.ssid()));
+
+    if (m_networkState != event.networkState()) {
+        m_networkState = event.networkState();
+        emit networkStateChanged();
+    }
 
     if (m_networkStrength != event.networkStrength()) {
         m_networkStrength = event.networkStrength();

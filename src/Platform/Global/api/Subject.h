@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "SubjectIfc.h"
+
 /**
  * Base class for observer pattern implementation.
  * This class provides methods to attach and detach observers.
@@ -10,7 +12,7 @@
  * @tparam T Type of the observer interface.
  */
 template<typename T>
-class Subject {
+class Subject : public SubjectIfc<T> {
 public:
 
     virtual ~Subject() = default;
@@ -19,7 +21,7 @@ public:
      * Add an observer to the list.
      * @param observer Observer to add.
      */
-    void attach(T* observer) {
+    void attach(T* observer) override {
         if (observer) {
             m_observers.push_back(observer);
         }
@@ -29,7 +31,7 @@ public:
      * Remove an observer from the list.
      * @param observer Observer to remove.
      */
-    void detach(T* observer) {
+    void detach(T* observer) override {
         auto it = std::remove(m_observers.begin(), m_observers.end(), observer);
         if (it != m_observers.end()) {
             m_observers.erase(it, m_observers.end());

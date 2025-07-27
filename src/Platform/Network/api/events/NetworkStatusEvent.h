@@ -18,10 +18,14 @@ public:
      *
      * @param ssid The SSID of the connected network.
      * @param airplaneMode Whether the airplane mode is enabled.
+     * @param networkState The current state of the network (enabled/disabled).
      * @param networkStrength The strength of the network connection, -1 means no network.
      */
-    NetworkStatusEvent(std::string ssid, bool const airplaneMode, int32_t const networkStrength) :
-        m_ssid(std::move(ssid)), m_airplaneMode(airplaneMode), m_networkStrength(networkStrength) {
+    NetworkStatusEvent(std::string ssid, bool const airplaneMode, bool const networkState, int32_t const networkStrength) :
+        m_ssid(std::move(ssid)),
+        m_airplaneMode(airplaneMode),
+        m_networkState(networkState),
+        m_networkStrength(networkStrength) {
     }
 
     /**
@@ -48,9 +52,18 @@ public:
         return m_networkStrength;
     }
 
+    /**
+     * Returns the current network state.
+     * @return True if the network is enabled, false otherwise.
+     */
+    bool networkState() const {
+        return m_networkState;
+    }
+
 private:
 
     bool m_airplaneMode {false};
+    bool m_networkState {false};
     int32_t m_networkStrength {-1};
     std::string m_ssid {};
 };

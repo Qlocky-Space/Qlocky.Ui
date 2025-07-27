@@ -61,13 +61,27 @@ public:
      */
     ResultVoid fetchScanResults() final;
 
+    /**
+     * Add an observer to the list.
+     * @param observer Observer to add.
+     */
+    void attach(NetworkDriverListenerIfc* observer) final {
+        Subject<NetworkDriverListenerIfc>::attach(observer);
+    }
+
+    /**
+     * Remove an observer from the list.
+     * @param observer Observer to remove.
+     */
+    void detach(NetworkDriverListenerIfc* observer) final {
+        Subject<NetworkDriverListenerIfc>::detach(observer);
+    }
+
 private:
 
     using ResultMsg = Result<nl_msg*, std::string>;
 
-    int onCallbackInterfaceStats(nl_msg* msg);
-    int onCallbackTriggerScan(nl_msg* msg);
-    int onCallbackScanAbort(nl_msg* msg);
+    int onCallbackOk(nl_msg* msg);
     int onCallbackScanResult(nl_msg* msg);
     int onCallbackGlobal(nl_msg* msg);
     int onCallbackError(nlmsgerr* nlerr);
@@ -84,7 +98,6 @@ private:
     ResultVoid sendNetlinkRequest(nl_msg* msg, NetlinkCallback* pCallback);
 
     ResultVoid setupSocket();
-    ResultVoid fetchInterfaceStats();
 
     std::unique_ptr<Socket, SocketDeleter> m_pSocket;
     std::thread m_recvThread;

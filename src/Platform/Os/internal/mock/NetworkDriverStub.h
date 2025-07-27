@@ -1,9 +1,11 @@
 #ifndef OS_NETWORK_DRIVER_STUB_H
 #define OS_NETWORK_DRIVER_STUB_H
 
+#include <Subject.h>
+
 #include "NetworkDriverIfc.h"
 
-class NetworkDriverStub : public NetworkDriverIfc {
+class NetworkDriverStub : public Subject<NetworkDriverListenerIfc>, public NetworkDriverIfc {
 public:
 
     NetworkDriverStub() = default;

@@ -10,8 +10,11 @@ NetworkService::NetworkService(Mediator& mediator, PersistenceServiceIfc& persis
     m_mediator {mediator},
     m_persistency {persistenceService},
     m_networkDriver {networkDriver},
+    m_activeNetwork {},
     m_airplaneMode {false},
     m_serviceEnabled {false} {
+
+    m_networkDriver.attach(this);
 }
 
 void NetworkService::initialize() {
@@ -34,6 +37,9 @@ void NetworkService::enable() {
     }
 
     setServiceEnable(true);
+    // m_networkDriver.triggerScan();
+    // sleep(5);
+    m_networkDriver.fetchScanResults();
 }
 
 void NetworkService::disable() {
@@ -55,17 +61,36 @@ void NetworkService::setAirplaneMode(bool enabled) {
     }
 
     getDatabase().setBool(AirplaneModeKey, m_airplaneMode);
+}
+
+void NetworkService::onNetStatusChanged(NetworkStatus const status) {
+    // TODO implement handling of network status changes
+
     updateNetworkStatus();
+}
+
+void NetworkService::onScanCompleted(bool success) {
+    std::cout << "Network scan completed: " << (success ? "Success" : "Failure") << std::endl;
+    // m_networkDriver.fetchScanResults();
+}
+
+void NetworkService::onScanResultsAvailable(ScanResult& result) {
+    std::cout << "Scan results available for SSID: " << result.ssid
+              << " with signal strength: " << result.signalStrength << std::endl;
+
+    // TODO implement handling of scan results
+    m_activeNetwork = NetworkInfo(result.ssid, result.signalStrength, true);
 }
 
 void NetworkService::updateNetworkStatus() {
     constexpr int32_t disabledNetworkStrength = -1;
 
     // TODO remove demo
-    std::string ssid = m_serviceEnabled ? "ConnectedNetwork" : "";
-    int32_t networkStrength = m_serviceEnabled ? 75 : disabledNetworkStrength;
 
-    NetworkStatusEvent event {ssid, m_airplaneMode, networkStrength};
+    std::string ssid = m_serviceEnabled && m_activeNetwork.isConnected() ? m_activeNetwork.getSsid() : "";
+    int32_t networkStrength = m_serviceEnabled && m_activeNetwork.isConnected() ? m_activeNetwork.getSignalStrength() : disabledNetworkStrength;
+
+    NetworkStatusEvent event {ssid, m_airplaneMode, m_serviceEnabled, networkStrength};
     m_mediator.notify(event);
 }
 

@@ -5,6 +5,8 @@
 
 #include "KeyValueDatabaseIfc.h"
 #include "NetworkDriverIfc.h"
+#include "NetworkDriverListenerIfc.h"
+#include "NetworkInfo.h"
 #include "NetworkServiceIfc.h"
 #include "PersistenceKey.h"
 #include "PersistenceServiceIfc.h"
@@ -14,7 +16,7 @@
  * A Platform independent service that provides network-related functionalities.
  * This service can be used to enable/disable network, set airplane mode, etc.
  */
-class NetworkService final : public NetworkServiceIfc {
+class NetworkService final : public NetworkServiceIfc, NetworkDriverListenerIfc {
 public:
 
     /**
@@ -47,6 +49,21 @@ public:
      */
     void setAirplaneMode(bool enabled) final;
 
+    /**
+     * @see NetworkDriverListenerIfc::onNetStatusChanged
+     */
+    void onNetStatusChanged(NetworkStatus const status) final;
+
+    /**
+     * @see NetworkDriverListenerIfc::onScanCompleted
+     */
+    void onScanCompleted(bool success) final;
+
+    /**
+     * @see NetworkDriverListenerIfc::onScanResultsAvailable
+     */
+    void onScanResultsAvailable(ScanResult& result) final;
+
 private:
 
     inline static PersistenceKey const AirplaneModeKey {"AirplaneMode"};
@@ -63,6 +80,7 @@ private:
     PersistenceServiceIfc& m_persistency;
     NetworkDriverIfc& m_networkDriver;
 
+    NetworkInfo m_activeNetwork;
     bool m_serviceEnabled;
     bool m_airplaneMode;
 };

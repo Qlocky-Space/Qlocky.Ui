@@ -5,12 +5,15 @@
 #include <types/Result.h>
 #include <vector>
 
+#include "NetworkDriverListenerIfc.h"
+#include "SubjectIfc.h"
+
 /**
  * A network driver interface for managing Wi-Fi operations.
  * This interface provides methods to trigger Wi-Fi scans and retrieve SSIDs.
  * It is designed to be implemented by platform-specific network drivers.
  */
-class NetworkDriverIfc {
+class NetworkDriverIfc : public SubjectIfc<NetworkDriverListenerIfc> {
 public:
 
     virtual ~NetworkDriverIfc() = default;

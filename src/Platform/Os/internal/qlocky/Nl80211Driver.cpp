@@ -85,8 +85,11 @@ Nl80211Driver::Nl80211Driver() :
 }
 
 ResultVoid Nl80211Driver::up(std::string const& interfaceName) {
+    std::cout << "Bringing up network interface: " << interfaceName << std::endl;
+
     m_pSocket = std::unique_ptr<Socket, std::function<void(Socket*)>>(
         new Socket(), [](Socket* pSocket) {
+            std::cout << "Cleaning up socket resources" << std::endl;
             if (pSocket->pHandle) {
                 nl_socket_free(pSocket->pHandle);
             }
@@ -109,22 +112,19 @@ ResultVoid Nl80211Driver::up(std::string const& interfaceName) {
     m_running = true;
     m_recvThread = std::thread([this]() {
         while (m_running) {
-            int err = nl_recvmsgs_default(m_pSocket->pHandle);
-            if (err < 0) {
-                std::cerr << "Netlink recv error: " << nl_geterror(err) << std::endl;
-            }
+            nl_recvmsgs_default(m_pSocket->pHandle);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     });
 
     notify(&NetworkDriverListenerIfc::onNetStatusChanged, NetworkStatus::UP);
 
-    // TODO remove
-    triggerScan();
-
     return ResultVoid::success(true);
 }
 
 ResultVoid Nl80211Driver::down() {
+    std::cout << "Bringing down network interface: " << m_pSocket->m_interfaceName << std::endl;
+
     m_running = false;
     m_pSocket.reset();
 
@@ -156,12 +156,12 @@ ResultVoid Nl80211Driver::triggerScan() {
     flags |= NL80211_SCAN_FLAG_COLOCATED_6GHZ;
     nla_put_u32(msg, NL80211_ATTR_SCAN_FLAGS, flags);
 
-    return sendNetlinkRequest(msg, this, &Nl80211Driver::onCallbackTriggerScan);
+    return sendNetlinkRequest(msg, this, &Nl80211Driver::onCallbackOk);
 }
 
 ResultVoid Nl80211Driver::abortScan() {
     auto scanResult = createNetlinkMessage(NL80211_CMD_ABORT_SCAN, 0);
-    return sendNetlinkRequest(scanResult, this, &Nl80211Driver::onCallbackScanAbort);
+    return sendNetlinkRequest(scanResult, this, &Nl80211Driver::onCallbackOk);
 }
 
 ResultVoid Nl80211Driver::fetchScanResults() {
@@ -169,90 +169,14 @@ ResultVoid Nl80211Driver::fetchScanResults() {
     return sendNetlinkRequest(scanResult, this, &Nl80211Driver::onCallbackScanResult);
 }
 
-ResultVoid Nl80211Driver::fetchInterfaceStats() {
-    auto result = createNetlinkMessage(NL80211_CMD_GET_INTERFACE, 0);
-    return sendNetlinkRequest(result, this, &Nl80211Driver::onCallbackInterfaceStats);
-}
-
-int Nl80211Driver::onCallbackInterfaceStats(nl_msg* msg) {
-    genlmsghdr* gnlHdr = static_cast<genlmsghdr*>(nlmsg_data(nlmsg_hdr(msg)));
-    nlattr* attr[NL80211_ATTR_MAX + 1] = {};
-
-    nla_parse(attr, NL80211_ATTR_MAX, genlmsg_attrdata(gnlHdr, 0), genlmsg_attrlen(gnlHdr, 0), nullptr);
-
-    // TODO extract into model class and send to mediator
-
-    if (attr[NL80211_ATTR_IFNAME]) {
-        char const* ifName = nla_get_string(attr[NL80211_ATTR_IFNAME]);
-        std::cout << "Interface Name: " << ifName << std::endl;
-    }
-    if (attr[NL80211_ATTR_IFINDEX]) {
-        int ifIndex = nla_get_u32(attr[NL80211_ATTR_IFINDEX]);
-        std::cout << "Interface Index: " << ifIndex << std::endl;
-    }
-    if (attr[NL80211_ATTR_MAC]) {
-        char mac_addr[20];
-        nl_addr* addr = nl_addr_alloc_attr(attr[NL80211_ATTR_MAC], 1);
-        nl_addr2str(addr, mac_addr, sizeof(mac_addr));
-        nl_addr_put(addr);
-        std::cout << "MAC Address: " << mac_addr << std::endl;
-    }
-    if (attr[NL80211_ATTR_SSID]) {
-        char ssid[64];
-        int len = nla_len(attr[NL80211_ATTR_SSID]);
-        char* const data = static_cast<char*>(nla_data(attr[NL80211_ATTR_SSID]));
-        std::cout << "SSID: " << std::string(data, len) << std::endl;
-    }
-    if (attr[NL80211_ATTR_WIPHY_FREQ]) {
-        uint32_t freq = nla_get_u32(attr[NL80211_ATTR_WIPHY_FREQ]);
-        std::cout << "Frequency: " << freq << " MHz";
-
-        if (attr[NL80211_ATTR_CHANNEL_WIDTH]) {
-            nl80211_chan_width width = static_cast<nl80211_chan_width>(nla_get_u32(attr[NL80211_ATTR_CHANNEL_WIDTH]));
-            std::cout << ", channel width: " << Nl80211Util::channelWidthName(width);
-            if (attr[NL80211_ATTR_CENTER_FREQ1]) {
-                std::cout << ", center1: " << nla_get_u32(attr[NL80211_ATTR_CENTER_FREQ1]) << " MHz";
-            }
-            if (attr[NL80211_ATTR_CENTER_FREQ2]) {
-                std::cout << ", center2: " << nla_get_u32(attr[NL80211_ATTR_CENTER_FREQ2]) << " MHz";
-            }
-
-            if (attr[NL80211_ATTR_PUNCT_BITMAP]) {
-                uint32_t punct = nla_get_u32(attr[NL80211_ATTR_PUNCT_BITMAP]);
-
-                if (punct) {
-                    std::cout << ", punctured: 0x" << std::hex << punct << std::dec;
-                }
-            }
-        }
-        else if (attr[NL80211_ATTR_WIPHY_CHANNEL_TYPE]) {
-            nl80211_channel_type channel_type = static_cast<nl80211_channel_type>(nla_get_u32(attr[NL80211_ATTR_WIPHY_CHANNEL_TYPE]));
-            std::cout << " " << Nl80211Util::channelTypeName(channel_type);
-        }
-
-        std::cout << std::endl;
-    }
-    if (attr[NL80211_ATTR_WIPHY_TX_POWER_LEVEL]) {
-        int32_t txPower = nla_get_u32(attr[NL80211_ATTR_WIPHY_TX_POWER_LEVEL]);
-        std::cout << "TX Power Level: " << (txPower / 100) << "." << (txPower % 100) << " dBm" << std::endl;
-    }
-
-    return NL_OK;
-}
-
-int Nl80211Driver::onCallbackTriggerScan(nl_msg* msg) {
-    std::cout << "Trigger Scan callback received" << std::endl;
-    return NL_OK;
-}
-
-int Nl80211Driver::onCallbackScanAbort(nl_msg* msg) {
-    std::cout << "Scan Abort callback received" << std::endl;
+int Nl80211Driver::onCallbackOk(nl_msg* msg) {
     return NL_OK;
 }
 
 int Nl80211Driver::onCallbackScanResult(nl_msg* msg) {
     nlmsghdr* nlh = nlmsg_hdr(msg);
     genlmsghdr* gnlh = static_cast<genlmsghdr*>(nlmsg_data(nlh));
+    ScanResult result {};
 
     struct nlattr* attrs[NL80211_ATTR_MAX + 1] = {};
     nla_parse(attrs, NL80211_ATTR_MAX, genlmsg_attrdata(gnlh, 0), genlmsg_attrlen(gnlh, 0), nullptr);
@@ -264,23 +188,27 @@ int Nl80211Driver::onCallbackScanResult(nl_msg* msg) {
     struct nlattr* bss[NL80211_BSS_MAX + 1] = {};
     nla_parse_nested(bss, NL80211_BSS_MAX, attrs[NL80211_ATTR_BSS], nullptr);
 
+    if (bss[NL80211_BSS_SIGNAL_MBM]) {
+        result.signalStrength = nla_get_u32(bss[NL80211_BSS_SIGNAL_MBM]);
+    }
+
     if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
-        auto* ie = (uint8_t*)nla_data(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
+        uint8_t* ie = static_cast<uint8_t*>(nla_data(bss[NL80211_BSS_INFORMATION_ELEMENTS]));
         int len = nla_len(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
 
-        for (int i = 0; i + 1 < len;) {
+        for (int32_t i = 0; i + 1 < len;) {
             uint8_t id = ie[i];
             uint8_t elen = ie[i + 1];
             if (id == 0 && i + 2 + elen <= len) { // SSID element
                 std::string ssid((char*)&ie[i + 2], elen);
-                if (!ssid.empty()) {
-                    std::cout << "Found SSID: " << ssid << std::endl;
-                }
+                result.ssid = ssid;
                 break;
             }
             i += elen + 2;
         }
     }
+
+    notify(&NetworkDriverListenerIfc::onScanResultsAvailable, result);
 
     return NL_SKIP;
 }
@@ -343,6 +271,9 @@ ResultVoid Nl80211Driver::setupSocket() {
     // This is necessary to avoid issues with sequence numbers in some cases.
     // https://stackoverflow.com/questions/64669383/cannot-understand-this-message-sequence-mismatch-error
     nl_socket_disable_seq_check(m_pSocket->pHandle);
+
+    nl_socket_set_buffer_size(m_pSocket->pHandle, 8192, 8192);
+    nl_socket_set_nonblocking(m_pSocket->pHandle);
 
     return ResultVoid::success(true);
 }

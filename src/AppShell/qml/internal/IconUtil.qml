@@ -8,7 +8,11 @@ QtObject {
     * @param {int} strength
     * @returns {string} The icon representation of the network strength.
     */
-    function toNetworkStrength(strength) {
+    function toNetworkStrength(enabled, strength) {
+        if (!enabled) {
+            return "\ue2cf"; // disconnected
+        }
+
         if (strength <= 5) {
             return "\uf6ac"; // no connection
         } else if (strength < 20) {

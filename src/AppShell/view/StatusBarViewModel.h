@@ -33,6 +33,7 @@ class StatusBarViewModel : public QObject {
 
     Q_PROPERTY(int32_t networkStrength READ getNetworkStrength NOTIFY networkStrengthChanged)
     Q_PROPERTY(QString ssid READ ssid NOTIFY ssidChanged)
+    Q_PROPERTY(bool networkState READ getNetworkState NOTIFY networkStateChanged)
     Q_PROPERTY(bool isAirplaneModeEnabled READ isAirplaneModeEnabled WRITE setAirplaneMode NOTIFY airplaneModeChanged)
     Q_PROPERTY(bool lightMode READ isLightModeEnabled WRITE setLightMode NOTIFY lightModeChanged)
     Q_PROPERTY(QString title READ getTitle NOTIFY titleChanged)
@@ -43,6 +44,13 @@ class StatusBarViewModel : public QObject {
 public:
 
     explicit StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService);
+
+    /**
+     * Returns the current network state.
+     */
+    bool getNetworkState() const {
+        return m_networkState;
+    }
 
     /**
      * Returns the current network strength.
@@ -146,6 +154,7 @@ public:
 signals:
     void titleChanged();
     void networkStrengthChanged();
+    void networkStateChanged();
     void airplaneModeChanged();
     void lightModeChanged();
     void brightnessChanged();
@@ -162,6 +171,7 @@ private:
     QString m_title;
     QString m_ssid;
     int32_t m_networkStrength; // -1 to 100, -1 means no network
+    bool m_networkState;
     bool m_airplaneMode;
     bool m_lightMode;
     float m_brightness;
