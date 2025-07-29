@@ -114,14 +114,14 @@ protected:
      * @param condition Condition to check for transition.
      * @param nextState The next state to transition to.
      *
-     * @return True if the transition was successful, false otherwise.
+     * @return False if the condition is met and the transition is made, true otherwise.
      */
     bool transitionByCondition(bool condition, State nextState) {
         if (condition) {
             setNextState(nextState);
-            return true;
+            return false;
         }
-        return false;
+        return condition;
     }
 
     /**

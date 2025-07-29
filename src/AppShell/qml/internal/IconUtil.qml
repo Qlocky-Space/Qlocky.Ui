@@ -32,12 +32,16 @@ QtObject {
      * @returns {string} The icon representation of the network strength.
      */
     function toNetworkStrength(strength) {
-        if (strength < 20) {
-            return "\uf6aa"; // weak
-        } else if (strength < 40) {
+        // value closer to zero means stronger signal
+        // theoretical limits are 0-100, but we use 0-80 for practical purposes
+        strength = Math.abs(strength);
+
+        if (strength < 30) {
+            return "\uf1eb"; // excellent
+        } else if (strength < 60) {
             return "\uf6ab"; // medium
         } else if (strength < 80) {
-            return "\uf1eb"; // excellent
+            return "\uf6aa"; // weak
         } else {
             return "\uf071"; // error
         }

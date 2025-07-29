@@ -7,6 +7,7 @@
 
 #include "NetworkDriverErrorCode.h"
 #include "NetworkDriverListenerIfc.h"
+#include "NetworkInfo.h"
 #include "SubjectIfc.h"
 
 /**
@@ -34,6 +35,11 @@ public:
     virtual NetworkResult down() = 0;
 
     /**
+     * Registers a network with the driver.
+     */
+    virtual NetworkResult registerNetwork(NetworkInfo const& network) = 0;
+
+    /**
      * Triggers a Wi-Fi scan on the interface.
      * @return true if the scan was successfully triggered, false otherwise.
      */
@@ -57,6 +63,12 @@ public:
      * @return ResultVoid indicating success or failure.
      */
     virtual NetworkResult connectTo(std::string const& ssid) = 0;
+
+    /**
+     * Disconnects from the currently connected Wi-Fi network.
+     * @return ResultVoid indicating success or failure.
+     */
+    virtual NetworkResult disconnect() = 0;
 };
 
 #endif

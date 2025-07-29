@@ -1,86 +1,99 @@
 #include "NetworkService.h"
 
 #include <iostream>
-#include <unistd.h>
 
 #include "events/CommunicationStatusEvent.h"
-#include "events/NetworkStatusEvent.h"
+#include "NetworkProfileMapper.h"
 #include "NetworkStateMachine.h"
 
-NetworkService::NetworkService(Mediator& mediator, PersistenceServiceIfc& persistenceService,
+NetworkService::NetworkService(Mediator& mediator, NetworkRepositoryIfc& repository,
     NetworkDriverIfc& networkDriver) :
     m_mediator {mediator},
-    m_persistency {persistenceService},
+    m_repository {repository},
     m_stateMachine {mediator, networkDriver},
+    m_networkDriver {networkDriver},
     m_airplaneMode {false} {
 
-    networkDriver.attach(this);
+    networkDriver.attach(&m_stateMachine);
 }
 
 void NetworkService::initialize() {
-    bool const airplaneMode {getDatabase().getBool(AirplaneModeKey).valueOr(false)};
-    bool const serviceEnabled {getDatabase().getBool(NetworkEnabledKey).valueOr(false)};
+    bool const airplaneMode {m_repository.getAirplaneMode()};
+    bool const serviceEnabled {m_repository.getNetworkEnabled()};
 
     // restore state from persistence
     setAirplaneMode(airplaneMode);
-    if (serviceEnabled) {
-        enable();
-    }
-    else {
-        disable();
-    }
-}
+    setWifiEnabled(serviceEnabled);
 
-void NetworkService::enable() {
-    if (m_airplaneMode) {
-        // Cannot enable network while airplane mode is on
-        return;
+    auto profiles = m_repository.getAllProfiles();
+    for (auto const& profile : profiles) {
+        m_networkDriver.registerNetwork(NetworkProfileMapper::toNetworkInfo(profile));
     }
 
-    m_stateMachine.enable();
-
-    getDatabase().setBool(NetworkEnabledKey, true);
-    sendCommunicationStatus();
-}
-
-void NetworkService::disable() {
-    m_stateMachine.disable();
-
-    getDatabase().setBool(NetworkEnabledKey, false);
-    sendCommunicationStatus();
+    // because the state machine is initialized all events
+    // must be forced to ensure listeners are notified
+    m_stateMachine.forceEvents();
 }
 
 void NetworkService::setAirplaneMode(bool enabled) {
     m_airplaneMode = enabled;
+    m_repository.setAirplaneMode(enabled);
 
     // If airplane mode is enabled, ensure service is disabled
     // to prevent network operations while in airplane mode.
     if (enabled) {
         m_stateMachine.disable();
     }
-
-    getDatabase().setBool(AirplaneModeKey, m_airplaneMode);
-    sendCommunicationStatus();
 }
 
-void NetworkService::onNetStatusChanged(PhyStatus const status) {
-    // TODO implement handling of network status changes
+void NetworkService::setWifiEnabled(bool enabled) {
+    if (enabled && m_airplaneMode) {
+        // Cannot enable Wi-Fi while airplane mode is on
+        return;
+    }
+
+    m_repository.setNetworkEnabled(enabled);
+
+    if (enabled) {
+        m_stateMachine.enable();
+    }
+    else {
+        m_stateMachine.disable();
+    }
 }
 
-void NetworkService::onScanCompleted(bool success) {
-    std::cout << "Network scan completed: " << (success ? "Success" : "Failure") << std::endl;
-    // m_networkDriver.fetchScanResults();
+void NetworkService::startScan() {
+    m_networkDriver.triggerScan();
 }
 
-void NetworkService::onScanResultsAvailable(ScanResult& result) {
-    std::cout << "Scan results available for SSID: " << result.ssid
-              << " with signal strength: " << result.signalStrength << std::endl;
+void NetworkService::connectTo(NetworkProfileNew const& profile) {
+    // Save the profile to persistence
+    NetworkProfileEntity profileEntity = NetworkProfileMapper::toEntity(profile);
+    m_repository.addProfile(profileEntity);
+    m_networkDriver.registerNetwork(NetworkProfileMapper::toNetworkInfo(profileEntity));
 
-    // TODO implement handling of scan results
-    // m_activeNetwork = NetworkInfo(result.ssid, result.signalStrength, true);
+    connectTo(profileEntity.ssid);
 }
 
-void NetworkService::sendCommunicationStatus() {
-    bool const networkEnabled = m_stateMachine.currentState() != NetworkStates::DOWN;
-    m_mediator.notify(CommunicationStatusEvent(m_airplaneMode, networkEnabled));
+void NetworkService::connectTo(std::string const& ssid) {
+    // Fetch the profile from persistence
+    std::optional<NetworkProfileEntity> profile {m_repository.getProfileBySsid(ssid)};
+
+    if (profile.has_value()) {
+        m_stateMachine.connectTo(profile.value());
+    }
+    else {
+        std::cerr << "Profile with SSID " << ssid << " not found." << std::endl;
+    }
+}
+
+void NetworkService::disconnect() {
+    m_stateMachine.disconnect();
+}
+
+void NetworkService::sendCommunicationStatusEvent() {
+    bool const wifiMode {m_stateMachine.currentState() != NetworkStates::DOWN};
+    CommunicationStatusEvent const event(m_airplaneMode, wifiMode);
+
+    m_mediator.notify(event);
 }

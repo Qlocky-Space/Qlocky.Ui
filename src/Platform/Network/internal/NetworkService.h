@@ -5,27 +5,26 @@
 
 #include "KeyValueDatabaseIfc.h"
 #include "NetworkDriverIfc.h"
-#include "NetworkDriverListenerIfc.h"
+#include "NetworkRepositoryIfc.h"
 #include "NetworkServiceIfc.h"
 #include "NetworkStateMachine.h"
 #include "PersistenceKey.h"
-#include "PersistenceServiceIfc.h"
 
 /**
  * Network service implementation.
  * A Platform independent service that provides network-related functionalities.
  * This service can be used to enable/disable network, set airplane mode, etc.
  */
-class NetworkService final : public NetworkServiceIfc, NetworkDriverListenerIfc {
+class NetworkService final : public NetworkServiceIfc {
 public:
 
     /**
      * Constructor for NetworkService.
      * @param mediator The mediator instance used for event notification.
-     * @param persistenceService The persistence service instance for data storage.
+     * @param repository The network repository instance for managing network profiles.
      * @param networkDriver The network driver instance for managing network operations.
      */
-    NetworkService(Mediator& mediator, PersistenceServiceIfc& persistenceService, NetworkDriverIfc& networkDriver);
+    NetworkService(Mediator& mediator, NetworkRepositoryIfc& repository, NetworkDriverIfc& networkDriver);
 
     ~NetworkService() final = default;
 
@@ -35,49 +34,43 @@ public:
     void initialize() final;
 
     /**
-     * @see NetworkServiceIfc::enable
-     */
-    void enable() final;
-
-    /**
-     * @see NetworkServiceIfc::disable
-     */
-    void disable() final;
-
-    /**
      * @see NetworkServiceIfc::setAirplaneMode
      */
     void setAirplaneMode(bool enabled) final;
 
     /**
-     * @see NetworkDriverListenerIfc::onNetStatusChanged
+     * @see NetworkServiceIfc::setWifiEnabled
      */
-    void onNetStatusChanged(PhyStatus const status) final;
+    void setWifiEnabled(bool enabled) final;
 
     /**
-     * @see NetworkDriverListenerIfc::onScanCompleted
+     * @see NetworkServiceIfc::startScan
      */
-    void onScanCompleted(bool success) final;
+    void startScan() final;
 
     /**
-     * @see NetworkDriverListenerIfc::onScanResultsAvailable
+     * @see NetworkServiceIfc::connectTo
      */
-    void onScanResultsAvailable(ScanResult& result) final;
+    void connectTo(NetworkProfileNew const& profile) final;
+
+    /**
+     * @see NetworkServiceIfc::connectTo
+     */
+    void connectTo(std::string const& ssid) final;
+
+    /**
+     * @see NetworkServiceIfc::disconnect
+     */
+    void disconnect() final;
 
 private:
 
-    inline static PersistenceKey const AirplaneModeKey {"AirplaneMode"};
-    inline static PersistenceKey const NetworkEnabledKey {"NetworkEnabled"};
-
-    KeyValueDatabaseIfc& getDatabase() {
-        return m_persistency.getContext("NetworkService");
-    }
-
-    void sendCommunicationStatus();
+    void sendCommunicationStatusEvent();
 
     Mediator& m_mediator;
-    PersistenceServiceIfc& m_persistency;
+    NetworkRepositoryIfc& m_repository;
     NetworkStateMachine m_stateMachine;
+    NetworkDriverIfc& m_networkDriver;
 
     bool m_airplaneMode;
 };

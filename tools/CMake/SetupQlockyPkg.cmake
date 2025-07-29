@@ -3,15 +3,11 @@
 ###########################################
 
 if (OS_IS_QLOCKY)
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(LIBNL REQUIRED IMPORTED_TARGET
-  libnl-3.0
-  libnl-genl-3.0
-  )
+  find_package(sdbus-c++ REQUIRED)
 
   # Setup all used components
   set(_components
-  PkgConfig::LIBNL
+    SDBusCpp::sdbus-c++
   )
 
   foreach(_component ${_components})

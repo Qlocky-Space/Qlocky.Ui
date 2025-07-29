@@ -7,7 +7,10 @@
 
 #include "api/Mediator.h"
 #include "events/CommunicationStatusEvent.h"
-#include "events/NetworkStatusEvent.h"
+#include "events/ConnectionStatusEvent.h"
+#include "events/NetworkScanResultEvent.h"
+#include "events/WifiStatusEvent.h"
+#include "NetworkRepositoryIfc.h"
 #include "NetworkServiceIfc.h"
 
 /**
@@ -35,11 +38,11 @@ class NetworkStateType : public QObject {
 public:
 
     enum class State {
-        Disconnected,
+        Disabled,
         Connected,
         Searching,
+        Disconnected,
         Error,
-        Disabled
     };
     Q_ENUM(State)
 };
@@ -62,7 +65,7 @@ class StatusBarViewModel : public QObject {
 
 public:
 
-    explicit StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService);
+    explicit StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository);
 
     /**
      * Returns the current network state.
@@ -183,10 +186,13 @@ signals:
 
 private:
 
-    void updateNetworkStatus(NetworkStatusEvent const& event);
+    void updateWifiStatus(WifiStatusEvent const& event);
+    void updateConnectionStatus(ConnectionStatusEvent const& event);
+    void updateNetworkScanResult(NetworkScanResultEvent const& event);
     void updateCommunicationStatus(CommunicationStatusEvent const& event);
 
     NetworkServiceIfc& m_networkService;
+    NetworkRepositoryIfc& m_networkRepository;
 
     QString m_title;
     QString m_ssid;

@@ -5,9 +5,11 @@
 #include <string>
 
 /**
- * NetworkInfo holds information about the current network state.
+ * NetworkProfile holds information about the current network state.
  */
-struct NetworkInfo {
+struct NetworkProfile {
+    uint32_t Id; // Unique identifier for the network profile
+
     std::string Ssid;
     int32_t SignalStrength;
     bool IsConnected;

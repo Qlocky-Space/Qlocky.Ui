@@ -1,13 +1,24 @@
 #ifndef WPA_SUPPLICANT_DBUS_DRIVER_H
 #define WPA_SUPPLICANT_DBUS_DRIVER_H
 
+#include <sdbus-c++/sdbus-c++.h>
+
+#include <map>
 #include <Subject.h>
 
 #include "NetworkDriverIfc.h"
 #include "NetworkDriverListenerIfc.h"
 
+/**
+ * https://w1.fi/wpa_supplicant/devel/dbus.html#dbus_interface
+ *
+ * https://dbus.freedesktop.org/doc/dbus-specification.html#basic-types
+ */
 class WpaSupplicantDBusDriver final : public Subject<NetworkDriverListenerIfc>, public NetworkDriverIfc {
 public:
+
+    WpaSupplicantDBusDriver();
+    ~WpaSupplicantDBusDriver() final;
 
     /**
      * @see SubjectIfc::attach
@@ -36,6 +47,11 @@ public:
     NetworkResult down() final;
 
     /**
+     * @see NetworkDriverIfc::registerNetwork
+     */
+    NetworkResult registerNetwork(NetworkInfo const& network) final;
+
+    /**
      * @see NetworkDriverIfc::triggerScan
      */
     NetworkResult triggerScan() final;
@@ -44,14 +60,37 @@ public:
      * @see NetworkDriverIfc::fetchScanResults
      */
     NetworkResult fetchScanResults() final;
+
     /**
      * @see NetworkDriverIfc::abortScan
      */
     NetworkResult abortScan() final;
+
     /**
      * @see NetworkDriverIfc::connectTo
      */
     NetworkResult connectTo(std::string const& ssid) final;
+
+    /**
+     * @see NetworkDriverIfc::disconnect
+     */
+    NetworkResult disconnect() final;
+
+private:
+
+    inline static sdbus::ServiceName const DEFAULT_DBUS_SUPPLICANT_NAME {"fi.w1.wpa_supplicant1"};
+    inline static sdbus::ObjectPath const DEFAULT_DBUS_SUPPLICANT_PATH {"/fi/w1/wpa_supplicant1"};
+
+    std::unique_ptr<sdbus::IProxy> createInterfaceProxy(std::string const& interfaceName);
+    std::unique_ptr<sdbus::IProxy> createNetworkProxy(std::string const& ssid);
+
+    void parseNetworkState(std::string const& state);
+
+    std::unique_ptr<sdbus::IConnection> m_connection;
+    std::unique_ptr<sdbus::IProxy> m_proxy;
+
+    std::map<std::string, sdbus::ObjectPath> m_networks;
+    std::string m_interfaceName;
 };
 
 #endif

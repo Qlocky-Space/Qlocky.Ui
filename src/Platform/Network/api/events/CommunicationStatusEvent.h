@@ -12,11 +12,11 @@ public:
     /**
      * Constructor for CommunicationStatusEvent.
      * @param airplaneMode The current airplane mode status.
-     * @param networkEnabled The current network enabled status.
+     * @param wifiMode The current WiFi mode status.
      */
-    CommunicationStatusEvent(bool airplaneMode, bool networkEnabled) :
+    CommunicationStatusEvent(bool airplaneMode, bool wifiMode) :
         m_airplaneMode(airplaneMode),
-        m_networkEnabled(networkEnabled) {
+        m_wifiMode(wifiMode) {
     }
 
     /**
@@ -28,17 +28,17 @@ public:
     }
 
     /**
-     * Gets the current network enabled status.
-     * @return True if network is enabled, false otherwise.
+     * Gets the current WiFi mode status.
+     * @return The current WiFi mode status.
      */
-    bool getNetworkEnabled() const {
-        return m_networkEnabled;
+    bool getWifiMode() const {
+        return m_wifiMode;
     }
 
 private:
 
     bool m_airplaneMode {false};
-    bool m_networkEnabled {false};
+    bool m_wifiMode {false};
 };
 
 #endif

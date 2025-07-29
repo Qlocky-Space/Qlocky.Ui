@@ -9,7 +9,8 @@
 #include <string>
 
 #include "NetworkDriverErrorCode.h"
-#include "NetworkInfo.h"
+#include "NetworkProfile.h"
+#include "NetworkProfileEntity.h"
 
 /**
  * NetworkStateMachine is a state machine for managing network states.
@@ -20,7 +21,7 @@ enum class NetworkStates {
 
     DOWN = INITIAL,
     UP,
-    SCANNING,
+    CONNECTING,
     CONNECTED,
     ERROR
 };
@@ -28,7 +29,7 @@ enum class NetworkStates {
 /**
  * NetworkStateMachine is a concrete implementation of StateMachineBase for managing network states.
  */
-class NetworkStateMachine : public StateMachineBase<NetworkStates> {
+class NetworkStateMachine : public StateMachineBase<NetworkStates>, public NetworkDriverListenerIfc {
 public:
 
     NetworkStateMachine(Mediator& mediator, NetworkDriverIfc& networkDriver) :
@@ -37,6 +38,12 @@ public:
     }
 
     ~NetworkStateMachine() = default;
+
+    /**
+     * Forces the state machine to process all events.
+     * This method is used to ensure that all events are processed immediately,
+     */
+    void forceEvents();
 
     /**
      * Transition to the DOWN state.
@@ -51,30 +58,15 @@ public:
     void enable();
 
     /**
-     * Transition to the SCANNING state.
-     * This method is called when a network scan is initiated.
+     * Start a network connection to the specified profile.
+     * @param profile The network profile to connect to.
      */
-    void startScan();
+    void connectTo(NetworkProfileEntity const& profile);
 
     /**
-     * Transition to the CONNECTED state.
-     * This method is called when a network scan is completed.
-     * @param ssid The SSID of the network to connect to
+     * Disconnect from the current network.
      */
-    void connectTo(std::string const& ssid);
-
-    /**
-     * Transition to the CONNECTED state.
-     * This method is called when a network connection is established.
-     * @param foundResult True if the scan found a result, false otherwise.
-     */
-    void onScanCompleted(bool foundResult);
-
-    /**
-     * This method is called when the network interface state changed.
-     * @param info The current network information.
-     */
-    void onNetworkStateChanged(NetworkInfo const& info);
+    void disconnect();
 
     /**
      * Transition to the ERROR state.
@@ -83,11 +75,27 @@ public:
      */
     void onError(int32_t errorCode);
 
+    /**
+     * @see NetworkDriverListenerIfc::onInterfaceStatusChanged
+     */
+    void onInterfaceStatusChanged(NetworkIfStatus const status) final;
+
+    /**
+     * @see NetworkDriverListenerIfc::onScanCompleted
+     */
+    void onScanCompleted(bool success) final;
+
+    /**
+     * @see NetworkDriverListenerIfc::onScanResultsAvailable
+     */
+    void onScanResultsAvailable(ScanResult& result) final;
+
 protected:
 
     void onTransition(NetworkStates const state) final;
     void onEnterState(NetworkStates const state) final;
     void onLeaveState(NetworkStates const state) final;
+    void onRunState(NetworkStates const state) final;
 
     void transitionOnError();
     void transitionOnDisabled();
@@ -98,11 +106,14 @@ protected:
     }
 
     void sendNetworkStatus();
+    void sendConnectionStatus();
 
     void clearFlags() override {
-        m_scanning = false;
+        m_connected = false;
         m_connecting = false;
+        m_disconnect = false;
         m_scanDone = false;
+        m_lost = false;
         m_disabled = false;
         m_enabled = false;
     }
@@ -126,11 +137,13 @@ private:
     }};
 
     int32_t m_errorCode {0};
-    NetworkInfo m_networkInfo {};
+    NetworkProfile m_activeProfile {};
 
     // Flags
-    bool m_scanning {false};
+    bool m_connected {false};
     bool m_connecting {false};
+    bool m_disconnect {false};
+    bool m_lost {false};
     bool m_scanDone {false};
     bool m_disabled {false};
     bool m_enabled {false};

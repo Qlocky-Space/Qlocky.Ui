@@ -1,17 +1,19 @@
 #include "StatusBarViewModel.h"
 
+#include <iostream>
+
 namespace {
-constexpr NetworkStateType::State toType(NetworkStatus status) {
+constexpr NetworkStateType::State toType(WifiStatus status) {
     switch (status) {
-        case NetworkStatus::UP:
+        case WifiStatus::UP:
             return NetworkStateType::State::Disconnected;
-        case NetworkStatus::DOWN:
+        case WifiStatus::DOWN:
             return NetworkStateType::State::Disabled;
-        case NetworkStatus::SEARCHING:
+        case WifiStatus::CONNECTING:
             return NetworkStateType::State::Searching;
-        case NetworkStatus::CONNECTED:
+        case WifiStatus::CONNECTED:
             return NetworkStateType::State::Connected;
-        case NetworkStatus::ERROR:
+        case WifiStatus::ERROR:
             return NetworkStateType::State::Error;
         default:
             return NetworkStateType::State::Error;
@@ -19,9 +21,10 @@ constexpr NetworkStateType::State toType(NetworkStatus status) {
 }
 } // namespace
 
-StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService) :
+StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository) :
     QObject {nullptr},
     m_networkService {networkService},
+    m_networkRepository {networkRepository},
     m_title {"Qlocky"},
     m_ssid {""},
     m_networkStrength {-1},
@@ -32,8 +35,11 @@ StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& ne
     m_volume {100.F},
     m_volumeType {VolumeType::Level::Mute} {
 
-    mediator.subscribe<NetworkStatusEvent>(this, &StatusBarViewModel::updateNetworkStatus);
+    mediator.subscribe<WifiStatusEvent>(this, &StatusBarViewModel::updateWifiStatus);
+    mediator.subscribe<NetworkScanResultEvent>(this, &StatusBarViewModel::updateNetworkScanResult);
+    mediator.subscribe<ConnectionStatusEvent>(this, &StatusBarViewModel::updateConnectionStatus);
     mediator.subscribe<CommunicationStatusEvent>(this, &StatusBarViewModel::updateCommunicationStatus);
+
     // TODO register events for LightMode, AudioVolume, Brightness, etc.
 }
 
@@ -44,12 +50,8 @@ void StatusBarViewModel::setNetworkState(bool enabled) {
         setAirplaneMode(false);
     }
 
-    if (enabled) {
-        m_networkService.enable();
-    }
-    else {
-        m_networkService.disable();
-    }
+    std::cout << "Status Bar - Setting network state to " << (enabled ? "enabled" : "disabled") << std::endl;
+    m_networkService.setWifiEnabled(enabled);
 }
 
 void StatusBarViewModel::setSsid(QString const& ssid) {
@@ -60,11 +62,34 @@ void StatusBarViewModel::setSsid(QString const& ssid) {
 }
 
 void StatusBarViewModel::setAirplaneMode(bool enabled) {
-    m_networkService.setAirplaneMode(enabled);
+    std::cout << "Status Bar - Start Scan (DEMO)" << std::endl;
+    m_networkService.startScan();
+
+    // m_networkService.setAirplaneMode(enabled);
 }
 
 void StatusBarViewModel::setLightMode(bool enabled) {
-    // TODO forward to service
+    if (enabled) {
+        // TODO forward to service
+        auto profiles {m_networkRepository.getAllProfiles()};
+        if (profiles.empty()) {
+            std::cout << "Status Bar - No saved networks found, creating a new profile." << std::endl;
+
+            NetworkProfileNew profile {};
+            profile.Ssid = "XXXXXXXXX";
+            profile.Psk = "XXXXXXXXXX";
+            m_networkService.connectTo(profile);
+        }
+        else {
+            std::cout << "Status Bar - Connecting to the first saved network: " << profiles.front().ssid << std::endl;
+
+            m_networkService.connectTo(profiles.front().ssid);
+        }
+    }
+    else {
+        std::cout << "Status Bar - Disconnecting from network." << std::endl;
+        m_networkService.disconnect();
+    }
 
     if (m_lightMode != enabled) {
         m_lightMode = enabled;
@@ -99,20 +124,32 @@ void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
     }
 }
 
-void StatusBarViewModel::updateNetworkStatus(NetworkStatusEvent const& event) {
-    setSsid(QString::fromStdString(event.ssid()));
+void StatusBarViewModel::updateWifiStatus(WifiStatusEvent const& event) {
+    NetworkStateType::State networkState {toType(event.getWifiStatus())};
 
-    NetworkStateType::State networkState {toType(event.networkState())};
-
+    std::cout << "Status Bar - Network state changed to: " << static_cast<int>(networkState) << std::endl;
     if (m_networkState != networkState) {
         m_networkState = networkState;
         emit networkStateChanged();
     }
+}
 
-    if (m_networkStrength != event.networkStrength()) {
-        m_networkStrength = event.networkStrength();
+void StatusBarViewModel::updateConnectionStatus(ConnectionStatusEvent const& event) {
+    std::cout << "Status Bar - Network SSID: " << event.ssid() << std::endl;
+    std::cout << "Status Bar - Network Strength: " << event.signalStrength() << std::endl;
+
+    setSsid(QString::fromStdString(event.ssid()));
+
+    if (m_networkStrength != event.signalStrength()) {
+        m_networkStrength = event.signalStrength();
         emit networkStrengthChanged();
     }
+}
+
+void StatusBarViewModel::updateNetworkScanResult(NetworkScanResultEvent const& event) {
+    // Handle network scan results if needed
+    // For now, we just log that the scan was completed
+    std::cout << "Status Bar - Network scan result received: " << event.networkProfile().Ssid << std::endl;
 }
 
 void StatusBarViewModel::updateCommunicationStatus(CommunicationStatusEvent const& event) {
@@ -121,8 +158,10 @@ void StatusBarViewModel::updateCommunicationStatus(CommunicationStatusEvent cons
         emit airplaneModeChanged();
     }
 
-    if (!event.getNetworkEnabled()) {
+    if (!event.getWifiMode()) {
         m_networkState = NetworkStateType::State::Disabled;
+
+        setSsid("");
         emit networkStateChanged();
     }
 }
