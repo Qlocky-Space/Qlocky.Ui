@@ -36,9 +36,9 @@ QtObject {
         // theoretical limits are 0-100, but we use 0-80 for practical purposes
         strength = Math.abs(strength);
 
-        if (strength < 30) {
+        if (strength < 50) {
             return "\uf1eb"; // excellent
-        } else if (strength < 60) {
+        } else if (strength < 65) {
             return "\uf6ab\uf1eb"; // medium
         } else if (strength < 80) {
             return "\uf6aa\uf1eb"; // weak

@@ -18,6 +18,11 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/view/SettingPageViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/SettingPageViewModel.h
+
+    ${CMAKE_CURRENT_LIST_DIR}/view/NetworkStateType.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/NetworkStateType.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/VolumeType.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/VolumeType.h
 )
 
 set(MODULE_QML_SRC

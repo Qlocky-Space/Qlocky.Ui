@@ -5,8 +5,10 @@
 #include "QmlRegistryUtil.h"
 #include "view/MainPageViewModel.h"
 #include "view/MainWindowViewModel.h"
+#include "view/NetworkStateType.h"
 #include "view/SettingPageViewModel.h"
 #include "view/StatusBarViewModel.h"
+#include "view/VolumeType.h"
 
 void AppShellModule::registerExports(Injector& container) {
     container.install(boost::di::bind<Mediator>());

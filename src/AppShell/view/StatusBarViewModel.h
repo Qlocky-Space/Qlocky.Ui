@@ -11,40 +11,8 @@
 #include "events/WifiStatusEvent.h"
 #include "NetworkRepositoryIfc.h"
 #include "NetworkServiceIfc.h"
-
-/**
- * VolumeType is an enumeration representing the different types of volume settings.
- */
-class VolumeType : public QObject {
-    Q_OBJECT
-
-public:
-
-    enum class Level {
-        Mute,
-        Vibration,
-        Acoustic
-    };
-    Q_ENUM(Level)
-};
-
-/**
- * NetworkStateType is an enumeration representing the different states of network connectivity.
- */
-class NetworkStateType : public QObject {
-    Q_OBJECT
-
-public:
-
-    enum class State {
-        Disabled,
-        Connected,
-        Searching,
-        Disconnected,
-        Error,
-    };
-    Q_ENUM(State)
-};
+#include "NetworkStateType.h"
+#include "VolumeType.h"
 
 /**
  * StatusBarViewModel is responsible for managing the status bar view model.

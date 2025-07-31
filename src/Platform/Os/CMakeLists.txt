@@ -17,6 +17,7 @@ if (OS_IS_QLOCKY)
     )
 else()
     list(APPEND MODULE_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/internal/mock/NetworkDriverStub.cpp
         ${CMAKE_CURRENT_LIST_DIR}/internal/mock/NetworkDriverStub.h
     )
 endif()

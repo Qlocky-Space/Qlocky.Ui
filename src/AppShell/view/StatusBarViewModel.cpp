@@ -2,25 +2,6 @@
 
 #include <iostream>
 
-namespace {
-constexpr NetworkStateType::State toType(WifiStatus status) {
-    switch (status) {
-        case WifiStatus::UP:
-            return NetworkStateType::State::Disconnected;
-        case WifiStatus::DOWN:
-            return NetworkStateType::State::Disabled;
-        case WifiStatus::CONNECTING:
-            return NetworkStateType::State::Searching;
-        case WifiStatus::CONNECTED:
-            return NetworkStateType::State::Connected;
-        case WifiStatus::ERROR:
-            return NetworkStateType::State::Error;
-        default:
-            return NetworkStateType::State::Error;
-    }
-}
-} // namespace
-
 StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository) :
     QObject {nullptr},
     m_networkService {networkService},
@@ -64,29 +45,6 @@ void StatusBarViewModel::setAirplaneMode(bool enabled) {
 }
 
 void StatusBarViewModel::setLightMode(bool enabled) {
-    if (enabled) {
-        // TODO forward to service
-        auto profiles {m_networkRepository.getAllProfiles()};
-        if (profiles.empty()) {
-            std::cout << "Status Bar - No saved networks found, creating a new profile." << std::endl;
-
-            NetworkProfileNew profile {};
-            profile.Ssid = "XXXXXXXXX";
-            profile.Psk = "XXXXXXXXXX";
-            profile.AutoConnect = true;
-            m_networkService.connectTo(profile);
-        }
-        else {
-            std::cout << "Status Bar - Connecting to the first saved network: " << profiles.front().ssid << std::endl;
-
-            m_networkService.connectTo(profiles.front().ssid);
-        }
-    }
-    else {
-        std::cout << "Status Bar - Disconnecting from network." << std::endl;
-        m_networkService.disconnect();
-    }
-
     if (m_lightMode != enabled) {
         m_lightMode = enabled;
         emit lightModeChanged();
@@ -121,7 +79,7 @@ void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
 }
 
 void StatusBarViewModel::updateWifiStatus(WifiStatusEvent const& event) {
-    NetworkStateType::State networkState {toType(event.getWifiStatus())};
+    NetworkStateType::State networkState {toNetworkType(event.getWifiStatus())};
 
     // Reset SSID if the network is disabled
     if (networkState == NetworkStateType::State::Disabled || networkState == NetworkStateType::State::Disconnected) {

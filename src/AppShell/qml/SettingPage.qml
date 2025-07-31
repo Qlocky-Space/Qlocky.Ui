@@ -9,6 +9,8 @@ Item {
     id: root
     anchors.fill: parent
 
+    property var viewModel: SettingPageViewModel
+
     RowLayout {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
@@ -33,11 +35,22 @@ Item {
             }
         }
 
-        Text {
+        ColumnLayout {
+            QButton {
+                text: "Connect Network"
+
+                onClicked: viewModel.networkConnect()
+            }
+
+            QButton {
+                text: "Disconnect Network"
+
+                onClicked: viewModel.networkDisconnect()
+            }
+        }
+
+        QLabel {
             text: "Settings"
-            font.pixelSize: 24
-            color: ThemeManager.currentTheme == ThemeManager.ThemeMode.Light ? "black" : "white"
-            anchors.margins: 20
         }
     }
 }

@@ -32,7 +32,7 @@ Item {
         anchors.fill: parent
         anchors.centerIn: parent
 
-        text: control.icon[0]
+        text: icon.length > 0 ? icon[0] : null
         font.family: FontStyle.fontAwesome.family
         font.pixelSize: parent.height
         color: control.color
