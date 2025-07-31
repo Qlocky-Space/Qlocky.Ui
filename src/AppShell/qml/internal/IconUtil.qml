@@ -39,9 +39,9 @@ QtObject {
         if (strength < 30) {
             return "\uf1eb"; // excellent
         } else if (strength < 60) {
-            return "\uf6ab"; // medium
+            return "\uf6ab\uf1eb"; // medium
         } else if (strength < 80) {
-            return "\uf6aa"; // weak
+            return "\uf6aa\uf1eb"; // weak
         } else {
             return "\uf071"; // error
         }
