@@ -2,9 +2,9 @@ set(CMAKE_TARGET_SDK Qlocky)
 
 include($ENV{OECORE_NATIVE_SYSROOT}/usr/share/cmake/OEToolchainConfig.cmake)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g")
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g")
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections")
 
 # Read the contents of the file
 file(STRINGS /workspaces/.env ENV_FILE)

@@ -11,6 +11,7 @@ set(CMAKE_CXX_COMPILER g++ CACHE PATH "C++ compiler")
 # c++17 + -Wpedantic ensure that "linux" is not converted to "1" by the gcc preprocessor
 set(CMAKE_CXX_FLAGS "-std=c++17 -Wpedantic -Werror -DQT_QML_DEBUG")
 set(CMAKE_C_FLAGS "-Wpedantic -Werror")
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections")
 
 set(QT_INST_DIR "/opt/qt/6.8.1/gcc_64")
 set(CMAKE_PREFIX_PATH ${QT_INST_DIR})
@@ -18,7 +19,7 @@ set(QT_HOST_PATH ${QT_INST_DIR})
 set(QT_QMAKE_EXECUTABLE ${QT_INST_DIR}/bin/qmake)
 set(CMAKE_INSTALL_RPATH "${QT_INST_DIR}/lib")
 
-# Custopm VSCode launch
+# Custom VSCode launch
 set(VSCODE_LAUNCH_COMMANDS [[
     "linux": {
         "preLaunchTask": "CMake: build",
