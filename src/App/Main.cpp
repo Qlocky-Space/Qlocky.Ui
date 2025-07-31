@@ -1,11 +1,14 @@
 #include <boost/di.hpp>
 #include <boost/di/extension/injector.hpp>
+#include <ng-log/logging.h>
 #include <QGuiApplication>
 
 #include "AlarmModule.h"
 #include "api/ApplicationIfc.h"
 #include "AppShellModule.h"
+#include "internal/ConsoleSink.h"
 #include "internal/QlockyApp.h"
+#include "internal/QtLogForwarder.h"
 #include "LanguageModule.h"
 #include "NetworkModule.h"
 #include "OsModule.h"
@@ -29,6 +32,17 @@ std::shared_ptr<T> createApplication(Injector& container) {
 }
 
 int main(int argc, char* argv[]) {
+    using namespace std::chrono_literals;
+
+    nglog::InitializeLogging(argv[0]);
+    nglog::InstallFailureSignalHandler();
+    nglog::EnableLogCleaner(24h * 30); // Clean logs older than 30 days
+    QtLoggerForwarder::install();
+
+    // Add the console sink for logging as early as possible
+    auto consoleSink {std::make_shared<ConsoleSink>()};
+    nglog::AddLogSink(consoleSink.get());
+
     // Setup basic information for application
     auto coreApp {std::make_unique<QGuiApplication>(argc, argv)};
     coreApp->setApplicationName("QlockyApp");

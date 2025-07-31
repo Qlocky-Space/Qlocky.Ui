@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <ng-log/logging.h>
 #include <nlohmann/json.hpp>
 
 #include "events/NetworkProfileAddedEvent.h"
@@ -20,8 +21,7 @@ void NetworkRepository::initialize() {
 
     auto results {getContext().getList(Preferences::NetworksKey)};
     if (results.isError()) {
-        // TODO log error
-        std::cerr << "Failed to get network profiles: " << results.error() << std::endl;
+        LOG(ERROR) << "Failed to get network profiles: " << results.error();
         return;
     }
 
@@ -40,8 +40,7 @@ void NetworkRepository::addProfile(NetworkProfileEntity const& profile) {
 
     ResultVoid const result {updateObject(profile)};
     if (result.isError()) {
-        // TODO log error
-        std::cerr << "Failed to update networkprofile: " << result.error() << std::endl;
+        LOG(ERROR) << "Failed to add network profile: " << result.error();
         return;
     }
 
@@ -69,8 +68,7 @@ void NetworkRepository::removeProfile(std::string const& ssid) {
 
     ResultVoid const result {removeObject(id)};
     if (result.isError()) {
-        // TODO log error
-        std::cerr << "Failed to remove network profile: " << result.error() << std::endl;
+        LOG(ERROR) << "Failed to remove network profile: " << result.error();
         return;
     }
 

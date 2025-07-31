@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <linux/rfkill.h>
+#include <ng-log/logging.h>
 #include <unistd.h>
 
 class RfkillHelper {
@@ -52,7 +53,7 @@ private:
             perror("write");
         }
         else {
-            std::cout << "rfkill " << index << " " << (block ? "blocked" : "unblocked") << " via /dev/rfkill" << std::endl;
+            LOG(INFO) << "rfkill " << index << " " << (block ? "blocked" : "unblocked") << " via /dev/rfkill";
         }
 
         close(fd);

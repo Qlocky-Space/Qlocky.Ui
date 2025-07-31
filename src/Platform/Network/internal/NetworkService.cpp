@@ -1,6 +1,6 @@
 #include "NetworkService.h"
 
-#include <iostream>
+#include <ng-log/logging.h>
 
 #include "events/CommunicationStatusEvent.h"
 #include "NetworkProfileMapper.h"
@@ -84,7 +84,7 @@ void NetworkService::connectTo(std::string const& ssid) {
         m_stateMachine.connectTo(profile.value());
     }
     else {
-        std::cerr << "Profile with SSID " << ssid << " not found." << std::endl;
+        LOG(ERROR) << "Profile with SSID " << ssid << " not found.";
     }
 }
 
