@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <ng-log/logging.h>
 #include <nlohmann/json.hpp>
 #include <vector>
 
@@ -21,8 +22,7 @@ void AlarmRepository::initialize() {
 
     auto result {getContext().getList(Preferences::PROP_ITEMS_KEY)};
     if (result.isError()) {
-        // TODO log error
-        std::cerr << "Failed to get alarms: " << result.error() << std::endl;
+        LOG(ERROR) << "Failed to get alarms: " << result.error();
         return;
     }
 
@@ -41,8 +41,7 @@ void AlarmRepository::addAlarm(AlarmEntity const& alarm) {
 
     ResultVoid const result {updateObject(alarm)};
     if (result.isError()) {
-        // TODO log error
-        std::cerr << "Failed to update alarm: " << result.error() << std::endl;
+        LOG(ERROR) << "Failed to add alarm: " << result.error();
         return;
     }
 
@@ -66,8 +65,7 @@ void AlarmRepository::removeAlarm(AlarmId const id) {
 
     ResultVoid const result {removeObject(id)};
     if (result.isError()) {
-        // TODO log error
-        std::cerr << "Failed to remove alarm: " << result.error() << std::endl;
+        LOG(ERROR) << "Failed to remove alarm: " << result.error();
         return;
     }
 
@@ -88,8 +86,7 @@ void AlarmRepository::setAlarmState(AlarmId const id, bool isActive) {
 
     ResultVoid const result {updateObject(*it)};
     if (result.isError()) {
-        // TODO log error
-        std::cerr << "Failed to change alarm state: " << result.error() << std::endl;
+        LOG(ERROR) << "Failed to change alarm state: " << result.error();
         return;
     }
 
@@ -114,8 +111,7 @@ void AlarmRepository::snooze(AlarmId const alarmId) {
 
     ResultVoid const result {updateObject(*it)};
     if (result.isError()) {
-        // TODO log error
-        std::cerr << "Failed to snooze alarm: " << result.error() << std::endl;
+        LOG(ERROR) << "Failed to snooze alarm: " << result.error();
         return;
     }
 

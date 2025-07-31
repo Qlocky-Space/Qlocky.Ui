@@ -2,6 +2,8 @@
 
 #include <sdbus-c++/sdbus-c++.h>
 
+#include <ng-log/logging.h>
+
 #include "RfkillHelper.h"
 
 WpaSupplicantDBusDriver::WpaSupplicantDBusDriver() :
@@ -30,6 +32,8 @@ NetworkResult WpaSupplicantDBusDriver::up(std::string const& interfaceName) {
 
     m_proxy = createInterfaceProxy(interfaceName);
 
+    LOG(INFO) << "Interface " << interfaceName << " is up";
+
     // if connect to interface, ensure it is never connected
     // auto connect is handled by application itself
     disconnect();
@@ -55,6 +59,7 @@ NetworkResult WpaSupplicantDBusDriver::down() {
 
     m_proxy.reset();
     m_interfaceName.clear();
+    LOG(INFO) << "Interface " << m_interfaceName << " is down";
 
     return NetworkResult::success(true);
 }
@@ -102,6 +107,8 @@ NetworkResult WpaSupplicantDBusDriver::triggerScan() {
     }
 
     auto proxy = createInterfaceProxy(m_interfaceName);
+
+    LOG(INFO) << "Triggering scan on interface " << m_interfaceName;
 
     std::map<std::string, sdbus::Variant> scanArgs {};
     scanArgs["Type"] = sdbus::Variant(std::string("passive"));
@@ -155,6 +162,8 @@ NetworkResult WpaSupplicantDBusDriver::connectTo(std::string const& ssid) {
 
     auto networkProxy = createNetworkProxy(ssid);
 
+    LOG(INFO) << "Connecting to network: " << ssid;
+
     networkProxy->setProperty("Enabled")
         .onInterface("fi.w1.wpa_supplicant1.Network")
         .toValue(sdbus::Variant(true));
@@ -166,6 +175,8 @@ NetworkResult WpaSupplicantDBusDriver::disconnect() {
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
+
+    LOG(INFO) << "Disconnecting from network";
 
     auto proxy = createInterfaceProxy(m_interfaceName);
     try {

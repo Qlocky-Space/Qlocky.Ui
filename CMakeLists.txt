@@ -37,6 +37,7 @@ include(SetupConfigure)
 ###########################################
 include(SetupQt6)
 include(SetupBoostDi)
+include(SetupNgLog)
 include(SetupNLohmann)
 include(SetupQlockyPkg)
 include(DeclareModuleSetup)

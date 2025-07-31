@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <ng-log/logging.h>
 
 #include "KeyValueDatabase.h"
 
@@ -24,7 +25,7 @@ void PersistenceService::initialize() {
 
     rocksdb::Status const status {rocksdb::DB::Open(options, dbName, &pDb)};
     if (!status.ok()) {
-        std::cerr << "Error opening DB: " << status.ToString() << std::endl;
+        LOG(ERROR) << "Failed to open database: " << status.ToString();
         return;
     }
 

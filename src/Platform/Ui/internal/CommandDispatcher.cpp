@@ -1,10 +1,13 @@
 #include "CommandDispatcher.h"
 
+#include <ng-log/logging.h>
+
 void CommandDispatcher::dispatch(CommandCode const& id, CommandArgs const* data) {
     if (!keyExists(id)) {
         return;
     }
 
+    DLOG(INFO) << "Executing command with ID: " << id;
     m_commands.at(id).execute(data);
 }
 

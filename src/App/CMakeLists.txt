@@ -30,6 +30,10 @@ add_executable(QlockyApp
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/QlockyApp.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/QlockyApp.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/ConsoleSink.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/ConsoleSink.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QtLogForwarder.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QtLogForwarder.cpp
 )
 
 ###########################################

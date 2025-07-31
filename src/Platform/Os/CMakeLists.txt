@@ -10,6 +10,10 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/TimeProvider.h
 )
 
+list(APPEND _links
+    ng-log::ng-log
+)
+
 if (OS_IS_QLOCKY)
     list(APPEND MODULE_SRC
         ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/WpaSupplicantDBusDriver.cpp
@@ -21,5 +25,7 @@ else()
         ${CMAKE_CURRENT_LIST_DIR}/internal/mock/NetworkDriverStub.h
     )
 endif()
+
+set(MODULE_LINK ${_links})
 
 setup_module()
