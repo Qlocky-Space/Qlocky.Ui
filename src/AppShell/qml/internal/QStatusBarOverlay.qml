@@ -43,8 +43,8 @@ Item {
                 QStatusBarIcon {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
-                    isActive: viewModel.networkStrength > 0
-                    image: IconUtil.toNetworkStrength(viewModel.networkStrength)
+                    isActive: viewModel.networkState != NetworkStateType.Disabled
+                    image: IconUtil.toNetwork(viewModel.networkState, viewModel.networkStrength)
                     imageInactive: "\uf6ac"
                     onClicked: function(state) {
                         viewModel.setNetworkState(state)

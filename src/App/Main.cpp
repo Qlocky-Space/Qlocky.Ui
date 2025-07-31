@@ -7,6 +7,7 @@
 #include "AppShellModule.h"
 #include "internal/QlockyApp.h"
 #include "LanguageModule.h"
+#include "NetworkModule.h"
 #include "OsModule.h"
 #include "PersistenceModule.h"
 #include "QlockyConfig.h"
@@ -41,6 +42,7 @@ int main(int argc, char* argv[]) {
     // Register Platform modules
     app->addModule<OsModule>();
     app->addModule<PersistenceModule>();
+    app->addModule<NetworkModule>();
     app->addModule<WidgetModule>();
     app->addModule<UiModule>();
     app->addModule<LanguageModule>();

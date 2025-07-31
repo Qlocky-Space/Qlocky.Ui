@@ -1,29 +1,36 @@
 #include "StatusBarViewModel.h"
 
-StatusBarViewModel::StatusBarViewModel(Mediator& mediator) :
+#include <iostream>
+
+StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository) :
     QObject {nullptr},
+    m_networkService {networkService},
+    m_networkRepository {networkRepository},
     m_title {"Qlocky"},
     m_ssid {""},
     m_networkStrength {-1},
+    m_networkState {false},
     m_airplaneMode {false},
     m_lightMode {false},
-    m_brightness {0.5f},
-    m_volume {0.5f},
+    m_brightness {100.F},
+    m_volume {100.F},
     m_volumeType {VolumeType::Level::Mute} {
-    // TODO register events for NetworkStatus, AirplaneMode, LightMode
+
+    mediator.subscribe<WifiStatusEvent>(this, &StatusBarViewModel::updateWifiStatus);
+    mediator.subscribe<ConnectionStatusEvent>(this, &StatusBarViewModel::updateConnectionStatus);
+    mediator.subscribe<CommunicationStatusEvent>(this, &StatusBarViewModel::updateCommunicationStatus);
+
+    // TODO register events for LightMode, AudioVolume, Brightness, etc.
 }
 
 void StatusBarViewModel::setNetworkState(bool enabled) {
+    // just for user convenience, this will toggle the network state to on,
+    // if airplane mode is enabled, it will disable it first
     if (enabled && m_airplaneMode) {
         setAirplaneMode(false);
     }
 
-    // TODO forward to service
-
-    m_networkStrength = enabled ? 100 : -1;  // Simulate network strength
-    setSsid(enabled ? "QlockyNetwork" : ""); // Simulate SSID
-
-    emit networkStrengthChanged();
+    m_networkService.setWifiEnabled(enabled);
 }
 
 void StatusBarViewModel::setSsid(QString const& ssid) {
@@ -34,21 +41,10 @@ void StatusBarViewModel::setSsid(QString const& ssid) {
 }
 
 void StatusBarViewModel::setAirplaneMode(bool enabled) {
-    if (enabled) {
-        setNetworkState(false);
-    }
-
-    // TODO forward to service
-
-    if (m_airplaneMode != enabled) {
-        m_airplaneMode = enabled;
-        emit airplaneModeChanged();
-    }
+    m_networkService.setAirplaneMode(enabled);
 }
 
 void StatusBarViewModel::setLightMode(bool enabled) {
-    // TODO forward to service
-
     if (m_lightMode != enabled) {
         m_lightMode = enabled;
         emit lightModeChanged();
@@ -79,5 +75,43 @@ void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
     if (m_volumeType != type) {
         m_volumeType = type;
         emit volumeTypeChanged();
+    }
+}
+
+void StatusBarViewModel::updateWifiStatus(WifiStatusEvent const& event) {
+    NetworkStateType::State networkState {toNetworkType(event.getWifiStatus())};
+
+    // Reset SSID if the network is disabled
+    if (networkState == NetworkStateType::State::Disabled || networkState == NetworkStateType::State::Disconnected) {
+        setSsid("");
+    }
+
+    if (m_networkState != networkState) {
+        m_networkState = networkState;
+        emit networkStateChanged();
+    }
+}
+
+void StatusBarViewModel::updateConnectionStatus(ConnectionStatusEvent const& event) {
+    setSsid(QString::fromStdString(event.ssid()));
+
+    if (m_networkStrength != event.signalStrength()) {
+        m_networkStrength = event.signalStrength();
+        emit networkStrengthChanged();
+    }
+}
+
+void StatusBarViewModel::updateCommunicationStatus(CommunicationStatusEvent const& event) {
+    if (m_airplaneMode != event.getAirplaneMode()) {
+        m_airplaneMode = event.getAirplaneMode();
+        emit airplaneModeChanged();
+    }
+
+    if (!event.getWifiMode()) {
+        m_networkState = NetworkStateType::State::Disabled;
+
+        // Reset the SSID when Wi-Fi mode is disabled
+        setSsid("");
+        emit networkStateChanged();
     }
 }

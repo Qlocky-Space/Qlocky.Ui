@@ -1,6 +1,7 @@
 #ifndef SRC_PLATFORM_GLOBAL_TYPES_RESULT_H
 #define SRC_PLATFORM_GLOBAL_TYPES_RESULT_H
 
+#include <functional>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -18,11 +19,8 @@ class Result {
 public:
 
     // Implicit constructor from T
-    Result(T const& value) :
-        Result {Ok {value}} {
-    }
-    Result(T&& value) :
-        Result {Ok {std::forward<T>(value)}} {
+    Result(T value) :
+        Result {Ok {std::move(value)}} {
     }
 
     /**
@@ -30,17 +28,8 @@ public:
      * @param value Success value.
      * @return Result containing the value.
      */
-    static Result success(T&& value) {
-        return Result {Ok {std::forward<T>(value)}};
-    }
-
-    /**
-     * Create a success result.
-     * @param value Success value.
-     * @return Result containing the value.
-     */
-    static Result success(T const& value) {
-        return Result {Ok {value}};
+    static Result success(T value) {
+        return Result {Ok {std::move(value)}};
     }
 
     /**
@@ -82,7 +71,7 @@ public:
      * @return Success value.
      * @throws std::logic_error if not success.
      */
-    T const& value() const {
+    T value() const {
         if (!isSuccess()) {
             throw std::logic_error {"Tried to access value on an error result."};
         }
@@ -94,7 +83,7 @@ public:
      * @param defaultValue Default value to return if error.
      * @return Success value or default value.
      */
-    T const& valueOr(T const& defaultValue) const {
+    T valueOr(T defaultValue) const {
         if (!isSuccess()) {
             return defaultValue;
         }
@@ -111,6 +100,30 @@ public:
             throw std::logic_error {"Tried to access error on a success result."};
         }
         return std::get<Err>(m_result).error;
+    }
+
+    /**
+     * Execute a callback if result is error.
+     * @param callback Callback to execute if error.
+     * @return Reference to this result for chaining.
+     */
+    Result<T, E>& onError(std::function<void(E const&)> callback) {
+        if (isError() && callback) {
+            callback(error());
+        }
+        return *this;
+    }
+
+    /**
+     * Execute a callback if result is success.
+     * @param callback Callback to execute if success.
+     * @return Reference to this result for chaining.
+     */
+    Result<T, E>& onSuccess(std::function<void(T const&)> callback) {
+        if (isSuccess() && callback) {
+            callback(value());
+        }
+        return *this;
     }
 
 private:

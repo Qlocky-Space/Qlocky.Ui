@@ -6,22 +6,13 @@
 #include <QString>
 
 #include "api/Mediator.h"
-
-/**
- * VolumeType is an enumeration representing the different types of volume settings.
- */
-class VolumeType : public QObject {
-    Q_OBJECT
-
-public:
-
-    enum class Level {
-        Mute,
-        Vibration,
-        Acoustic
-    };
-    Q_ENUM(Level)
-};
+#include "events/CommunicationStatusEvent.h"
+#include "events/ConnectionStatusEvent.h"
+#include "events/WifiStatusEvent.h"
+#include "NetworkRepositoryIfc.h"
+#include "NetworkServiceIfc.h"
+#include "NetworkStateType.h"
+#include "VolumeType.h"
 
 /**
  * StatusBarViewModel is responsible for managing the status bar view model.
@@ -31,6 +22,7 @@ class StatusBarViewModel : public QObject {
 
     Q_PROPERTY(int32_t networkStrength READ getNetworkStrength NOTIFY networkStrengthChanged)
     Q_PROPERTY(QString ssid READ ssid NOTIFY ssidChanged)
+    Q_PROPERTY(NetworkStateType::State networkState READ getNetworkState NOTIFY networkStateChanged)
     Q_PROPERTY(bool isAirplaneModeEnabled READ isAirplaneModeEnabled WRITE setAirplaneMode NOTIFY airplaneModeChanged)
     Q_PROPERTY(bool lightMode READ isLightModeEnabled WRITE setLightMode NOTIFY lightModeChanged)
     Q_PROPERTY(QString title READ getTitle NOTIFY titleChanged)
@@ -40,7 +32,14 @@ class StatusBarViewModel : public QObject {
 
 public:
 
-    explicit StatusBarViewModel(Mediator& mediator);
+    explicit StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository);
+
+    /**
+     * Returns the current network state.
+     */
+    NetworkStateType::State getNetworkState() const {
+        return m_networkState;
+    }
 
     /**
      * Returns the current network strength.
@@ -144,6 +143,7 @@ public:
 signals:
     void titleChanged();
     void networkStrengthChanged();
+    void networkStateChanged();
     void airplaneModeChanged();
     void lightModeChanged();
     void brightnessChanged();
@@ -153,9 +153,17 @@ signals:
 
 private:
 
+    void updateWifiStatus(WifiStatusEvent const& event);
+    void updateConnectionStatus(ConnectionStatusEvent const& event);
+    void updateCommunicationStatus(CommunicationStatusEvent const& event);
+
+    NetworkServiceIfc& m_networkService;
+    NetworkRepositoryIfc& m_networkRepository;
+
     QString m_title;
     QString m_ssid;
     int32_t m_networkStrength; // -1 to 100, -1 means no network
+    NetworkStateType::State m_networkState;
     bool m_airplaneMode;
     bool m_lightMode;
     float m_brightness;
