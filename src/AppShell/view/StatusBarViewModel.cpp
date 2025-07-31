@@ -36,7 +36,6 @@ StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& ne
     m_volumeType {VolumeType::Level::Mute} {
 
     mediator.subscribe<WifiStatusEvent>(this, &StatusBarViewModel::updateWifiStatus);
-    mediator.subscribe<NetworkScanResultEvent>(this, &StatusBarViewModel::updateNetworkScanResult);
     mediator.subscribe<ConnectionStatusEvent>(this, &StatusBarViewModel::updateConnectionStatus);
     mediator.subscribe<CommunicationStatusEvent>(this, &StatusBarViewModel::updateCommunicationStatus);
 
@@ -50,7 +49,6 @@ void StatusBarViewModel::setNetworkState(bool enabled) {
         setAirplaneMode(false);
     }
 
-    std::cout << "Status Bar - Setting network state to " << (enabled ? "enabled" : "disabled") << std::endl;
     m_networkService.setWifiEnabled(enabled);
 }
 
@@ -62,10 +60,7 @@ void StatusBarViewModel::setSsid(QString const& ssid) {
 }
 
 void StatusBarViewModel::setAirplaneMode(bool enabled) {
-    std::cout << "Status Bar - Start Scan (DEMO)" << std::endl;
-    m_networkService.startScan();
-
-    // m_networkService.setAirplaneMode(enabled);
+    m_networkService.setAirplaneMode(enabled);
 }
 
 void StatusBarViewModel::setLightMode(bool enabled) {
@@ -78,6 +73,7 @@ void StatusBarViewModel::setLightMode(bool enabled) {
             NetworkProfileNew profile {};
             profile.Ssid = "XXXXXXXXX";
             profile.Psk = "XXXXXXXXXX";
+            profile.AutoConnect = true;
             m_networkService.connectTo(profile);
         }
         else {
@@ -127,7 +123,11 @@ void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
 void StatusBarViewModel::updateWifiStatus(WifiStatusEvent const& event) {
     NetworkStateType::State networkState {toType(event.getWifiStatus())};
 
-    std::cout << "Status Bar - Network state changed to: " << static_cast<int>(networkState) << std::endl;
+    // Reset SSID if the network is disabled
+    if (networkState == NetworkStateType::State::Disabled || networkState == NetworkStateType::State::Disconnected) {
+        setSsid("");
+    }
+
     if (m_networkState != networkState) {
         m_networkState = networkState;
         emit networkStateChanged();
@@ -135,21 +135,12 @@ void StatusBarViewModel::updateWifiStatus(WifiStatusEvent const& event) {
 }
 
 void StatusBarViewModel::updateConnectionStatus(ConnectionStatusEvent const& event) {
-    std::cout << "Status Bar - Network SSID: " << event.ssid() << std::endl;
-    std::cout << "Status Bar - Network Strength: " << event.signalStrength() << std::endl;
-
     setSsid(QString::fromStdString(event.ssid()));
 
     if (m_networkStrength != event.signalStrength()) {
         m_networkStrength = event.signalStrength();
         emit networkStrengthChanged();
     }
-}
-
-void StatusBarViewModel::updateNetworkScanResult(NetworkScanResultEvent const& event) {
-    // Handle network scan results if needed
-    // For now, we just log that the scan was completed
-    std::cout << "Status Bar - Network scan result received: " << event.networkProfile().Ssid << std::endl;
 }
 
 void StatusBarViewModel::updateCommunicationStatus(CommunicationStatusEvent const& event) {
@@ -161,6 +152,7 @@ void StatusBarViewModel::updateCommunicationStatus(CommunicationStatusEvent cons
     if (!event.getWifiMode()) {
         m_networkState = NetworkStateType::State::Disabled;
 
+        // Reset the SSID when Wi-Fi mode is disabled
         setSsid("");
         emit networkStateChanged();
     }

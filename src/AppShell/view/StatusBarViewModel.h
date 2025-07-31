@@ -8,7 +8,6 @@
 #include "api/Mediator.h"
 #include "events/CommunicationStatusEvent.h"
 #include "events/ConnectionStatusEvent.h"
-#include "events/NetworkScanResultEvent.h"
 #include "events/WifiStatusEvent.h"
 #include "NetworkRepositoryIfc.h"
 #include "NetworkServiceIfc.h"
@@ -188,7 +187,6 @@ private:
 
     void updateWifiStatus(WifiStatusEvent const& event);
     void updateConnectionStatus(ConnectionStatusEvent const& event);
-    void updateNetworkScanResult(NetworkScanResultEvent const& event);
     void updateCommunicationStatus(CommunicationStatusEvent const& event);
 
     NetworkServiceIfc& m_networkService;
