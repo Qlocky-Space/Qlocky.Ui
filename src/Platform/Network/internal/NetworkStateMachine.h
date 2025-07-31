@@ -11,6 +11,7 @@
 #include "NetworkDriverErrorCode.h"
 #include "NetworkProfile.h"
 #include "NetworkProfileEntity.h"
+#include "NetworkRepositoryIfc.h"
 
 /**
  * NetworkStateMachine is a state machine for managing network states.
@@ -32,9 +33,10 @@ enum class NetworkStates {
 class NetworkStateMachine : public StateMachineBase<NetworkStates>, public NetworkDriverListenerIfc {
 public:
 
-    NetworkStateMachine(Mediator& mediator, NetworkDriverIfc& networkDriver) :
+    NetworkStateMachine(Mediator& mediator, NetworkDriverIfc& networkDriver, NetworkRepositoryIfc& repository) :
         m_mediator {mediator},
-        m_networkDriver {networkDriver} {
+        m_networkDriver {networkDriver},
+        m_repository {repository} {
     }
 
     ~NetworkStateMachine() = default;
@@ -97,6 +99,8 @@ protected:
     void onLeaveState(NetworkStates const state) final;
     void onRunState(NetworkStates const state) final;
 
+    void onUpEntered();
+
     void transitionOnError();
     void transitionOnDisabled();
 
@@ -129,6 +133,7 @@ private:
     // Data
     Mediator& m_mediator;
     NetworkDriverIfc& m_networkDriver;
+    NetworkRepositoryIfc& m_repository;
     NetworkErrorCallback m_errorCallback {[this](NetworkDriverErrorCode const& errorCode) {
         setErrorCode(errorCode);
     }};

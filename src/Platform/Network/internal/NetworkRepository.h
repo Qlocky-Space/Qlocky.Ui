@@ -34,6 +34,16 @@ public:
     void removeProfile(std::string const& ssid) final;
 
     /**
+     * @see NetworkRepositoryIfc::selectNetwork
+     */
+    void selectNetwork(std::string const& ssid) final;
+
+    /**
+     * @see NetworkRepositoryIfc::getLastNetwork
+     */
+    std::optional<NetworkProfileEntity> getLastNetwork() final;
+
+    /**
      * @see NetworkRepositoryIfc::getProfileById
      */
     std::optional<NetworkProfileEntity> getProfileBySsid(std::string const& ssid) final;
@@ -71,6 +81,7 @@ private:
 
     struct Preferences final {
         inline static std::string const NetworksKey {"Networks"};
+        inline static std::string const LastNetworkKey {"LastNetwork"};
         inline static PersistenceKey const AirplaneModeKey {"AirplaneMode"};
         inline static PersistenceKey const NetworkEnabledKey {"NetworkEnabled"};
     };

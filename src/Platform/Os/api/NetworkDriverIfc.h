@@ -40,6 +40,12 @@ public:
     virtual NetworkResult registerNetwork(NetworkInfo const& network) = 0;
 
     /**
+     * Unregisters all networks from the driver.
+     * This method is used to clear all registered networks.
+     */
+    virtual NetworkResult unregisterAll() = 0;
+
+    /**
      * Triggers a Wi-Fi scan on the interface.
      * @return true if the scan was successfully triggered, false otherwise.
      */

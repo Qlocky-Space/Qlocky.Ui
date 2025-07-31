@@ -2,12 +2,11 @@
 
 #include <sdbus-c++/sdbus-c++.h>
 
-#include <iostream>
+#include "RfkillHelper.h"
 
 WpaSupplicantDBusDriver::WpaSupplicantDBusDriver() :
     m_connection {sdbus::createSystemBusConnection()},
     m_interfaceName {} {
-
     m_connection->enterEventLoopAsync();
 }
 
@@ -22,34 +21,26 @@ NetworkResult WpaSupplicantDBusDriver::up(std::string const& interfaceName) {
 
     m_interfaceName = interfaceName;
 
-    std::cout << "Bringing up interface: " << m_interfaceName << std::endl;
+    // Workaround:
+    // It seems in the RPI image the wifi interface is blocked by rfkill
+    // so we need to unblock it before bringing it up
+    // This is a workaround, ideally we should not rely on rfkill
+    // and instead configure yocto image to not block the interface
+    RfkillHelper::unblockRfkillDevice(WIFI_RFKILL_INDEX);
 
-    // register listeners
     m_proxy = createInterfaceProxy(interfaceName);
 
+    // if connect to interface, ensure it is never connected
+    // auto connect is handled by application itself
+    disconnect();
+    unregisterAll();
+
+    // register listeners
     m_proxy->uponSignal("PropertiesChanged")
         .onInterface("org.freedesktop.DBus.Properties")
         .call([this](std::string const& interfaceName, std::map<std::string, sdbus::Variant> const& changed, std::vector<std::string> const& invalidated) {
-            // std::cout << "Properties changed for interface: " << interfaceName << std::endl;
-            // for (auto const& [key, value] : changed) {
-            //     std::cout << "  " << key << std::endl;
-            // }
-
-            if (interfaceName == "fi.w1.wpa_supplicant1.Interface") {
-                auto it = changed.find("Scanning");
-                if (it != changed.end()) {
-                    bool scanning = it->second.get<bool>();
-                    if (!scanning) {
-                        notify(&NetworkDriverListenerIfc::onScanCompleted, true);
-                    }
-                }
-
-                it = changed.find("State");
-                if (it != changed.end()) {
-                    std::string state = it->second.get<std::string>();
-                    parseNetworkState(state);
-                }
-            }
+            parseScanningProperty(interfaceName, changed);
+            parseStateProperty(interfaceName, changed);
         });
     return NetworkResult::success(true);
 }
@@ -59,14 +50,11 @@ NetworkResult WpaSupplicantDBusDriver::down() {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
 
-    std::cout << "Bringing down interface: " << m_interfaceName << std::endl;
+    disconnect();
+    unregisterAll();
 
     m_proxy.reset();
-
-    // auto proxy = createInterfaceProxy(m_interfaceName);
-    // proxy->callMethod("Set")
-    //     .onInterface("org.freedesktop.DBus.Properties")
-    //     .withArguments("fi.w1.wpa_supplicant1.Network", "Enabled", sdbus::Variant(false));
+    m_interfaceName.clear();
 
     return NetworkResult::success(true);
 }
@@ -75,8 +63,6 @@ NetworkResult WpaSupplicantDBusDriver::registerNetwork(NetworkInfo const& networ
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
-
-    std::cout << "Registering network: " << network.ssid << " on interface: " << m_interfaceName << std::endl;
 
     auto proxy = createInterfaceProxy(m_interfaceName);
 
@@ -97,12 +83,23 @@ NetworkResult WpaSupplicantDBusDriver::registerNetwork(NetworkInfo const& networ
     return NetworkResult::success(true);
 }
 
-NetworkResult WpaSupplicantDBusDriver::triggerScan() {
+NetworkResult WpaSupplicantDBusDriver::unregisterAll() {
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
 
-    std::cout << "Triggering scan on interface: " << m_interfaceName << std::endl;
+    auto proxy = createInterfaceProxy(m_interfaceName);
+    proxy->callMethod("RemoveAllNetworks")
+        .onInterface("fi.w1.wpa_supplicant1.Interface");
+
+    m_networks.clear();
+    return NetworkResult::success(true);
+}
+
+NetworkResult WpaSupplicantDBusDriver::triggerScan() {
+    if (m_interfaceName.empty()) {
+        return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
+    }
 
     auto proxy = createInterfaceProxy(m_interfaceName);
 
@@ -171,9 +168,13 @@ NetworkResult WpaSupplicantDBusDriver::disconnect() {
     }
 
     auto proxy = createInterfaceProxy(m_interfaceName);
-    proxy->callMethod("Disconnect")
-        .onInterface("fi.w1.wpa_supplicant1.Interface")
-        .dontExpectReply();
+    try {
+        proxy->callMethod("Disconnect")
+            .onInterface("fi.w1.wpa_supplicant1.Interface");
+    }
+    catch (sdbus::Error const& e) {
+        return NetworkResult::success(false);
+    }
 
     return NetworkResult::success(true);
 }
@@ -208,8 +209,6 @@ std::unique_ptr<sdbus::IProxy> WpaSupplicantDBusDriver::createNetworkProxy(std::
 }
 
 void WpaSupplicantDBusDriver::parseNetworkState(std::string const& state) {
-    std::cout << "Interface state changed: " << state << std::endl;
-
     if (state == "completed") {
         notify(&NetworkDriverListenerIfc::onInterfaceStatusChanged, NetworkIfStatus::CONNECTED);
     }
@@ -226,5 +225,31 @@ void WpaSupplicantDBusDriver::parseNetworkState(std::string const& state) {
     }
     else {
         notify(&NetworkDriverListenerIfc::onInterfaceStatusChanged, NetworkIfStatus::UNKNOWN);
+    }
+}
+
+void WpaSupplicantDBusDriver::parseScanningProperty(std::string const& interfaceName, std::map<std::string, sdbus::Variant> const& changed) {
+    if (interfaceName != "fi.w1.wpa_supplicant1.Interface") {
+        return;
+    }
+
+    auto it = changed.find("Scanning");
+    if (it != changed.end()) {
+        bool scanning = it->second.get<bool>();
+        if (!scanning) {
+            notify(&NetworkDriverListenerIfc::onScanCompleted, true);
+        }
+    }
+}
+
+void WpaSupplicantDBusDriver::parseStateProperty(std::string const& interfaceName, std::map<std::string, sdbus::Variant> const& changed) {
+    if (interfaceName != "fi.w1.wpa_supplicant1.Interface") {
+        return;
+    }
+
+    auto it = changed.find("State");
+    if (it != changed.end()) {
+        std::string state = it->second.get<std::string>();
+        parseNetworkState(state);
     }
 }

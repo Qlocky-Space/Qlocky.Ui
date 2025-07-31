@@ -1,9 +1,8 @@
 #include "NetworkStateMachine.h"
 
-#include <iostream>
-
 #include "events/ConnectionStatusEvent.h"
 #include "events/WifiStatusEvent.h"
+#include "NetworkProfileMapper.h"
 
 void NetworkStateMachine::forceEvents() {
     sendNetworkStatus();
@@ -25,10 +24,9 @@ void NetworkStateMachine::enable() {
 }
 
 void NetworkStateMachine::connectTo(NetworkProfileEntity const& profile) {
+    m_activeProfile = {};
     m_activeProfile.Id = profile.id;
     m_activeProfile.Ssid = profile.ssid;
-    m_activeProfile.SignalStrength = 0;
-    m_activeProfile.IsConnected = false;
 
     m_connecting = true;
 
@@ -42,21 +40,6 @@ void NetworkStateMachine::disconnect() {
 }
 
 void NetworkStateMachine::onInterfaceStatusChanged(NetworkIfStatus const status) {
-    std::string statusName;
-    switch (status) {
-        case NetworkIfStatus::DISCONNECTED:
-            statusName = "DISCONNECTED";
-            break;
-        case NetworkIfStatus::CONNECTED:
-            statusName = "CONNECTED";
-            break;
-        case NetworkIfStatus::CONNECTING:
-            statusName = "CONNECTING";
-            break;
-    }
-
-    std::cout << "NSM - Interface status changed: " << statusName << std::endl;
-
     m_connected = (status == NetworkIfStatus::CONNECTED);
     m_lost = (status == NetworkIfStatus::DISCONNECTED);
     m_connecting = (status == NetworkIfStatus::CONNECTING);
@@ -111,6 +94,7 @@ void NetworkStateMachine::onTransition(NetworkStates const state) {
             break;
         case NetworkStates::CONNECTED:
             m_lost = transitionByCondition(m_lost, NetworkStates::CONNECTING);
+            m_disconnect = transitionByCondition(m_disconnect, NetworkStates::UP);
             transitionOnDisabled();
             transitionOnError();
             break;
@@ -123,38 +107,15 @@ void NetworkStateMachine::onTransition(NetworkStates const state) {
 }
 
 void NetworkStateMachine::onEnterState(NetworkStates const state) {
-    std::string stateName;
-    switch (state) {
-        case NetworkStates::DOWN:
-            stateName = "DOWN";
-            break;
-        case NetworkStates::UP:
-            stateName = "UP";
-            break;
-        case NetworkStates::CONNECTING:
-            stateName = "CONNECTING";
-            break;
-        case NetworkStates::CONNECTED:
-            stateName = "CONNECTED";
-            break;
-        case NetworkStates::ERROR:
-            stateName = "ERROR";
-            break;
-        default:
-            stateName = "UNKNOWN";
-            break;
-    }
-
-    std::cout << "NSM - Entering state: " << stateName << std::endl;
-
     switch (state) {
         case NetworkStates::DOWN:
             // If shutdown has error, ignore it
             m_networkDriver.down();
+            m_activeProfile = {};
             sendNetworkStatus();
             break;
         case NetworkStates::UP:
-            sendNetworkStatus();
+            onUpEntered();
             break;
         case NetworkStates::CONNECTING:
             m_networkDriver.connectTo(m_activeProfile.Ssid)
@@ -173,8 +134,6 @@ void NetworkStateMachine::onEnterState(NetworkStates const state) {
 }
 
 void NetworkStateMachine::onLeaveState(NetworkStates const state) {
-    std::cout << "Leaving state: " << static_cast<int>(state) << std::endl;
-
     switch (state) {
         case NetworkStates::DOWN:
             m_networkDriver.up(DEFAULT_INTERFACE_NAME)
@@ -201,6 +160,31 @@ void NetworkStateMachine::onRunState(NetworkStates const state) {
     }
 }
 
+void NetworkStateMachine::onUpEntered() {
+    // ensure in UP state, the interface is disconnected
+    m_networkDriver.disconnect()
+        .onError(m_errorCallback)
+        .onSuccess(m_sendStatusCallback);
+
+    // Register all saved networks
+    auto profiles = m_repository.getAllProfiles();
+    for (auto const& profile : profiles) {
+        m_networkDriver.registerNetwork(NetworkProfileMapper::toNetworkInfo(profile));
+    }
+
+    // If a profile is set to auto-connect, connect to it
+    auto lastNetwork = m_repository.getLastNetwork();
+    if (lastNetwork.has_value()) {
+        // If the last network is already connected, skip connecting
+        // to avoid unnecessary reconnections.
+        bool const alreadyConnected {m_activeProfile.Ssid == lastNetwork->ssid};
+
+        if (!alreadyConnected && lastNetwork->autoConnect) {
+            connectTo(lastNetwork.value());
+        }
+    }
+}
+
 void NetworkStateMachine::transitionOnError() {
     if (m_errorCode != 0) {
         setNextState(NetworkStates::ERROR);
@@ -215,36 +199,28 @@ void NetworkStateMachine::transitionOnDisabled() {
 
 void NetworkStateMachine::sendNetworkStatus() {
     WifiStatus status {};
-    std::string statusName {};
 
     switch (currentState()) {
         case NetworkStates::DOWN:
             status = WifiStatus::DOWN;
-            statusName = "DOWN";
             break;
         case NetworkStates::UP:
             status = WifiStatus::UP;
-            statusName = "UP";
             break;
         case NetworkStates::CONNECTING:
             status = WifiStatus::CONNECTING;
-            statusName = "CONNECTING";
             break;
         case NetworkStates::CONNECTED:
             status = WifiStatus::CONNECTED;
-            statusName = "CONNECTED";
             break;
         case NetworkStates::ERROR:
             status = WifiStatus::ERROR;
-            statusName = "ERROR";
             break;
         default:
             status = WifiStatus::ERROR;
-            statusName = "UNKNOWN";
             break;
     }
 
-    std::cout << "NSM - Sending wifi status: " << statusName << std::endl;
     m_mediator.notify(WifiStatusEvent(status));
 }
 
@@ -252,6 +228,5 @@ void NetworkStateMachine::sendConnectionStatus() {
     ConnectionStatusEvent event {m_activeProfile.Id};
     event.setFrom(m_activeProfile);
 
-    std::cout << "NSM - Sending connection status" << std::endl;
     m_mediator.notify(event);
 }

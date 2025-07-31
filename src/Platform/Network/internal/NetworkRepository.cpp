@@ -77,6 +77,22 @@ void NetworkRepository::removeProfile(std::string const& ssid) {
     m_mediator.notify(NetworkProfileRemovedEvent {id});
 }
 
+void NetworkRepository::selectNetwork(std::string const& ssid) {
+    auto profile = getProfileBySsid(ssid);
+
+    getContext().setString(Preferences::LastNetworkKey, ssid);
+}
+
+std::optional<NetworkProfileEntity> NetworkRepository::getLastNetwork() {
+    auto lastSsid = getContext().getString(Preferences::LastNetworkKey);
+    if (lastSsid.isError()) {
+        // Not found, return empty optional
+        return std::nullopt;
+    }
+
+    return getProfileBySsid(lastSsid.value());
+}
+
 std::optional<NetworkProfileEntity> NetworkRepository::getProfileBySsid(std::string const& ssid) {
     auto it = std::find_if(m_networkProfiles.begin(), m_networkProfiles.end(),
         [ssid](NetworkProfileEntity const& p) { return p.ssid == ssid; });

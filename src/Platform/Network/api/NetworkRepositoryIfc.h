@@ -36,6 +36,18 @@ public:
     virtual void removeProfile(std::string const& ssid) = 0;
 
     /**
+     * Select the last used network profile.
+     * @param ssid The SSID of the network profile to select.
+     */
+    virtual void selectNetwork(std::string const& ssid) = 0;
+
+    /**
+     * Retrieves the last used network profile.
+     * @return An optional containing the last used network profile entity if found, or empty if not found
+     */
+    virtual std::optional<NetworkProfileEntity> getLastNetwork() = 0;
+
+    /**
      * Retrieves a network profile by its ID.
      * @param ssid The SSID of the network profile to retrieve.
      * @return An optional containing the network profile entity if found, or empty if not found

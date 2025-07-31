@@ -10,7 +10,7 @@ NetworkService::NetworkService(Mediator& mediator, NetworkRepositoryIfc& reposit
     NetworkDriverIfc& networkDriver) :
     m_mediator {mediator},
     m_repository {repository},
-    m_stateMachine {mediator, networkDriver},
+    m_stateMachine {mediator, networkDriver, repository},
     m_networkDriver {networkDriver},
     m_airplaneMode {false} {
 
@@ -24,11 +24,6 @@ void NetworkService::initialize() {
     // restore state from persistence
     setAirplaneMode(airplaneMode);
     setWifiEnabled(serviceEnabled);
-
-    auto profiles = m_repository.getAllProfiles();
-    for (auto const& profile : profiles) {
-        m_networkDriver.registerNetwork(NetworkProfileMapper::toNetworkInfo(profile));
-    }
 
     // because the state machine is initialized all events
     // must be forced to ensure listeners are notified
@@ -44,6 +39,8 @@ void NetworkService::setAirplaneMode(bool enabled) {
     if (enabled) {
         m_stateMachine.disable();
     }
+
+    sendCommunicationStatusEvent();
 }
 
 void NetworkService::setWifiEnabled(bool enabled) {
@@ -60,6 +57,8 @@ void NetworkService::setWifiEnabled(bool enabled) {
     else {
         m_stateMachine.disable();
     }
+
+    sendCommunicationStatusEvent();
 }
 
 void NetworkService::startScan() {
@@ -78,6 +77,8 @@ void NetworkService::connectTo(NetworkProfileNew const& profile) {
 void NetworkService::connectTo(std::string const& ssid) {
     // Fetch the profile from persistence
     std::optional<NetworkProfileEntity> profile {m_repository.getProfileBySsid(ssid)};
+
+    m_repository.selectNetwork(ssid);
 
     if (profile.has_value()) {
         m_stateMachine.connectTo(profile.value());
