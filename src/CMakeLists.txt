@@ -4,6 +4,7 @@ set(QLOCKY_MODULES_PLATFORM
     Os
     Network
     Persistence
+    Configuration
     Languages
     Ui
     Widget
