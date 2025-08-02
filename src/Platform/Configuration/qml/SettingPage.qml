@@ -99,10 +99,21 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
-                    Loader {
-                        id: contentLoader
+                    Flickable {
+                        id: contentFlickable
                         anchors.fill: parent
-                        source: viewModel.currentPageComponent
+
+                        clip: true
+
+                        Loader {
+                            id: contentLoader
+                            anchors.fill: parent
+                            source: viewModel.currentPageComponent
+
+                            onLoaded: {
+                                contentFlickable.contentHeight = contentLoader.implicitHeight;
+                            }
+                        }
                     }
                 }
             }

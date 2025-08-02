@@ -30,6 +30,10 @@ set(MODULE_QML_SRC
     qml/internal/SettingMenu.qml
     qml/internal/SettingMenuHeader.qml
     qml/internal/SettingMenuItem.qml
+    qml/internal/SettingGroup.qml
+    qml/internal/SettingKeyValueBase.qml
+    qml/internal/SettingKeyValueItem.qml
+    qml/internal/SettingKeySwitchItem.qml
     qml/SettingPage.qml
 )
 
