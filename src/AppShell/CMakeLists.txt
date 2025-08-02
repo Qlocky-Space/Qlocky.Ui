@@ -36,6 +36,8 @@ set(MODULE_QML_SRC
     qml/AppWindow.qml
     qml/MainPage.qml
     qml/StatusBar.qml
+    qml/About.qml
+    qml/Develop.qml
 )
 
 set_source_files_properties(qml/internal/IconUtil.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
@@ -49,5 +51,6 @@ set(MODULE_LINK
     qlocky::Ui
     qlocky::Widget
     qlocky::Network
+    qlocky::Configuration
 )
 setup_module()

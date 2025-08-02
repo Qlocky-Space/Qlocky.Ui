@@ -1,34 +1,54 @@
-
-
 #include "SettingPageViewModel.h"
 
-SettingPageViewModel::SettingPageViewModel(NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository) :
+#include <ng-log/logging.h>
+
+SettingPageViewModel::SettingPageViewModel(ConfigurationRegistryIfc& registry, SettingListProxyModel& model) :
     QObject {nullptr},
-    m_networkService {networkService},
-    m_networkRepository {networkRepository} {
+    m_registry {registry},
+    m_settingsModel {&model},
+    m_selectedIndex {UINT32_MAX},
+    m_currentPageTitle {""},
+    m_currentPageComponent {""} {
 }
 
-// TODO remove demo methods
-void SettingPageViewModel::networkDisconnect() {
-    m_networkService.disconnect();
+void SettingPageViewModel::setSelectedIndex(uint32_t index) {
+    if (m_selectedIndex != index) {
+        m_selectedIndex = index;
+
+        emit selectedIndexChanged();
+        loadContent(index);
+    }
 }
 
-// TODO remove demo methods
-void SettingPageViewModel::networkConnect() {
-    std::string const ssid = "XXXXXXXXX";
-    std::string const psk = "xxxxxxxx";
+void SettingPageViewModel::loadContent(uint32_t const index) {
+    std::string path {getMetaPath(index)};
+    ConfigurationMeta const meta {m_registry.meta(path)};
 
-    // m_networkRepository.removeProfile(ssid);
+    if (meta.qmlPath.empty()) {
+        LOG(WARNING) << "No configuration path available.";
+        return;
+    }
 
-    auto profiles {m_networkRepository.getAllProfiles()};
-    if (profiles.empty()) {
-        NetworkProfileNew profile {};
-        profile.Ssid = ssid;
-        profile.Psk = psk;
-        profile.AutoConnect = true;
-        m_networkService.connectTo(profile);
+    if (meta.qmlPath == m_currentPageComponent.toStdString()) {
+        return;
     }
-    else {
-        m_networkService.connectTo(profiles.front().ssid);
+
+    m_currentPageComponent = QString::fromStdString(meta.qmlPath);
+    m_currentPageTitle = QString::fromStdString(meta.title);
+    emit currentPageTitleChanged();
+    emit currentPageComponentChanged();
+}
+
+std::string SettingPageViewModel::getMetaPath(uint32_t const index) const {
+    QModelIndex const modelIndex = m_settingsModel->index(index, 0);
+    if (!modelIndex.isValid()) {
+        return "";
     }
+
+    auto path {m_settingsModel->data(modelIndex, SettingListModel::SettingRoles::PathRole).toString()};
+    if (path.isEmpty()) {
+        return "";
+    }
+
+    return path.toStdString();
 }

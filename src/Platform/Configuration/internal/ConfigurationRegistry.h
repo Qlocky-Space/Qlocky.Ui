@@ -1,19 +1,32 @@
 #ifndef CONFIGURATION_REGISTRY_H
 #define CONFIGURATION_REGISTRY_H
 
-#include <vector>
+#include <unordered_map>
 
-#include "ConfigurationProviderIfc.h"
 #include "ConfigurationRegistryIfc.h"
+#include "view/SettingListModel.h"
 
 class ConfigurationRegistry : public ConfigurationRegistryIfc {
 public:
 
-    void registerProvider(ConfigurationProviderIfc& provider) final;
+    ConfigurationRegistry(SettingListModel& model);
+
+    /**
+     * @see ConfigurationRegistryIfc::registerProvider
+     */
+    void registerProvider(std::string const& path, ConfigurationMeta const& meta) final;
+
+    /**
+     * @see ConfigurationRegistryIfc::meta
+     */
+    ConfigurationMeta const& meta(std::string const& path) const final;
 
 private:
 
-    std::vector<ConfigurationProviderIfc*> m_providers;
+    SettingItemViewModel* createViewModel(std::string const& path, ConfigurationMeta const& meta);
+
+    SettingListModel& m_model;
+    std::unordered_map<std::string, ConfigurationMeta> m_map;
 };
 
 #endif // CONFIGURATION_REGISTRY_H

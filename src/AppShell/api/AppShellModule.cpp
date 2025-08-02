@@ -1,6 +1,7 @@
 #include "AppShellModule.h"
 
 #include "api/Mediator.h"
+#include "ConfigurationRegistryIfc.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
 #include "view/MainPageViewModel.h"
@@ -25,4 +26,8 @@ void AppShellModule::registerQmlTypes() {
 void AppShellModule::onInitialize() {
     auto irRegistry = resolve<InteractiveUriRegistryIfc>();
     irRegistry->registerUri(Uri {"qlocky://main"}, InteractiveMeta {InteractiveMeta::Type::Page, "/qt/qml/AppShell/qml/MainPage.qml"});
+
+    auto configRegistry = resolve<ConfigurationRegistryIfc>();
+    configRegistry->registerProvider("about", ConfigurationMeta {"System", "About", "/qt/qml/AppShell/qml/About.qml"});
+    configRegistry->registerProvider("develop", ConfigurationMeta {"System", "Develop", "/qt/qml/AppShell/qml/Develop.qml"});
 }

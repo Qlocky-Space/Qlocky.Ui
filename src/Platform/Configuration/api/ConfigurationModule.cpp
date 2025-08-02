@@ -3,10 +3,15 @@
 #include "internal/ConfigurationRegistry.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
+#include "view/SettingItemViewModel.h"
+#include "view/SettingListModel.h"
+#include "view/SettingListProxyModel.h"
 #include "view/SettingPageViewModel.h"
 
 void ConfigurationModule::registerExports(Injector& container) {
     container.install(boost::di::bind<ConfigurationRegistryIfc>().to<ConfigurationRegistry>());
+    container.install(boost::di::bind<SettingListModel>());
+    container.install(boost::di::bind<SettingListProxyModel>());
 }
 
 void ConfigurationModule::registerQmlTypes() {
