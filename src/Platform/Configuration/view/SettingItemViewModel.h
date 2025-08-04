@@ -13,6 +13,7 @@ class SettingItemViewModel : public QObject {
 
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QString category READ category WRITE setCategory NOTIFY categoryChanged)
+    Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
 
 public:
 
@@ -64,6 +65,7 @@ public:
 signals:
     void titleChanged();
     void categoryChanged();
+    void pathChanged();
 
 private:
 

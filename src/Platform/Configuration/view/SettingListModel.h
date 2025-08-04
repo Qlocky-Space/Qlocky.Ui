@@ -24,9 +24,9 @@ public:
     ~SettingListModel() final;
 
     /**
-     * Returns the number of alarms in the list.
+     * Returns the number of setting items in the list.
      * @param parent The parent index.
-     * @return The number of alarms.
+     * @return The number of setting items.
      */
     int rowCount(QModelIndex const& parent = QModelIndex()) const override;
 
@@ -45,7 +45,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     /**
-     * Adds an alarm to the model.
+     * Adds a setting item to the model.
      * @param item The setting item to add.
      */
     void addItem(SettingItemViewModel* item);

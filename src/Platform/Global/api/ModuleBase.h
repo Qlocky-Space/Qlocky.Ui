@@ -34,7 +34,7 @@ public:
      * Registers all QML types in the module.
      * This method must be called before the module can be used in QML.
      */
-    void registersQml() {
+    void registerQml() {
         registerQmlTypes();
     }
 

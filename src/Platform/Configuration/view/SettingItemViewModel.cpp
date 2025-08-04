@@ -17,5 +17,6 @@ void SettingItemViewModel::setCategory(QString const& category) {
 void SettingItemViewModel::setPath(QString const& path) {
     if (m_path != path) {
         m_path = path;
+        emit pathChanged();
     }
 }
