@@ -4,7 +4,7 @@
 
 #include <ng-log/logging.h>
 
-#include "RfkillHelper.h"
+#include "WpaSupplicantHelper.h"
 
 WpaSupplicantDBusDriver::WpaSupplicantDBusDriver() :
     m_connection {sdbus::createSystemBusConnection()},
@@ -21,14 +21,20 @@ NetworkResult WpaSupplicantDBusDriver::up(std::string const& interfaceName) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
 
-    m_interfaceName = interfaceName;
-
     // Workaround:
     // It seems in the RPI image the wifi interface is blocked by rfkill
     // so we need to unblock it before bringing it up
     // This is a workaround, ideally we should not rely on rfkill
     // and instead configure yocto image to not block the interface
-    RfkillHelper::unblockRfkillDevice(WIFI_RFKILL_INDEX);
+    WpaSupplicantHelper::unblockRfkillDevice(WIFI_RFKILL_INDEX);
+
+    if (!WpaSupplicantHelper::wpaSupplicantIsRunning()) {
+        LOG(FATAL) << "wpa_supplicant is not running correct. Cannot bring up interface " << interfaceName;
+        // Should never be reached
+        return NetworkResult::error(NetworkDriverErrorCode::ERROR_GENERIC);
+    }
+
+    m_interfaceName = interfaceName;
 
     m_proxy = createInterfaceProxy(interfaceName);
 
