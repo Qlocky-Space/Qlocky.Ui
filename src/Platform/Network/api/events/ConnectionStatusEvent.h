@@ -17,43 +17,50 @@ public:
 
     /**
      * Constructor for ConnectionStatusEvent.
+     * @param profile The network profile associated with the connection status.
      */
-    ConnectionStatusEvent(uint32_t profileId) :
-        m_profileId(profileId) {
-    }
-
-    void setFrom(NetworkProfile const& profile) {
-        m_profileId = profile.Id;
-        m_ssid = profile.Ssid;
-        m_signalStrength = profile.SignalStrength;
+    ConnectionStatusEvent(NetworkProfile profile) :
+        m_profile(profile) {
     }
 
     /**
      * Returns the profile ID.
      */
     uint32_t profileId() const {
-        return m_profileId;
+        return m_profile.Id;
     }
 
     /**
      * Returns the SSID of the network.
      */
     std::string ssid() const {
-        return m_ssid;
+        return m_profile.Ssid;
     }
 
     /**
      * Returns the signal strength of the network.
      */
     int32_t signalStrength() const {
-        return m_signalStrength;
+        return m_profile.SignalStrength;
+    }
+
+    /**
+     * Returns whether the network is connected.
+     */
+    bool isConnected() const {
+        return m_profile.SignalStrength < 0;
+    }
+
+    /**
+     * Returns the network profile associated with this event.
+     */
+    NetworkProfile const& networkProfile() const {
+        return m_profile;
     }
 
 private:
 
-    uint32_t m_profileId;
-    std::string m_ssid;
-    int32_t m_signalStrength {-1}; // -1 means no network
+    NetworkProfile m_profile;
 };
 
 #endif

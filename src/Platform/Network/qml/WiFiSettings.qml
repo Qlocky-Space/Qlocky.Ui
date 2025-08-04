@@ -55,6 +55,14 @@ ColumnLayout {
                 title: ssid
                 titleColor: connected ? ThemeManager.theme.blue : ThemeManager.theme.labelSecondary
 
+                clickable: true
+                onClicked: function() {
+                    if (connected) {
+                        CommandExecutor.dispatch("network-disconnect")
+                    } else {
+                        CommandExecutor.dispatch("network-connect", { "ssid": ssid })
+                    }
+                }
             }
         }
     }

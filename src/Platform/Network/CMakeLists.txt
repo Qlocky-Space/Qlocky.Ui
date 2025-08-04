@@ -13,6 +13,10 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/NetworkRepositoryIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/NetworkStateType.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/NetworkStateType.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkConnectToCommand.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkConnectToCommand.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkDisconnectCommand.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkDisconnectCommand.h
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkService.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkService.h

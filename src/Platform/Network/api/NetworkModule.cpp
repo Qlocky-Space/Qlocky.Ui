@@ -1,5 +1,8 @@
 #include "NetworkModule.h"
 
+#include "Command/CommandRegistryUtil.h"
+#include "commands/NetworkConnectToCommand.h"
+#include "commands/NetworkDisconnectCommand.h"
 #include "ConfigurationRegistryIfc.h"
 #include "internal/NetworkRepository.h"
 #include "internal/NetworkService.h"
@@ -26,6 +29,10 @@ void NetworkModule::onInitialize() {
     // Initialize the network service
     auto networkService = resolve<NetworkServiceIfc>();
     networkService->initialize();
+
+    // Register Commands
+    CommandRegistryUtil::registerCommand<NetworkConnectToCommand>(*this, "network-connect");
+    CommandRegistryUtil::registerCommand<NetworkDisconnectCommand>(*this, "network-disconnect");
 
     // Register Configuration page
     auto configRegistry = resolve<ConfigurationRegistryIfc>();

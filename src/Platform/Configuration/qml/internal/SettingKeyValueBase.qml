@@ -13,6 +13,9 @@ Item {
 
     default property alias windowContent: valueItem.data
 
+    property bool clickable: false
+    signal clicked()
+
     implicitHeight: Math.max(100, itemLayout.implicitHeight)
     implicitWidth: itemLayout.implicitWidth
 
@@ -40,6 +43,55 @@ Item {
                 sourceComponent: root.additionalContent
                 visible: root.additionalContent !== null
             }
+        }
+    }
+
+    Rectangle {
+        id: indicator
+
+        property int mx
+        property int my
+        x: mx - width / 2
+        y: my - height / 2
+        radius: height / 2
+        color: ThemeManager.theme.miscellaneousSeperatorNonOpaque
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        enabled: root.clickable
+
+        onClicked: {
+            indicator.mx = mouseArea.mouseX;
+            indicator.my = mouseArea.mouseY;
+            main.restart();
+            root.clicked();
+        }
+    }
+
+    ParallelAnimation {
+        id: main
+        NumberAnimation {
+            target: indicator
+            properties: "width"
+            from: 0
+            to: root.width
+            duration: 200
+        }
+        NumberAnimation {
+            target: indicator
+            properties: "height"
+            from: 0
+            to: root.height
+            duration: 200
+        }
+        NumberAnimation {
+            target: indicator
+            properties: "opacity"
+            from: 0.6
+            to: 0
+            duration: 200
         }
     }
 

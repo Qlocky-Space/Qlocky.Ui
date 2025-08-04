@@ -5,6 +5,7 @@
 #include <QObject>
 
 #include "events/CommunicationStatusEvent.h"
+#include "events/ConnectionStatusEvent.h"
 #include "events/NetworkScanEvent.h"
 #include "events/NetworkScanResultEvent.h"
 #include "NetworkServiceIfc.h"
@@ -64,6 +65,7 @@ private:
     void onNetworkScanResult(NetworkScanResultEvent const& event);
     void onCommunicationStatus(CommunicationStatusEvent const& event);
     void onNetworkScanEvent(NetworkScanEvent const& event);
+    void onConnectionStatus(ConnectionStatusEvent const& event);
 
     Mediator& m_mediator;
     NetworkServiceIfc& m_networkService;

@@ -10,9 +10,14 @@ WiFiSettingsPageViewModel::WiFiSettingsPageViewModel(Mediator& mediator, Network
     mediator.subscribe<NetworkScanResultEvent>(this, &WiFiSettingsPageViewModel::onNetworkScanResult);
     mediator.subscribe<CommunicationStatusEvent>(this, &WiFiSettingsPageViewModel::onCommunicationStatus);
     mediator.subscribe<NetworkScanEvent>(this, &WiFiSettingsPageViewModel::onNetworkScanEvent);
+    mediator.subscribe<ConnectionStatusEvent>(this, &WiFiSettingsPageViewModel::onConnectionStatus);
 }
 
 void WiFiSettingsPageViewModel::startScan() {
+    if (m_scanning) {
+        return; // Already scanning
+    }
+
     m_networkListModel.clearNetworks();
     m_networkService.startScan();
 }
@@ -30,11 +35,27 @@ void WiFiSettingsPageViewModel::onNetworkScanEvent(NetworkScanEvent const& event
     setScanning(event.isScanning());
 }
 
+void WiFiSettingsPageViewModel::onConnectionStatus(ConnectionStatusEvent const& event) {
+    // required to update the connected state
+    m_networkListModel.updateNetwork(event.networkProfile());
+}
+
 void WiFiSettingsPageViewModel::setWifiEnabled(bool const enabled) {
-    if (m_wifiEnabled != enabled) {
-        m_wifiEnabled = enabled;
-        emit wifiEnabledChanged();
-        m_networkService.setWifiEnabled(enabled);
+    if (m_wifiEnabled == enabled) {
+        return;
+    }
+
+    m_wifiEnabled = enabled;
+    emit wifiEnabledChanged();
+
+    m_networkService.setWifiEnabled(enabled);
+
+    // additional events, depending on the state of Wi-Fi
+    if (enabled) {
+        startScan();
+    }
+    else {
+        m_networkListModel.clearNetworks();
     }
 }
 

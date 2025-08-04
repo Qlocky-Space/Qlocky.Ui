@@ -150,6 +150,11 @@ void NetworkStateMachine::onLeaveState(NetworkStates const state) {
                 .onError(m_errorCallback)
                 .onSuccess(m_sendStatusCallback);
             break;
+        case NetworkStates::CONNECTED:
+            m_activeProfile.IsConnected = false;
+            m_activeProfile.SignalStrength = 1;
+            sendConnectionStatus();
+            break;
         case NetworkStates::ERROR:
             m_errorCode = 0; // Reset error code
             break;
@@ -244,9 +249,7 @@ void NetworkStateMachine::sendNetworkStatus() {
 }
 
 void NetworkStateMachine::sendConnectionStatus() {
-    ConnectionStatusEvent event {m_activeProfile.Id};
-    event.setFrom(m_activeProfile);
-
+    ConnectionStatusEvent event {m_activeProfile};
     m_mediator.notify(event);
 }
 
@@ -258,7 +261,7 @@ void NetworkStateMachine::sendScanResult(ScanResult const& result) {
     profile.Id = entity.has_value() ? entity->id : 0;
     profile.Ssid = result.ssid;
     profile.SignalStrength = result.signalStrength;
-    profile.IsConnected = (result.ssid == m_activeProfile.Ssid);
+    profile.IsConnected = (result.ssid == m_activeProfile.Ssid) && m_activeProfile.IsConnected;
     NetworkScanResultEvent event {profile};
 
     m_mediator.notify(event);
