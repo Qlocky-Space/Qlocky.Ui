@@ -4,6 +4,7 @@
 #include "ConfigurationRegistryIfc.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
+#include "view/AboutViewModel.h"
 #include "view/MainPageViewModel.h"
 #include "view/MainWindowViewModel.h"
 #include "view/StatusBarViewModel.h"
@@ -17,6 +18,7 @@ void AppShellModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<MainPageViewModel>(*this, "MainPageViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<MainWindowViewModel>(*this, "MainWindowViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<StatusBarViewModel>(*this, "StatusBarViewModel");
+    QmlRegistryUtil::qmlRegisterViewModel<AboutViewModel>(*this, "AboutViewModel");
 
     qmlRegisterUncreatableType<VolumeType>("AppShell", 1, 0, "VolumeType", "Cannot create VolumeType in QML");
 }

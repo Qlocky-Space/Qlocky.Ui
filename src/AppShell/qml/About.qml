@@ -7,6 +7,8 @@ import Configuration
 
 
 ColumnLayout {
+    property var viewModel: AboutViewModel
+
     anchors.fill: parent
 
     SettingGroup {
@@ -17,17 +19,72 @@ ColumnLayout {
 
         SettingKeyValueItem {
             title: qsTr("Product Name")
-            value: "Qlocky Device"
+            value: viewModel.productName
         }
         SettingKeyValueItem {
             title: qsTr("Model")
-            value: "QL-A100"
+            value: viewModel.deviceModel
         }
         SettingKeyValueItem {
             title: qsTr("Serial Number")
-            value: "QL-123456"
+            value: viewModel.serialNumber
         }
     }
+
+    SettingGroup {
+        id: appIdentificationGroup
+        Layout.fillWidth: true
+
+        title: qsTr("App identifiers")
+
+        SettingKeyValueItem {
+            function formatUptime(seconds) {
+                if (seconds === undefined || seconds === null || isNaN(seconds))
+                    return "";
+
+                seconds = Math.floor(seconds);
+                var h = Math.floor(seconds / 3600);
+                var m = Math.floor((seconds % 3600) / 60);
+                var s = seconds % 60;
+
+                var result = ""
+                result += (h > 0 ? h + ":" : "")
+                result += (m < 10 ? "0" : "") + m + ":"
+                result += (s < 10 ? "0" : "") + s
+
+                return result;
+            }
+
+            title: qsTr("Uptime")
+            value: formatUptime(viewModel.upTime)
+        }
+        SettingKeyValueItem {
+            title: qsTr("App Version")
+            value: viewModel.appVersion
+        }
+        SettingKeyValueItem {
+            title: qsTr("App Build number")
+            value: viewModel.appBuildNumber
+        }
+    }
+
+    SettingGroup {
+        id: osIdentificationGroup
+        Layout.fillWidth: true
+
+        title: qsTr("OS identifiers")
+
+        SettingKeyValueItem {
+            title: qsTr("Kernel Version")
+            value: viewModel.kernelVersion
+        }
+        SettingKeyValueItem {
+            title: qsTr("Kernel Build Date")
+            value: viewModel.kernelBuildDate
+            valueLabel.font.pixelSize: 24
+        }
+    }
+
 
     SettingGroup {
         id: legalRightsGroup
@@ -40,22 +97,6 @@ ColumnLayout {
         }
         SettingKeyValueItem {
             title: qsTr("Source code")
-            value: "TODO"
-        }
-    }
-
-    SettingGroup {
-        id: deviceIndentificationGroup
-        Layout.fillWidth: true
-
-        title: qsTr("Device identifiers")
-
-        SettingKeyValueItem {
-            title: qsTr("Uptime")
-            value: "TODO"
-        }
-        SettingKeyValueItem {
-            title: qsTr("Build number")
             value: "TODO"
         }
     }
