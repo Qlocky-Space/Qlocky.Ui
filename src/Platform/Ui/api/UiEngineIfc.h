@@ -5,6 +5,7 @@
 
 class QQmlApplicationEngine;
 class QTranslator;
+class QQmlImageProviderBase;
 
 /**
  * UiEngineIfc is an interface for the UI engine that provides methods to manage the QML application engine,
@@ -36,6 +37,13 @@ public:
      * @note This method is used to revert the application's language changes.
      */
     virtual bool removeTranslator(QTranslator* messageFile) = 0;
+
+    /**
+     * Registers a QQuickImageProvider with the engine.
+     * @param name The name of the image provider.
+     * @param provider The QQuickImageProvider instance to register.
+     */
+    virtual void registerImageProvider(QString const& name, QQmlImageProviderBase* provider) = 0;
 
     /**
      * Sets the layout direction for the application.

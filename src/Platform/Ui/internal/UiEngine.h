@@ -29,6 +29,11 @@ public:
     bool removeTranslator(QTranslator* messageFile) final;
 
     /**
+     * @see UiEngineIfc::registerImageProvider
+     */
+    void registerImageProvider(QString const& name, QQmlImageProviderBase* provider) final;
+
+    /**
      * @see UiEngineIfc::setLayoutDirection
      */
     void setLayoutDirection(Qt::LayoutDirection direction) final;

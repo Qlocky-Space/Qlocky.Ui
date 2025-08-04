@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Shapes
 
 import Ui
 import Configuration
@@ -85,7 +86,6 @@ ColumnLayout {
         }
     }
 
-
     SettingGroup {
         id: legalRightsGroup
         Layout.fillWidth: true
@@ -94,10 +94,19 @@ ColumnLayout {
 
         SettingKeyValueItem {
             title: qsTr("Third-party licences")
+            value: "Qlocky Wiki"
+            clickable: true
+            onClicked: {
+                CommandExecutor.dispatch("show-qr-code", { "content": "https://qlocky.notion.site/Qlocky-Wiki-b2c1fdab6b84481caad0c45b414d6cd8" })
+            }
         }
         SettingKeyValueItem {
             title: qsTr("Source code")
-            value: "TODO"
+            value: "Qlocky GitHub"
+            clickable: true
+            onClicked: {
+                CommandExecutor.dispatch("show-qr-code", { "content": "https://www.github.com/Qlocky-Space" })
+            }
         }
     }
 }

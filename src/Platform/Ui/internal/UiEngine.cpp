@@ -18,6 +18,10 @@ bool UiEngine::removeTranslator(QTranslator* messageFile) {
     return false;
 }
 
+void UiEngine::registerImageProvider(QString const& name, QQmlImageProviderBase* provider) {
+    m_engine.addImageProvider(name, provider);
+}
+
 void UiEngine::setLayoutDirection(Qt::LayoutDirection direction) {
     qApp->setLayoutDirection(direction);
 }
