@@ -9,11 +9,10 @@ WiFiSettingsPageViewModel::WiFiSettingsPageViewModel(Mediator& mediator, Network
     m_scanning {false} {
     mediator.subscribe<NetworkScanResultEvent>(this, &WiFiSettingsPageViewModel::onNetworkScanResult);
     mediator.subscribe<CommunicationStatusEvent>(this, &WiFiSettingsPageViewModel::onCommunicationStatus);
+    mediator.subscribe<NetworkScanEvent>(this, &WiFiSettingsPageViewModel::onNetworkScanEvent);
 }
 
 void WiFiSettingsPageViewModel::startScan() {
-    setScanning(true);
-
     m_networkListModel.clearNetworks();
     m_networkService.startScan();
 }
@@ -23,10 +22,12 @@ void WiFiSettingsPageViewModel::onCommunicationStatus(CommunicationStatusEvent c
 }
 
 void WiFiSettingsPageViewModel::onNetworkScanResult(NetworkScanResultEvent const& event) {
-    setScanning(false);
-
     NetworkProfile const& profile {event.networkProfile()};
     m_networkListModel.updateNetwork(event.networkProfile());
+}
+
+void WiFiSettingsPageViewModel::onNetworkScanEvent(NetworkScanEvent const& event) {
+    setScanning(event.isScanning());
 }
 
 void WiFiSettingsPageViewModel::setWifiEnabled(bool const enabled) {

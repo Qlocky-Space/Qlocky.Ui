@@ -3,6 +3,7 @@
 #include "ConfigurationRegistryIfc.h"
 #include "internal/NetworkRepository.h"
 #include "internal/NetworkService.h"
+#include "NetworkStateType.h"
 #include "QmlRegistryUtil.h"
 #include "view/WiFiSettingsPageViewModel.h"
 
@@ -13,6 +14,8 @@ void NetworkModule::registerExports(Injector& container) {
 
 void NetworkModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<WiFiSettingsPageViewModel>(*this, "WiFiSettingsPageViewModel");
+
+    qmlRegisterUncreatableType<NetworkStateType>("Network", 1, 0, "NetworkStateType", "Cannot create NetworkStateType in QML");
 }
 
 void NetworkModule::onInitialize() {

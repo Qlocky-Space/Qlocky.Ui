@@ -112,6 +112,7 @@ protected:
     void sendNetworkStatus();
     void sendConnectionStatus();
     void sendScanResult(ScanResult const& result);
+    void sendNetworkScanningStatus();
 
     void clearFlags() override {
         m_connected = false;
@@ -144,6 +145,8 @@ private:
 
     int32_t m_errorCode {0};
     NetworkProfile m_activeProfile {};
+    bool m_scanning {false};
+    bool m_lastScanning {false};
 
     // Flags
     bool m_connected {false};

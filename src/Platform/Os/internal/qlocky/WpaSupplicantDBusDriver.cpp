@@ -223,8 +223,10 @@ void WpaSupplicantDBusDriver::parseNetworkState(std::string const& state) {
     if (state == "completed") {
         notify(&NetworkDriverListenerIfc::onInterfaceStatusChanged, NetworkIfStatus::CONNECTED);
     }
-    else if (state == "scanning" ||
-        state == "authenticating" ||
+    else if (state == "scanning") {
+        notify(&NetworkDriverListenerIfc::onInterfaceStatusChanged, NetworkIfStatus::SCANNING);
+    }
+    else if (state == "authenticating" ||
         state == "4way_handshake" ||
         state == "group_handshake" ||
         state == "associating" ||

@@ -3,14 +3,15 @@ import QtQuick.Layouts
 
 import Ui
 import Configuration
+import Network
 
 SettingKeyValueBase {
     id: root
 
     required property int signalStrength
 
-    QLabel {
-        text: signalStrength + " dBm"
+    QIcon {
+        icon: NetworkIconUtil.toNetworkStrength(signalStrength)
         color: root.titleColor
     }
 }
