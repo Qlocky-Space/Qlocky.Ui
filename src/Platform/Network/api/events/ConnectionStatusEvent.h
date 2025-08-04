@@ -45,13 +45,6 @@ public:
     }
 
     /**
-     * Returns whether the network is connected.
-     */
-    bool isConnected() const {
-        return m_profile.SignalStrength < 0;
-    }
-
-    /**
      * Returns the network profile associated with this event.
      */
     NetworkProfile const& networkProfile() const {

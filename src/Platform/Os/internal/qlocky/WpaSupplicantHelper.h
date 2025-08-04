@@ -1,5 +1,5 @@
-#ifndef RFKILL_HELPER_H
-#define RFKILL_HELPER_H
+#ifndef WPA_SUPPLICANT_HELPER_H
+#define WPA_SUPPLICANT_HELPER_H
 
 #include <cinttypes>
 

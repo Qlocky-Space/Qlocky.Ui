@@ -72,7 +72,6 @@ static inline bool isWpaRunning(std::string const& name, std::initializer_list<s
                 auto args = getCmdLineArgs(pid);
 
                 if (!args.empty() && args[0].find(name) != std::string::npos) {
-
                     bool has_args {true};
 
                     for (auto const& arg : expectedArgs) {
@@ -82,6 +81,7 @@ static inline bool isWpaRunning(std::string const& name, std::initializer_list<s
                         }
                     }
 
+                    closedir(proc);
                     return has_args;
                 }
             }
