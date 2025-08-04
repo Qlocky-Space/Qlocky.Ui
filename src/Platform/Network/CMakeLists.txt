@@ -49,6 +49,7 @@ set(MODULE_LINK
 set(MODULE_QML_SRC
     qml/WiFiSettings.qml
     qml/internal/SettingKeyNetworkItem.qml
+    qml/WiFiProfileDialog.qml
     qml/NetworkIconUtil.qml
 )
 

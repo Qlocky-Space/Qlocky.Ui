@@ -3,6 +3,7 @@
 
 #include <Command/QmlCommandBase.h>
 
+#include "Navigation/InteractiveNavigatorIfc.h"
 #include "NetworkRepositoryIfc.h"
 #include "NetworkServiceIfc.h"
 
@@ -13,7 +14,7 @@
 class NetworkConnectToCommand : public QmlCommandBase {
 public:
 
-    explicit NetworkConnectToCommand(NetworkServiceIfc& networkService, NetworkRepositoryIfc& repository);
+    explicit NetworkConnectToCommand(NetworkServiceIfc& networkService, NetworkRepositoryIfc& repository, InteractiveNavigatorIfc& navigator);
 
 protected:
 
@@ -26,6 +27,7 @@ private:
 
     NetworkServiceIfc& m_networkService;
     NetworkRepositoryIfc& m_repository;
+    InteractiveNavigatorIfc& m_navigator;
 };
 
 #endif

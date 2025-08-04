@@ -6,6 +6,7 @@
 #include "ConfigurationRegistryIfc.h"
 #include "internal/NetworkRepository.h"
 #include "internal/NetworkService.h"
+#include "Navigation/InteractiveUriRegistryIfc.h"
 #include "NetworkStateType.h"
 #include "QmlRegistryUtil.h"
 #include "view/WiFiSettingsPageViewModel.h"
@@ -33,6 +34,9 @@ void NetworkModule::onInitialize() {
     // Register Commands
     CommandRegistryUtil::registerCommand<NetworkConnectToCommand>(*this, "network-connect");
     CommandRegistryUtil::registerCommand<NetworkDisconnectCommand>(*this, "network-disconnect");
+
+    auto irRegistry = resolve<InteractiveUriRegistryIfc>();
+    irRegistry->registerUri(Uri {"qlocky://networkProfile"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Network/qml/WiFiProfileDialog.qml"});
 
     // Register Configuration page
     auto configRegistry = resolve<ConfigurationRegistryIfc>();

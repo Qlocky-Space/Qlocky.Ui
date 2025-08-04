@@ -3,12 +3,11 @@
 #include <ng-log/logging.h>
 #include <string>
 
-#include "NetworkProfileNew.h"
-
-NetworkConnectToCommand::NetworkConnectToCommand(NetworkServiceIfc& networkService, NetworkRepositoryIfc& repository) :
+NetworkConnectToCommand::NetworkConnectToCommand(NetworkServiceIfc& networkService, NetworkRepositoryIfc& repository, InteractiveNavigatorIfc& navigator) :
     QmlCommandBase {},
     m_networkService {networkService},
-    m_repository {repository} {
+    m_repository {repository},
+    m_navigator {navigator} {
 }
 
 void NetworkConnectToCommand::doExecute(CommandArgs const& data) {
@@ -20,7 +19,9 @@ void NetworkConnectToCommand::doExecute(CommandArgs const& data) {
 
     auto profileCandidate {m_repository.getProfileBySsid(ssid)};
     if (!profileCandidate.has_value()) {
-        // TODO open dialog to enter PWD
+        UriQuery uriQuery {"qlocky://networkProfile"};
+        uriQuery.addParam("ssid", ssid);
+        m_navigator.navigateTo(uriQuery);
         return;
     }
 
