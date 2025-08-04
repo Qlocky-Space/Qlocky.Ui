@@ -1,6 +1,7 @@
 #include "NetworkStateMachine.h"
 
 #include "events/ConnectionStatusEvent.h"
+#include "events/NetworkScanResultEvent.h"
 #include "events/WifiStatusEvent.h"
 #include "NetworkProfileMapper.h"
 
@@ -60,6 +61,8 @@ void NetworkStateMachine::onScanCompleted(bool success) {
 }
 
 void NetworkStateMachine::onScanResultsAvailable(ScanResult& result) {
+    sendScanResult(result);
+
     if (result.ssid != m_activeProfile.Ssid) {
         return;
     }
@@ -227,6 +230,20 @@ void NetworkStateMachine::sendNetworkStatus() {
 void NetworkStateMachine::sendConnectionStatus() {
     ConnectionStatusEvent event {m_activeProfile.Id};
     event.setFrom(m_activeProfile);
+
+    m_mediator.notify(event);
+}
+
+void NetworkStateMachine::sendScanResult(ScanResult const& result) {
+    std::optional<NetworkProfileEntity> entity {m_repository.getProfileBySsid(result.ssid)};
+
+    NetworkProfile profile {};
+
+    profile.Id = entity.has_value() ? entity->id : 0;
+    profile.Ssid = result.ssid;
+    profile.SignalStrength = result.signalStrength;
+    profile.IsConnected = (result.ssid == m_activeProfile.Ssid);
+    NetworkScanResultEvent event {profile};
 
     m_mediator.notify(event);
 }

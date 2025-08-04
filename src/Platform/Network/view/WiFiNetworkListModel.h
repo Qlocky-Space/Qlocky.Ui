@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include <QVector>
 
+#include "NetworkProfile.h"
 #include "WiFiNetworkViewModel.h"
 
 /**
@@ -47,19 +48,19 @@ public:
      * Adds a Wi-Fi network to the model.
      * @param network The Wi-Fi network to add.
      */
-    void addNetwork(WiFiNetworkViewModel* network);
+    void addNetwork(NetworkProfile const& profile);
 
     /**
      * Updates an existing Wi-Fi network in the model.
      * @param network The Wi-Fi network to update.
      */
-    void updateNetwork(WiFiNetworkViewModel* network);
+    void updateNetwork(NetworkProfile const& profile);
 
     /**
      * Removes a Wi-Fi network from the model.
      * @param network The Wi-Fi network to remove.
      */
-    void removeNetwork(WiFiNetworkViewModel* network);
+    void removeNetwork(std::string const& ssid);
 
     /**
      * Clears all Wi-Fi networks from the model.
@@ -69,6 +70,8 @@ public:
 private:
 
     void removeNetwork(int index);
+
+    QVector<WiFiNetworkViewModel*>::iterator findNetworkBySsid(std::string const& ssid);
 
     QVector<WiFiNetworkViewModel*> m_networks;
 };

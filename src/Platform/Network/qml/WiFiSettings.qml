@@ -49,6 +49,12 @@ ColumnLayout {
             model: viewModel.networks
 
             delegate: SettingKeyNetworkItem {
+                required property string ssid
+                required property bool connected
+
+                title: ssid
+                titleColor: connected ? ThemeManager.theme.blue : ThemeManager.theme.labelSecondary
+
             }
         }
     }

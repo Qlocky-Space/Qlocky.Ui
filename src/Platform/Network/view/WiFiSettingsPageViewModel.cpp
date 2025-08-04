@@ -11,18 +11,10 @@ WiFiSettingsPageViewModel::WiFiSettingsPageViewModel(Mediator& mediator, Network
     mediator.subscribe<CommunicationStatusEvent>(this, &WiFiSettingsPageViewModel::onCommunicationStatus);
 }
 
-void WiFiSettingsPageViewModel::setWifiEnabled(bool const enabled) {
-    if (m_wifiEnabled != enabled) {
-        m_wifiEnabled = enabled;
-        emit wifiEnabledChanged();
-        m_networkService.setWifiEnabled(enabled);
-    }
-}
-
 void WiFiSettingsPageViewModel::startScan() {
-    m_scanning = true;
-    emit scanningChanged();
+    setScanning(true);
 
+    m_networkListModel.clearNetworks();
     m_networkService.startScan();
 }
 
@@ -31,16 +23,23 @@ void WiFiSettingsPageViewModel::onCommunicationStatus(CommunicationStatusEvent c
 }
 
 void WiFiSettingsPageViewModel::onNetworkScanResult(NetworkScanResultEvent const& event) {
-    m_scanning = false;
-    emit scanningChanged();
+    setScanning(false);
 
     NetworkProfile const& profile {event.networkProfile()};
+    m_networkListModel.updateNetwork(event.networkProfile());
+}
 
-    auto networkViewModel = new WiFiNetworkViewModel();
-    networkViewModel->setSsid(QString::fromStdString(profile.Ssid));
-    networkViewModel->setSignalStrength(profile.SignalStrength);
-    networkViewModel->setConnected(profile.IsConnected);
+void WiFiSettingsPageViewModel::setWifiEnabled(bool const enabled) {
+    if (m_wifiEnabled != enabled) {
+        m_wifiEnabled = enabled;
+        emit wifiEnabledChanged();
+        m_networkService.setWifiEnabled(enabled);
+    }
+}
 
-    m_networkListModel.addNetwork(networkViewModel);
-    // TODO
+void WiFiSettingsPageViewModel::setScanning(bool scanning) {
+    if (m_scanning != scanning) {
+        m_scanning = scanning;
+        emit scanningChanged();
+    }
 }

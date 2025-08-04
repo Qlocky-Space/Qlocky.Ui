@@ -38,9 +38,15 @@ QHash<int, QByteArray> WiFiNetworkListModel::roleNames() const {
     return roles;
 }
 
-void WiFiNetworkListModel::addNetwork(WiFiNetworkViewModel* network) {
+void WiFiNetworkListModel::addNetwork(NetworkProfile const& profile) {
     beginInsertRows(QModelIndex(), m_networks.size(), m_networks.size());
+
+    WiFiNetworkViewModel* network = new WiFiNetworkViewModel();
+    network->setSsid(QString::fromStdString(profile.Ssid));
+    network->setSignalStrength(profile.SignalStrength);
+    network->setConnected(profile.IsConnected);
     m_networks.append(network);
+
     endInsertRows();
 }
 
@@ -53,17 +59,26 @@ void WiFiNetworkListModel::removeNetwork(int index) {
     endRemoveRows();
 }
 
-void WiFiNetworkListModel::updateNetwork(WiFiNetworkViewModel* network) {
-    int index = m_networks.indexOf(network);
-    if (index != -1) {
+void WiFiNetworkListModel::updateNetwork(NetworkProfile const& profile) {
+    auto it = findNetworkBySsid(profile.Ssid);
+
+    if (it != m_networks.end()) {
+        (*it)->setSignalStrength(profile.SignalStrength);
+        (*it)->setConnected(profile.IsConnected);
+
+        int index = std::distance(m_networks.begin(), it);
         emit dataChanged(createIndex(index, 0), createIndex(index, 0));
+    }
+    else {
+        addNetwork(profile);
     }
 }
 
-void WiFiNetworkListModel::removeNetwork(WiFiNetworkViewModel* network) {
-    int index = m_networks.indexOf(network);
-    if (index != -1) {
-        removeNetwork(index);
+void WiFiNetworkListModel::removeNetwork(std::string const& ssid) {
+    auto it = findNetworkBySsid(ssid);
+
+    if (it != m_networks.end()) {
+        removeNetwork(std::distance(m_networks.begin(), it));
     }
 }
 
@@ -72,4 +87,10 @@ void WiFiNetworkListModel::clearNetworks() {
     qDeleteAll(m_networks);
     m_networks.clear();
     endResetModel();
+}
+
+QVector<WiFiNetworkViewModel*>::iterator WiFiNetworkListModel::findNetworkBySsid(std::string const& ssid) {
+    return std::find_if(m_networks.begin(), m_networks.end(), [&ssid](WiFiNetworkViewModel* n) {
+        return n->ssid() == QString::fromStdString(ssid);
+    });
 }

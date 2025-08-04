@@ -58,6 +58,8 @@ signals:
 
 private:
 
+    void setScanning(bool scanning);
+
     void onNetworkScanResult(NetworkScanResultEvent const& event);
     void onCommunicationStatus(CommunicationStatusEvent const& event);
 

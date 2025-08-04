@@ -111,6 +111,7 @@ protected:
 
     void sendNetworkStatus();
     void sendConnectionStatus();
+    void sendScanResult(ScanResult const& result);
 
     void clearFlags() override {
         m_connected = false;

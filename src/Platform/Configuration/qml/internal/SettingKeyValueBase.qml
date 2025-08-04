@@ -7,6 +7,7 @@ Item {
     id: root
 
     required property string title
+    property color titleColor: ThemeManager.theme.labelPrimary
 
     property Component additionalContent: null
 
@@ -23,7 +24,7 @@ Item {
 
         QLabel {
             text: root.title
-            color: ThemeManager.theme.labelPrimary
+            color: root.titleColor
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             Layout.fillHeight: true
         }
