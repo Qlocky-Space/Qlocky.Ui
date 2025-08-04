@@ -19,10 +19,18 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkProfileMapper.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkStateMachine.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkStateMachine.h
+
+    ${CMAKE_CURRENT_LIST_DIR}/view/WiFiSettingsPageViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/WiFiSettingsPageViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/WiFiNetworkViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/WiFiNetworkViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/WiFiNetworkListModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/WiFiNetworkListModel.cpp
 )
 
 set(MODULE_LINK
     qlocky::Os
+    qlocky::Ui
     qlocky::Persistence
     qlocky::Configuration
 
@@ -31,6 +39,7 @@ set(MODULE_LINK
 
 set(MODULE_QML_SRC
     qml/WiFiSettings.qml
+    qml/internal/SettingKeyNetworkItem.qml
 )
 
 setup_module()

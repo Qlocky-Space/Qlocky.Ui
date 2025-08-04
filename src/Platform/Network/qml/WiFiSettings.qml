@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 
 import Ui
 import Configuration
@@ -10,25 +11,44 @@ ColumnLayout {
     id: columnLayout
     anchors.fill: parent
 
-    // TODO implement Wi-Fi settings
+    property var viewModel: WiFiSettingsPageViewModel
+
     SettingGroup {
         id: developGroup1
         Layout.fillWidth: true
 
-        title: qsTr("Wi-Fi Settings")
+        title: qsTr("Networks")
 
         SettingKeySwitchItem {
             id: wifiSwitch
             title: qsTr("Wi-Fi")
+
+            value: viewModel.wifiEnabled
+            onToggled: function(value) {
+                viewModel.wifiEnabled = value
+            }
+
+            additionalContent: QButton {
+                id: scanButton
+                buttonStyle: QButton.ButtonStyle.Plain
+                image: "\uf021"
+                onClicked: viewModel.startScan()
+
+                // Rotation animation while scanning
+                RotationAnimator on rotation {
+                    running: viewModel.scanning
+                    from: 0
+                    to: 360
+                    duration: 800
+                    loops: Animation.Infinite
+                }
+            }
         }
 
         Repeater {
-            model: ["WLAN1", "WLAN2", "WLAN3"]
-            delegate: SettingKeyValueItem {
-                required property string modelData
+            model: viewModel.networks
 
-                title: modelData
-                value: "TODO"
+            delegate: SettingKeyNetworkItem {
             }
         }
     }

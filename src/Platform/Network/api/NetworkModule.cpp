@@ -3,10 +3,16 @@
 #include "ConfigurationRegistryIfc.h"
 #include "internal/NetworkRepository.h"
 #include "internal/NetworkService.h"
+#include "QmlRegistryUtil.h"
+#include "view/WiFiSettingsPageViewModel.h"
 
 void NetworkModule::registerExports(Injector& container) {
     container.install(boost::di::bind<NetworkServiceIfc>().to<NetworkService>());
     container.install(boost::di::bind<NetworkRepositoryIfc>().to<NetworkRepository>());
+}
+
+void NetworkModule::registerQmlTypes() {
+    QmlRegistryUtil::qmlRegisterViewModel<WiFiSettingsPageViewModel>(*this, "WiFiSettingsPageViewModel");
 }
 
 void NetworkModule::onInitialize() {

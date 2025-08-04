@@ -8,6 +8,8 @@ Item {
 
     required property string title
 
+    property Component additionalContent: null
+
     default property alias windowContent: valueItem.data
 
     implicitHeight: Math.max(100, itemLayout.implicitHeight)
@@ -32,6 +34,11 @@ Item {
             id: valueItem
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
             Layout.fillHeight: true
+
+            Loader {
+                sourceComponent: root.additionalContent
+                visible: root.additionalContent !== null
+            }
         }
     }
 
