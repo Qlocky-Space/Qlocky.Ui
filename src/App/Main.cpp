@@ -6,6 +6,7 @@
 #include "AlarmModule.h"
 #include "api/ApplicationIfc.h"
 #include "AppShellModule.h"
+#include "ConfigurationModule.h"
 #include "internal/ConsoleSink.h"
 #include "internal/QlockyApp.h"
 #include "internal/QtLogForwarder.h"
@@ -56,6 +57,7 @@ int main(int argc, char* argv[]) {
     // Register Platform modules
     app->addModule<OsModule>();
     app->addModule<PersistenceModule>();
+    app->addModule<ConfigurationModule>();
     app->addModule<NetworkModule>();
     app->addModule<WidgetModule>();
     app->addModule<UiModule>();

@@ -1,5 +1,6 @@
 #include "NetworkModule.h"
 
+#include "ConfigurationRegistryIfc.h"
 #include "internal/NetworkRepository.h"
 #include "internal/NetworkService.h"
 
@@ -16,4 +17,8 @@ void NetworkModule::onInitialize() {
     // Initialize the network service
     auto networkService = resolve<NetworkServiceIfc>();
     networkService->initialize();
+
+    // Register Configuration page
+    auto configRegistry = resolve<ConfigurationRegistryIfc>();
+    configRegistry->registerProvider("wifi-setting", ConfigurationMeta {"Connectivity", "Wi-Fi Settings", "/qt/qml/Network/qml/WiFiSettings.qml"});
 }

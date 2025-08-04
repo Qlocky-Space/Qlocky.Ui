@@ -20,7 +20,9 @@ void QlockyApp::start(Injector& container) {
     for (std::unique_ptr<ModuleBase>& module : m_modules) {
         module->registers(container);
     }
-
+    for (std::unique_ptr<ModuleBase>& module : m_modules) {
+        module->registerQml();
+    }
     for (std::unique_ptr<ModuleBase>& module : m_modules) {
         module->initialize();
     }

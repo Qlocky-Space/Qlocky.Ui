@@ -24,8 +24,13 @@ set(MODULE_SRC
 set(MODULE_LINK
     qlocky::Os
     qlocky::Persistence
+    qlocky::Configuration
 
     nlohmann_json::nlohmann_json
+)
+
+set(MODULE_QML_SRC
+    qml/WiFiSettings.qml
 )
 
 setup_module()

@@ -16,9 +16,6 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/WidgetListModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/WidgetListModel.h
 
-    ${CMAKE_CURRENT_LIST_DIR}/view/SettingPageViewModel.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/SettingPageViewModel.h
-
     ${CMAKE_CURRENT_LIST_DIR}/view/NetworkStateType.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/NetworkStateType.h
     ${CMAKE_CURRENT_LIST_DIR}/view/VolumeType.cpp
@@ -38,8 +35,9 @@ set(MODULE_QML_SRC
     qml/Main.qml
     qml/AppWindow.qml
     qml/MainPage.qml
-    qml/SettingPage.qml
     qml/StatusBar.qml
+    qml/About.qml
+    qml/Develop.qml
 )
 
 set_source_files_properties(qml/internal/IconUtil.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
@@ -53,5 +51,6 @@ set(MODULE_LINK
     qlocky::Ui
     qlocky::Widget
     qlocky::Network
+    qlocky::Configuration
 )
 setup_module()

@@ -28,6 +28,13 @@ public:
         m_container = &container;
 
         registerExports(container);
+    }
+
+    /**
+     * Registers all QML types in the module.
+     * This method must be called before the module can be used in QML.
+     */
+    void registerQml() {
         registerQmlTypes();
     }
 

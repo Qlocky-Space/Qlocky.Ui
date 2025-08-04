@@ -1,12 +1,12 @@
 #include "AppShellModule.h"
 
 #include "api/Mediator.h"
+#include "ConfigurationRegistryIfc.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
 #include "view/MainPageViewModel.h"
 #include "view/MainWindowViewModel.h"
 #include "view/NetworkStateType.h"
-#include "view/SettingPageViewModel.h"
 #include "view/StatusBarViewModel.h"
 #include "view/VolumeType.h"
 
@@ -16,7 +16,6 @@ void AppShellModule::registerExports(Injector& container) {
 
 void AppShellModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<MainPageViewModel>(*this, "MainPageViewModel");
-    QmlRegistryUtil::qmlRegisterViewModel<SettingPageViewModel>(*this, "SettingPageViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<MainWindowViewModel>(*this, "MainWindowViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<StatusBarViewModel>(*this, "StatusBarViewModel");
 
@@ -27,5 +26,8 @@ void AppShellModule::registerQmlTypes() {
 void AppShellModule::onInitialize() {
     auto irRegistry = resolve<InteractiveUriRegistryIfc>();
     irRegistry->registerUri(Uri {"qlocky://main"}, InteractiveMeta {InteractiveMeta::Type::Page, "/qt/qml/AppShell/qml/MainPage.qml"});
-    irRegistry->registerUri(Uri {"qlocky://settings"}, InteractiveMeta {InteractiveMeta::Type::Page, "/qt/qml/AppShell/qml/SettingPage.qml"});
+
+    auto configRegistry = resolve<ConfigurationRegistryIfc>();
+    configRegistry->registerProvider("about", ConfigurationMeta {"System", "About", "/qt/qml/AppShell/qml/About.qml"});
+    configRegistry->registerProvider("develop", ConfigurationMeta {"System", "Develop", "/qt/qml/AppShell/qml/Develop.qml"});
 }
