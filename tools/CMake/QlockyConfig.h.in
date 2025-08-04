@@ -2,6 +2,8 @@
 /* App                                            */
 /* ============================================== */
 
+#cmakedefine QLOCKY_APP_NAME "${QLOCKY_APP_NAME}"
+
 #cmakedefine QLOCKY_APP_REVISION "${QLOCKY_APP_REVISION}"
 #cmakedefine QLOCKY_APP_BUILD_NUMBER "${QLOCKY_APP_BUILD_NUMBER}"
 #cmakedefine QLOCKY_APP_VERSION "${QLOCKY_APP_VERSION}"

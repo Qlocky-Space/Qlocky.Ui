@@ -7,6 +7,8 @@
 #include "internal/InteractiveNavigator.h"
 #include "internal/InteractiveProvider.h"
 #include "internal/InteractiveUriRegistry.h"
+#include "internal/QrGenerator.h"
+#include "internal/QrQuickImageProvider.h"
 #include "internal/UiEngine.h"
 #include "Navigation/NavigateToCommand.h"
 #include "QmlRegistryUtil.h"
@@ -28,4 +30,7 @@ void UiModule::registerQmlTypes() {
 void UiModule::onInitialize() {
     // register commands
     CommandRegistryUtil::registerCommand<NavigateToCommand>(*this, "nav-to");
+
+    auto engine = resolve<UiEngineIfc>();
+    engine->registerImageProvider("qr", new QrQuickImageProvider());
 }

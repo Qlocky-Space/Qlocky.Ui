@@ -27,6 +27,15 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/CommandDispatcher.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/CommandExecutor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/CommandExecutor.h
+
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QRCodeGen/qrcodegen.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QRCodeGen/qrcodegen.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QrGenerator.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QrGenerator.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QrQuickImageProvider.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QrQuickImageProvider.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QrImage.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/QrImage.cpp
 )
 
 set(MODULE_QML_SRC
