@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import Ui
+import Network
 
 Item {
     property var viewModel: StatusBarViewModel
@@ -44,7 +45,7 @@ Item {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
                     isActive: viewModel.networkState != NetworkStateType.Disabled
-                    image: IconUtil.toNetwork(viewModel.networkState, viewModel.networkStrength)
+                    image: NetworkIconUtil.toNetwork(viewModel.networkState, viewModel.networkStrength)
                     imageInactive: "\uf6ac"
                     onClicked: function(state) {
                         viewModel.setNetworkState(state)

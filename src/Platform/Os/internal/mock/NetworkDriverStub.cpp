@@ -36,7 +36,27 @@ NetworkResult NetworkDriverStub::triggerScan() {
         return NetworkResult::success(false);
     }
 
-    notify(&NetworkDriverListenerIfc::onScanCompleted, true);
+    // hacky way to simulate a delay in scan results
+    static std::thread* pDelayThread;
+    // Check if a scan is already in progress
+    if (pDelayThread != nullptr) {
+        return NetworkResult::success(false);
+    }
+
+    notify(&NetworkDriverListenerIfc::onInterfaceStatusChanged, NetworkIfStatus::SCANNING);
+
+    if (m_thread.joinable()) {
+        m_thread.join();
+    }
+    delete pDelayThread;
+
+    pDelayThread = new std::thread([this]() {
+        std::this_thread::sleep_for(std::chrono::seconds(2)); // Simulate scan delay
+        notify(&NetworkDriverListenerIfc::onScanCompleted, true);
+        notify(&NetworkDriverListenerIfc::onInterfaceStatusChanged, (m_connected ? NetworkIfStatus::CONNECTED : NetworkIfStatus::DISCONNECTED));
+    });
+    pDelayThread->detach();
+
     return NetworkResult::success(true);
 }
 

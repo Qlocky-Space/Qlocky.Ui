@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import Ui
+import Network
 
 RowLayout {
     anchors.leftMargin: 50
@@ -21,7 +22,7 @@ RowLayout {
             id: networkIcon
 
             visible: !viewModel.isAirplaneModeEnabled
-            icon: IconUtil.toNetwork(viewModel.networkState, viewModel.networkStrength)
+            icon: NetworkIconUtil.toNetwork(viewModel.networkState, viewModel.networkStrength)
         }
 
         QIcon {

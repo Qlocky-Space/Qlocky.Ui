@@ -5,6 +5,7 @@
 
 enum class NetworkIfStatus : uint8_t {
     DISCONNECTED,
+    SCANNING,
     CONNECTED,
     CONNECTING,
     UNKNOWN

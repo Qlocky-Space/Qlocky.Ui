@@ -1,6 +1,8 @@
 #include "NetworkStateMachine.h"
 
 #include "events/ConnectionStatusEvent.h"
+#include "events/NetworkScanEvent.h"
+#include "events/NetworkScanResultEvent.h"
 #include "events/WifiStatusEvent.h"
 #include "NetworkProfileMapper.h"
 
@@ -44,10 +46,16 @@ void NetworkStateMachine::onInterfaceStatusChanged(NetworkIfStatus const status)
     m_lost = (status == NetworkIfStatus::DISCONNECTED);
     m_connecting = (status == NetworkIfStatus::CONNECTING);
 
+    if (status == NetworkIfStatus::SCANNING) {
+        m_scanning = true;
+    }
+
     runStateMachine();
 }
 
 void NetworkStateMachine::onScanCompleted(bool success) {
+    m_scanning = false;
+
     if (success) {
         // get the results, will trigger onScanResultsAvailable
         m_networkDriver.fetchScanResults();
@@ -60,6 +68,8 @@ void NetworkStateMachine::onScanCompleted(bool success) {
 }
 
 void NetworkStateMachine::onScanResultsAvailable(ScanResult& result) {
+    sendScanResult(result);
+
     if (result.ssid != m_activeProfile.Ssid) {
         return;
     }
@@ -140,6 +150,11 @@ void NetworkStateMachine::onLeaveState(NetworkStates const state) {
                 .onError(m_errorCallback)
                 .onSuccess(m_sendStatusCallback);
             break;
+        case NetworkStates::CONNECTED:
+            m_activeProfile.IsConnected = false;
+            m_activeProfile.SignalStrength = 1;
+            sendConnectionStatus();
+            break;
         case NetworkStates::ERROR:
             m_errorCode = 0; // Reset error code
             break;
@@ -151,9 +166,18 @@ void NetworkStateMachine::onLeaveState(NetworkStates const state) {
 
 void NetworkStateMachine::onRunState(NetworkStates const state) {
     switch (state) {
+        case NetworkStates::UP:
+            sendNetworkScanningStatus();
+            break;
+
+        case NetworkStates::ERROR:
+            sendNetworkScanningStatus();
+            break;
+
         case NetworkStates::CONNECTING:
         case NetworkStates::CONNECTED:
             sendConnectionStatus();
+            sendNetworkScanningStatus();
             break;
         default:
             break;
@@ -225,8 +249,31 @@ void NetworkStateMachine::sendNetworkStatus() {
 }
 
 void NetworkStateMachine::sendConnectionStatus() {
-    ConnectionStatusEvent event {m_activeProfile.Id};
-    event.setFrom(m_activeProfile);
+    ConnectionStatusEvent event {m_activeProfile};
+    m_mediator.notify(event);
+}
 
+void NetworkStateMachine::sendScanResult(ScanResult const& result) {
+    std::optional<NetworkProfileEntity> entity {m_repository.getProfileBySsid(result.ssid)};
+
+    NetworkProfile profile {};
+
+    profile.Id = entity.has_value() ? entity->id : 0;
+    profile.Ssid = result.ssid;
+    profile.SignalStrength = result.signalStrength;
+    profile.IsConnected = (result.ssid == m_activeProfile.Ssid) && m_activeProfile.IsConnected;
+    NetworkScanResultEvent event {profile};
+
+    m_mediator.notify(event);
+}
+
+void NetworkStateMachine::sendNetworkScanningStatus() {
+    if (m_scanning == m_lastScanning) {
+        return; // No change in scanning status
+    }
+
+    m_lastScanning = m_scanning;
+
+    NetworkScanEvent event {m_scanning};
     m_mediator.notify(event);
 }
