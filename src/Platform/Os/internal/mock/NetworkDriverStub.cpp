@@ -1,7 +1,5 @@
 #include "NetworkDriverStub.h"
 
-#include <future>
-
 NetworkDriverStub::~NetworkDriverStub() {
     m_connected = false;
     if (m_thread.joinable()) {
@@ -12,11 +10,6 @@ NetworkDriverStub::~NetworkDriverStub() {
 NetworkResult NetworkDriverStub::up(std::string const& interfaceName) {
     m_isUp = true;
     m_connected = false;
-
-    m_networks.clear();
-    m_networks.push_back(NetworkInfo {"Mock Network 1", "", "WPA-NONE"});
-    m_networks.push_back(NetworkInfo {"Mock Network 2", "", "WPA-NONE"});
-    m_networks.push_back(NetworkInfo {"Mock Network 3", "", "WPA-NONE"});
 
     return NetworkResult::success(true);
 }
@@ -43,11 +36,7 @@ NetworkResult NetworkDriverStub::triggerScan() {
         return NetworkResult::success(false);
     }
 
-    [[maybe_unused]] auto future = std::async(std::launch::async, [this]() {
-        std::this_thread::sleep_for(std::chrono::seconds(3));
-        notify(&NetworkDriverListenerIfc::onScanCompleted, true);
-    });
-
+    notify(&NetworkDriverListenerIfc::onScanCompleted, true);
     return NetworkResult::success(true);
 }
 
@@ -57,14 +46,8 @@ NetworkResult NetworkDriverStub::fetchScanResults() {
     }
 
     for (auto const& network : m_networks) {
-        [[maybe_unused]] auto future = std::async(std::launch::async, [this, network]() {
-            // simulate random delay for each network
-            int delay = rand() % 5 + 1; // Random delay between 1 and 5 seconds
-            std::this_thread::sleep_for(std::chrono::seconds(delay));
-
-            ScanResult result {network.ssid, -60}; // Simulated signal strength
-            notify(&NetworkDriverListenerIfc::onScanResultsAvailable, result);
-        });
+        ScanResult result {network.ssid, -60}; // Simulated signal strength
+        notify(&NetworkDriverListenerIfc::onScanResultsAvailable, result);
     }
 
     return NetworkResult::success(true);
