@@ -41,6 +41,8 @@ QtObject {
     readonly property color miscellaneousButtonDisabled: Qt.alpha(gray2, 0.26)
     readonly property color miscellaneousTextFieldOutline: Qt.alpha(labelSecondary, 0.3)
     readonly property color miscellaneousTextFieldBackground: Qt.alpha(black, 0.9)
+    readonly property color miscellaneousTextFieldDisabled: Qt.alpha(gray2, 0.26)
+    readonly property color miscellaneousTextFieldTinted: Qt.alpha(blue, 0.15)
     readonly property color miscellaneousSeperatorOpaque: Qt.alpha("#38383A", 1)
     readonly property color miscellaneousSeperatorNonOpaque: Qt.alpha("#545456", 0.6)
 }

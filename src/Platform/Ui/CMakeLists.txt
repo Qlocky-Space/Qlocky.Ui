@@ -39,6 +39,7 @@ set(MODULE_SRC
 )
 
 set(MODULE_QML_SRC
+    qml/internal/AutoScroller.qml
     qml/QButton.qml
     qml/QStatusButton.qml
     qml/QIcon.qml
@@ -48,6 +49,8 @@ set(MODULE_QML_SRC
     qml/QRoundedRectangle.qml
     qml/QToggleButton.qml
     qml/QTimePicker.qml
+    qml/QKeyboard.qml
+    qml/QTextField.qml
     qml/QConfirmationSlider.qml
     qml/QDialogProvider.qml
     qml/FontStyle.qml

@@ -35,6 +35,11 @@ std::shared_ptr<T> createApplication(Injector& container) {
 int main(int argc, char* argv[]) {
     using namespace std::chrono_literals;
 
+    // https://doc.qt.io/archives/qt-5.15/qtvirtualkeyboard-deployment-guide.html#loading-the-plugin
+    qputenv("QT_IM_MODULE", "qtvirtualkeyboard");
+    qputenv("QT_VIRTUALKEYBOARD_STYLE", "qlocky");
+    qputenv("QT_VIRTUALKEYBOARD_LAYOUT_PATH", ":/VirtualKeyboardResources/layouts");
+
     nglog::InitializeLogging(argv[0]);
     nglog::InstallFailureSignalHandler();
     nglog::EnableLogCleaner(24h * 30); // Clean logs older than 30 days

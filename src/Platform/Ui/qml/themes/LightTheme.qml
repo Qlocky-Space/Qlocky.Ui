@@ -1,4 +1,3 @@
-// LightTheme.qml
 import QtQuick
 import "."
 
@@ -42,6 +41,8 @@ QtObject {
     readonly property color miscellaneousButtonDisabled: Qt.alpha(gray2, 0.3)
     readonly property color miscellaneousTextFieldOutline: Qt.alpha(labelSecondary, 0.4)
     readonly property color miscellaneousTextFieldBackground: "#F2F2F7" // light gray background
+    readonly property color miscellaneousTextFieldDisabled: Qt.alpha(gray2, 0.26)
+    readonly property color miscellaneousTextFieldTinted: Qt.alpha(blue, 0.15)
     readonly property color miscellaneousSeperatorOpaque: "#C6C6C8"
     readonly property color miscellaneousSeperatorNonOpaque: Qt.alpha("#C6C6C8", 0.6)
 }

@@ -4,11 +4,12 @@ import QtQuick.Effects
 
 import Ui
 
-Item {
+FocusScope {
     id: root
 
     anchors.fill: parent
     anchors.margins: 20
+    focus: true
 
     signal opened
     signal closed

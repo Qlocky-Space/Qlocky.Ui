@@ -10,6 +10,7 @@ set(_components
     Qml
     Quick
     ShaderTools
+    VirtualKeyboard
 )
 
 # TODO environment configuration issue, where LinguistTools is not found
