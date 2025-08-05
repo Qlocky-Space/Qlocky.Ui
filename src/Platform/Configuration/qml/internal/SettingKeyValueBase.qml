@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 
 import Ui
 
@@ -10,6 +11,7 @@ Item {
     property color titleColor: ThemeManager.theme.labelPrimary
 
     property Component additionalContent: null
+    property alias menu: menuContext
 
     default property alias windowContent: valueItem.data
 
@@ -65,9 +67,22 @@ Item {
         onClicked: {
             indicator.mx = mouseArea.mouseX;
             indicator.my = mouseArea.mouseY;
+
             main.restart();
             root.clicked();
         }
+
+        onPressAndHold: {
+            indicator.mx = mouseArea.mouseX;
+            indicator.my = mouseArea.mouseY;
+            menuContext.open()
+        }
+    }
+
+    QMenu {
+        id: menuContext
+        x: indicator.mx
+        y: indicator.my
     }
 
     ParallelAnimation {
