@@ -8,7 +8,7 @@ import Ui
 FocusScope {
     id: root
 
-    property var currentText: ""
+    property string currentText: ""
 
     property alias validator: valueInput.validator
     property alias maximumLength: valueInput.maximumLength
@@ -86,7 +86,7 @@ FocusScope {
             selectedTextColor: color
             placeholderTextColor: ThemeManager.theme.labelTertiary
 
-            text: root.currentText === undefined ? "" : root.currentText
+            text: root.currentText
 
             Keys.onPressed: function(event) {
                 var isAcceptKey = event.key === Qt.Key_Enter || event.key === Qt.Key_Return
