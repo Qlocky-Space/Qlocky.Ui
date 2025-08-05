@@ -19,7 +19,7 @@ endforeach()
 ###########################################
 # Resources
 ###########################################
-# no resources required
+list(APPEND LINK_LIB VirtualKeyboardResources VirtualKeyboardResourcesPlugin)
 
 ###########################################
 # Executable declaration

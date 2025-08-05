@@ -37,6 +37,8 @@ int main(int argc, char* argv[]) {
 
     // https://doc.qt.io/archives/qt-5.15/qtvirtualkeyboard-deployment-guide.html#loading-the-plugin
     qputenv("QT_IM_MODULE", "qtvirtualkeyboard");
+    qputenv("QT_VIRTUALKEYBOARD_STYLE", "qlocky");
+    qputenv("QT_VIRTUALKEYBOARD_LAYOUT_PATH", ":/VirtualKeyboardResources/layouts");
 
     nglog::InitializeLogging(argv[0]);
     nglog::InstallFailureSignalHandler();
