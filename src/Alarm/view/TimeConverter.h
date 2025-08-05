@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QString>
 
-#include "internal/AlarmPreferencesRepositoryIfc.h"
+#include "AlarmPreferencesRepositoryIfc.h"
 
 /**
  * Formats time and date for display in QML.
