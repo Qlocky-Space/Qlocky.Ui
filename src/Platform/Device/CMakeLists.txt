@@ -7,6 +7,22 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/DeviceInfoProvider.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/DeviceInfoProvider.h
+
+    ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.h
 )
 
+set(MODULE_QML_SRC
+    qml/About.qml
+    qml/Develop.qml
+)
+
+set(MODULE_INCLUDE
+    ${CMAKE_BINARY_DIR}
+)
+
+set(MODULE_LINK
+    qlocky::Ui
+    qlocky::Configuration
+)
 setup_module()

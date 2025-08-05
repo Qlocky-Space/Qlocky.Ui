@@ -10,8 +10,6 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/MainWindowViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/StatusBarViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/StatusBarViewModel.h
-    ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.h
 
     ${CMAKE_CURRENT_LIST_DIR}/view/MainPageViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/MainPageViewModel.h
@@ -38,8 +36,6 @@ set(MODULE_QML_SRC
     qml/AppWindow.qml
     qml/MainPage.qml
     qml/StatusBar.qml
-    qml/About.qml
-    qml/Develop.qml
     qml/QrDialog.qml
 )
 
@@ -50,15 +46,9 @@ set(MODULE_QML_RESOURCES
     resources/wallpaper-dark.png
 )
 
-set(MODULE_INCLUDE
-    ${CMAKE_BINARY_DIR}
-)
-
 set(MODULE_LINK
     qlocky::Ui
     qlocky::Widget
     qlocky::Network
-    qlocky::Configuration
-    qlocky::Device
 )
 setup_module()

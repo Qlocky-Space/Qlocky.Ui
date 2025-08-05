@@ -14,6 +14,16 @@ public:
      */
     void registerExports(Injector& container) final;
 
+    /**
+     * @see ModuleBase::registerQmlTypes
+     */
+    void registerQmlTypes() final;
+
+    /**
+     * @see ModuleBase::onInitialize
+     */
+    void onInitialize() final;
+
     DeviceModule() = default;
     ~DeviceModule() final = default;
 
