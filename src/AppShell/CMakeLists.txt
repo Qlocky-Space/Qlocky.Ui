@@ -59,6 +59,6 @@ set(MODULE_LINK
     qlocky::Widget
     qlocky::Network
     qlocky::Configuration
-    qlocky::Os
+    qlocky::Device
 )
 setup_module()
