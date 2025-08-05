@@ -94,9 +94,9 @@ Item {
         id: dialog
         anchors.centerIn: parent
         focus: true
-        modal: true
+        modal: !Qt.inputMethod.visible
         dim: false
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        closePolicy: Qt.inputMethod.visible ? Popup.CloseOnEscape : Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
         // Min height/width
         height: Math.max(contentItem.implicitHeight, 500)

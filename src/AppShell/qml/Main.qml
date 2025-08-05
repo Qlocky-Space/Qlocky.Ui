@@ -21,4 +21,12 @@ AppWindow {
         pageLoader: pageProvider
         dialogLoader: dialogProvider
     }
+
+    // Ensure the input panel is always above other content, also
+    // popup is shown below
+    Overlay.overlay.children: [
+        QKeyboard {
+            id: keyboard
+        }
+    ]
 }
