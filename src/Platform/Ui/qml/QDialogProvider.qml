@@ -88,13 +88,24 @@ Item {
         Behavior on opacity {
             NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
         }
+
+        // Ensure when the virtual keyboard is visible, the dialog
+        // is not closed when clicking outside of it.
+        MouseArea {
+            anchors.fill: parent
+            // No onClicked handler needed; this just blocks events
+            enabled: Qt.inputMethod.visible
+        }
     }
 
     Popup {
         id: dialog
         anchors.centerIn: parent
         focus: true
-        modal: true
+        // Workaround, if set to true, virtual keyboard second function key
+        // will not work properly, so it is set to false. Therefore a MouseArea
+        // in blureEffect is used to block events when the virtual keyboard is visible.
+        modal: !Qt.inputMethod.visible
         dim: false
         closePolicy: Qt.inputMethod.visible ? Popup.CloseOnEscape : Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
