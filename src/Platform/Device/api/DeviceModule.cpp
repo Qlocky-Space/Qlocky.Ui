@@ -14,6 +14,9 @@ void DeviceModule::registerQmlTypes() {
 }
 
 void DeviceModule::onInitialize() {
+    // Initialize the device info provider
+    auto deviceInfoProvider = resolve<DeviceInfoProviderIfc>();
+    deviceInfoProvider->initialize();
 
     auto configRegistry = resolve<ConfigurationRegistryIfc>();
     configRegistry->registerProvider("about", ConfigurationMeta {"System", "About", "/qt/qml/Device/qml/About.qml"});

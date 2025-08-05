@@ -2,32 +2,16 @@
 
 #include <sys/utsname.h>
 
-std::string DeviceInfoProvider::getModelName() const {
-    return "QL-A100";
-}
-
-std::string DeviceInfoProvider::getKernelVersion() const {
+void DeviceInfoProvider::initialize() {
     struct utsname buffer;
     if (uname(&buffer) != 0) {
-        return "Unknown";
+        m_kernelVersion = "Unknown";
+        m_kernelBuildDate = "Unknown";
+        m_hostname = "Unknown";
     }
-
-    return std::string(buffer.release);
-}
-
-std::string DeviceInfoProvider::getKernelBuildDate() const {
-    struct utsname buffer;
-    if (uname(&buffer) != 0) {
-        return "Unknown";
+    else {
+        m_kernelVersion = std::string(buffer.release);
+        m_kernelBuildDate = std::string(buffer.version);
+        m_hostname = std::string(buffer.nodename);
     }
-
-    return std::string(buffer.version);
-}
-
-std::string DeviceInfoProvider::getDeviceName() const {
-    return "MyDevice";
-}
-
-std::string DeviceInfoProvider::getSerialNumber() const {
-    return "1234567890";
 }

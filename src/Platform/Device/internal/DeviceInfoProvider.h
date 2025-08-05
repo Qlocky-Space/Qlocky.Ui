@@ -3,6 +3,9 @@
 
 #include "DeviceInfoProviderIfc.h"
 
+/**
+ * DeviceInfoProvider provides information about the device.
+ */
 class DeviceInfoProvider final : public DeviceInfoProviderIfc {
 public:
 
@@ -10,29 +13,60 @@ public:
     ~DeviceInfoProvider() final = default;
 
     /**
-     * @see DeviceInfoProviderIfc::getModel
+     * @see DeviceInfoProviderIfc::initialize
      */
-    std::string getModelName() const final;
+    void initialize() final;
+
+    /**
+     * @see DeviceInfoProviderIfc::getModelName
+     */
+    std::string getModelName() const final {
+        return m_modelName;
+    }
 
     /**
      * @see DeviceInfoProviderIfc::getKernelVersion
      */
-    std::string getKernelVersion() const final;
+    std::string getKernelVersion() const final {
+        return m_kernelVersion;
+    }
 
     /**
      * @see DeviceInfoProviderIfc::getKernelBuildDate
      */
-    std::string getKernelBuildDate() const final;
+    std::string getKernelBuildDate() const final {
+        return m_kernelBuildDate;
+    }
 
     /**
      * @see DeviceInfoProviderIfc::getDeviceName
      */
-    std::string getDeviceName() const final;
+    std::string getDeviceName() const final {
+        return m_deviceName;
+    }
 
     /**
      * @see DeviceInfoProviderIfc::getSerialNumber
      */
-    std::string getSerialNumber() const final;
+    std::string getSerialNumber() const final {
+        return m_serialNumber;
+    }
+
+    /**
+     * @see DeviceInfoProviderIfc::getHostname
+     */
+    std::string getHostname() const final {
+        return m_hostname;
+    }
+
+private:
+
+    std::string m_modelName {"QL-A100"};
+    std::string m_deviceName {"MyDevice"};
+    std::string m_serialNumber {"1234567890"};
+    std::string m_kernelVersion;
+    std::string m_kernelBuildDate;
+    std::string m_hostname;
 };
 
 #endif

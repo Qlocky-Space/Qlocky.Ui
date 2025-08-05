@@ -14,6 +14,11 @@ public:
     virtual ~DeviceInfoProviderIfc() = default;
 
     /**
+     * Initializes the device information provider.
+     */
+    virtual void initialize() = 0;
+
+    /**
      * Returns the device model name.
      * @return A string representing the device model.
      */
@@ -42,6 +47,12 @@ public:
      * @return A string representing the device serial number.
      */
     virtual std::string getSerialNumber() const = 0;
+
+    /**
+     * Returns the hostname of the device.
+     * @return A string representing the hostname of the device.
+     */
+    virtual std::string getHostname() const = 0;
 };
 
 #endif
