@@ -1,5 +1,5 @@
-#ifndef ALARM_SETTING_REPOSITORY_IFC_H
-#define ALARM_SETTING_REPOSITORY_IFC_H
+#ifndef SYSTEM_PREFERENCES_REPOSITORY_IFC_H
+#define SYSTEM_PREFERENCES_REPOSITORY_IFC_H
 
 #include <string>
 
@@ -7,12 +7,10 @@
  * Represents an interface for an alarm setting repository.
  * This interface defines the basic operations for managing alarm settings.
  */
-// TODO all system preferences should be moved to a common module (in Platform)
-// TODO rename to SystemPreferencesRepositoryIfc
-class AlarmPreferencesRepositoryIfc {
+class SystemPreferencesRepositoryIfc {
 public:
 
-    virtual ~AlarmPreferencesRepositoryIfc() = default;
+    virtual ~SystemPreferencesRepositoryIfc() = default;
 
     /**
      * Initializes the repository.

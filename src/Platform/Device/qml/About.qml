@@ -12,6 +12,17 @@ ColumnLayout {
 
     anchors.fill: parent
 
+    SettingHostnameItem {
+        id: hostnameItem
+
+        hostname: viewModel.hostname
+        Layout.fillWidth: true
+
+        onChangeHostname: function(hostname) {
+            viewModel.changeHostname(hostname);
+        }
+    }
+
     SettingGroup {
         id: productGroup
         Layout.fillWidth: true

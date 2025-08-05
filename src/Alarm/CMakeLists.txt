@@ -19,9 +19,6 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepositoryIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepository.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmRepository.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepositoryIfc.h
-    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepository.h
-    ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmPreferencesRepository.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmOverlaySelector.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/AlarmOverlaySelector.h
 
@@ -67,6 +64,7 @@ set(MODULE_LINK
     qlocky::Persistence
     qlocky::Widget
     qlocky::Os
+    qlocky::Device
 
     nlohmann_json::nlohmann_json
 )

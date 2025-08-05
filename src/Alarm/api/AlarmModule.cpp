@@ -7,7 +7,6 @@
 #include "commands/AlarmNewCommand.h"
 #include "commands/AlarmRemoveCommand.h"
 #include "internal/AlarmOverlaySelector.h"
-#include "internal/AlarmPreferencesRepository.h"
 #include "internal/AlarmRepository.h"
 #include "internal/AlarmService.h"
 #include "Navigation/InteractiveUriRegistryIfc.h"
@@ -24,7 +23,6 @@
 void AlarmModule::registerExports(Injector& container) {
     container.install(boost::di::bind<AlarmServiceIfc>().to<AlarmService>());
     container.install(boost::di::bind<AlarmRepositoryIfc>().to<AlarmRepository>());
-    container.install(boost::di::bind<AlarmPreferencesRepositoryIfc>().to<AlarmPreferencesRepository>());
     container.install(boost::di::bind<AlarmOverlaySelector>());
 }
 

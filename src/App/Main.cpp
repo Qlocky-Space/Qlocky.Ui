@@ -7,6 +7,7 @@
 #include "api/ApplicationIfc.h"
 #include "AppShellModule.h"
 #include "ConfigurationModule.h"
+#include "DeviceModule.h"
 #include "internal/ConsoleSink.h"
 #include "internal/QlockyApp.h"
 #include "internal/QtLogForwarder.h"
@@ -63,6 +64,7 @@ int main(int argc, char* argv[]) {
     app->addModule<OsModule>();
     app->addModule<PersistenceModule>();
     app->addModule<ConfigurationModule>();
+    app->addModule<DeviceModule>();
     app->addModule<NetworkModule>();
     app->addModule<WidgetModule>();
     app->addModule<UiModule>();

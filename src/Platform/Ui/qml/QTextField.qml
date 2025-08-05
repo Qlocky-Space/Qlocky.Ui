@@ -79,7 +79,7 @@ FocusScope {
 
             background: Item {}
 
-            focus: false
+            focus: true
             activeFocusOnPress: true
             selectByMouse: true
             selectionColor: ThemeManager.theme.miscellaneousTextFieldTinted

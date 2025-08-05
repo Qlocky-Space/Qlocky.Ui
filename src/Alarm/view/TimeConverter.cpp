@@ -3,7 +3,7 @@
 #include <iostream>
 #include <QTimeZone>
 
-TimeConverter::TimeConverter(AlarmPreferencesRepositoryIfc& preferences) :
+TimeConverter::TimeConverter(SystemPreferencesRepositoryIfc& preferences) :
     m_preferences {preferences} {
 }
 
