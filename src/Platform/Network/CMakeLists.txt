@@ -17,6 +17,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkConnectToCommand.h
     ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkDisconnectCommand.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkDisconnectCommand.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkForgetCommand.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/api/commands/NetworkForgetCommand.h
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkService.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkService.h
@@ -28,6 +30,8 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/view/WiFiSettingsPageViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/WiFiSettingsPageViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/WiFiProfileDialogViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/WiFiProfileDialogViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/WiFiNetworkViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/WiFiNetworkViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/WiFiNetworkListModel.h

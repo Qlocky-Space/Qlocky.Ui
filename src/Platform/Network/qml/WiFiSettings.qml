@@ -51,15 +51,17 @@ ColumnLayout {
             delegate: SettingKeyNetworkItem {
                 required property string ssid
                 required property bool connected
+                required property int signalStrength
+
+                strength: signalStrength
+                active: connected
 
                 title: ssid
                 titleColor: connected ? ThemeManager.theme.blue : ThemeManager.theme.labelSecondary
 
                 clickable: true
                 onClicked: function() {
-                    if (connected) {
-                        CommandExecutor.dispatch("network-disconnect")
-                    } else {
+                    if (!connected) {
                         CommandExecutor.dispatch("network-connect", { "ssid": ssid })
                     }
                 }

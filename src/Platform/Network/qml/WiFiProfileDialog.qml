@@ -6,19 +6,24 @@ import QtQuick.VirtualKeyboard
 import Ui
 
 QDialog {
-    property string ssid
-    property string securityType: "WPA-PSK"
+    property var viewModel: WiFiProfileDialogViewModel
 
+    property string ssid
 
     implicitHeight: content.implicitHeight
     implicitWidth: 800
+
+    onOpened: {
+        viewModel.ssid = ssid;
+        viewModel.password = "";
+    }
 
     onCanceled: {
         close();
     }
 
     onAccepted: {
-        // viewModel.save();
+        viewModel.connectTo();
         close();
     }
 
@@ -34,8 +39,22 @@ QDialog {
         }
 
         QLabel {
-            text: ssid
-            anchors.horizontalCenter: parent.horizontalCenter
+            text: viewModel.ssid
+        }
+
+        QTextField {
+            hint: qsTr("Password")
+            focus: true
+
+            currentText: viewModel.password
+            onTextEditingFinished: function(text) {
+                viewModel.password = text;
+            }
+
+            clearTextButtonVisible: true
+            inputField.passwordMaskDelay: 500
+            inputField.echoMode: TextInput.Password
+            inputField.inputMethodHints: Qt.ImhHiddenText
         }
     }
 }

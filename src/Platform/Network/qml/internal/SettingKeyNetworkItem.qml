@@ -8,10 +8,22 @@ import Network
 SettingKeyValueBase {
     id: root
 
-    required property int signalStrength
+    property int strength
+    property bool active
 
     QIcon {
-        icon: NetworkIconUtil.toNetworkStrength(signalStrength)
+        icon: NetworkIconUtil.toNetworkStrength(strength)
         color: root.titleColor
     }
+
+    menu.contentData: [
+        QMenuItem {
+            text: qsTr("Forget")
+            onTriggered: CommandExecutor.dispatch("network-forget", { "ssid": ssid })
+        },
+        QMenuItem {
+            text: qsTr("Disconnect")
+            onTriggered: CommandExecutor.dispatch("network-disconnect")
+        }
+    ]
 }
