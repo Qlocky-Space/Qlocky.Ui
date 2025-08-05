@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QString>
 
-#include "AlarmPreferencesRepositoryIfc.h"
+#include "SystemPreferencesRepositoryIfc.h"
 
 /**
  * Formats time and date for display in QML.
@@ -21,7 +21,7 @@ public:
      * Constructs a TimeConverter.
      * @param preferences Reference to the alarm preferences repository.
      */
-    TimeConverter(AlarmPreferencesRepositoryIfc& preferences);
+    TimeConverter(SystemPreferencesRepositoryIfc& preferences);
 
     /**
      * Formats the given timestamp as a time string (hh:mm).
@@ -56,7 +56,7 @@ private:
     QDateTime toLocalDateTime(uint64_t const utcTimestamp);
     QDateTime fromLocalDateTime(uint64_t const localTimestamp);
 
-    AlarmPreferencesRepositoryIfc& m_preferences;
+    SystemPreferencesRepositoryIfc& m_preferences;
 };
 
 #endif

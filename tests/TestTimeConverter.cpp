@@ -1,11 +1,11 @@
 #include <gmock/gmock.h>
 
-#include "internal/AlarmPreferencesRepositoryIfc.h"
+#include "internal/SystemPreferencesRepositoryIfc.h"
 #include "view/TimeConverter.h"
 
 using namespace ::testing;
 
-class AlarmPreferencesRepositoryMock : public AlarmPreferencesRepositoryIfc {
+class SystemPreferencesRepositoryMock : public SystemPreferencesRepositoryIfc {
 public:
 
     MOCK_METHOD(void, initialize, (), (override));
@@ -14,7 +14,7 @@ public:
 };
 
 TEST(TimeConverter, relativeTimeToUtc) {
-    NiceMock<AlarmPreferencesRepositoryMock> preferencesMock {};
+    NiceMock<SystemPreferencesRepositoryMock> preferencesMock {};
     ON_CALL(preferencesMock, getTimeFormat()).WillByDefault(Return("HH:mm"));
     ON_CALL(preferencesMock, getTimeZone()).WillByDefault(Return("UTC+02:00"));
 
@@ -25,7 +25,7 @@ TEST(TimeConverter, relativeTimeToUtc) {
 }
 
 TEST(TimeConverter, utcToRelativeTime) {
-    NiceMock<AlarmPreferencesRepositoryMock> preferencesMock {};
+    NiceMock<SystemPreferencesRepositoryMock> preferencesMock {};
     ON_CALL(preferencesMock, getTimeFormat()).WillByDefault(Return("HH:mm"));
     ON_CALL(preferencesMock, getTimeZone()).WillByDefault(Return("UTC+02:00"));
 
@@ -36,7 +36,7 @@ TEST(TimeConverter, utcToRelativeTime) {
 }
 
 TEST(TimeConverter, asTime) {
-    NiceMock<AlarmPreferencesRepositoryMock> preferencesMock {};
+    NiceMock<SystemPreferencesRepositoryMock> preferencesMock {};
     ON_CALL(preferencesMock, getTimeFormat()).WillByDefault(Return("HH:mm"));
     ON_CALL(preferencesMock, getTimeZone()).WillByDefault(Return("UTC+02:00"));
 
