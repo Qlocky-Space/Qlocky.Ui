@@ -56,6 +56,9 @@ KeyboardLayout {
         Key {
             key: Qt.Key_Udiaeresis
             text: "ü"
+            alternativeKeys: "üè"
+            smallText: "è"
+            smallTextVisible: true
         }
     }
     KeyboardRow {
@@ -66,7 +69,6 @@ KeyboardLayout {
         Key {
             key: Qt.Key_S
             text: "s"
-            alternativeKeys: "sß"
         }
         Key {
             key: Qt.Key_D
@@ -99,10 +101,16 @@ KeyboardLayout {
         Key {
             key: Qt.Key_Odiaeresis
             text: "ö"
+            alternativeKeys: "öé"
+            smallText: "é"
+            smallTextVisible: true
         }
         Key {
             key: Qt.Key_Adiaeresis
             text: "ä"
+            alternativeKeys: "äà"
+            smallText: "à"
+            smallTextVisible: true
         }
     }
     KeyboardRow {
@@ -172,7 +180,7 @@ KeyboardLayout {
             weight: normalKeyWidth
             Layout.fillWidth: false
             text: "."
-            alternativeKeys: "!.?"
+            alternativeKeys: ",_-<>!?"
             smallText: "!?"
             smallTextVisible: true
             highlighted: true

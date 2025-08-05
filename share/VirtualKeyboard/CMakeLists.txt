@@ -42,10 +42,10 @@ qt6_add_resources(${MODULE} "${MODULE}-resources"
         layouts/en_US/symbols.fallback
         layouts/en_US/digits.fallback
         layouts/en_US/main.fallback
-        layouts/de_DE/dialpad.fallback
-        layouts/de_DE/handwriting.fallback
-        layouts/de_DE/numbers.fallback
-        layouts/de_DE/symbols.fallback
-        layouts/de_DE/digits.fallback
-        layouts/de_DE/main.qml
+        layouts/de_CH/dialpad.fallback
+        layouts/de_CH/handwriting.fallback
+        layouts/de_CH/numbers.fallback
+        layouts/de_CH/symbols.fallback
+        layouts/de_CH/digits.fallback
+        layouts/de_CH/main.qml
 )
