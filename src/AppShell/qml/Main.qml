@@ -8,18 +8,37 @@ import Ui
 AppWindow {
     id: root
 
-    Loader {
-        id: pageProvider
-        anchors.fill: parent
-    }
+    Flickable {
+        id: flickable
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
 
-    QDialogProvider {
-        id: dialogProvider
-    }
+        height: Qt.inputMethod.visible ?  parent.height - keyboard.input.y : parent.height
 
-    QInteractiveProvider {
-        pageLoader: pageProvider
-        dialogLoader: dialogProvider
+        contentWidth: parent.width
+        contentHeight: parent.height
+        interactive: false
+
+        Loader {
+            id: pageProvider
+            anchors.fill: parent
+        }
+
+        QDialogProvider {
+            id: dialogProvider
+        }
+
+        QInteractiveProvider {
+            pageLoader: pageProvider
+            dialogLoader: dialogProvider
+        }
+
+        // Ensures the flickable is scrolled to selected element
+        // when the keyboard is visible
+        AutoScroller {
+            outerFlickable: flickable
+        }
     }
 
     // Ensure the input panel is always above other content, also

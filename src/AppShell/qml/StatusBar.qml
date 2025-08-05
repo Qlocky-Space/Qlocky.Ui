@@ -102,8 +102,7 @@ Item {
         id: overlay
         x: parent.width / 2 - width / 2
         y: 100
-        focus: true
-        modal: false
+        modal: true
         dim: false
         closePolicy: Qt.inputMethod.visible ? Popup.CloseOnEscape : Popup.CloseOnEscape | Popup.CloseOnPressOutside
 

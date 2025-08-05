@@ -39,6 +39,7 @@ set(MODULE_SRC
 )
 
 set(MODULE_QML_SRC
+    qml/internal/AutoScroller.qml
     qml/QButton.qml
     qml/QStatusButton.qml
     qml/QIcon.qml

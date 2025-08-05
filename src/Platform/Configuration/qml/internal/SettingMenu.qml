@@ -35,7 +35,6 @@ Item {
 
         spacing: 0
         clip: true
-        focus: true
         delegate: SettingMenuItem {
             onClicked: {
                 settingListView.currentIndex = index

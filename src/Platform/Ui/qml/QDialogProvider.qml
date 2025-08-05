@@ -94,7 +94,7 @@ Item {
         id: dialog
         anchors.centerIn: parent
         focus: true
-        modal: !Qt.inputMethod.visible
+        modal: true
         dim: false
         closePolicy: Qt.inputMethod.visible ? Popup.CloseOnEscape : Popup.CloseOnEscape | Popup.CloseOnPressOutside
 

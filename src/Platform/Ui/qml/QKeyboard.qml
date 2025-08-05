@@ -1,14 +1,21 @@
+import QtQuick
+import QtQuick.Effects
 import QtQuick.VirtualKeyboard
 import QtQuick.VirtualKeyboard.Settings
 
-InputPanel {
-    id: inputPanel
+import Ui
 
-    anchors.left: parent.left
-    anchors.right: parent.right
-
-    y: Qt.inputMethod.visible ? parent.height - inputPanel.height : parent.height
-
+Item {
     z: 10000 // Ensure the input panel is always above other content
-    focus: true
+
+    anchors.fill: parent
+    property alias input: inputPanel
+
+    InputPanel {
+        id: inputPanel
+
+        width: parent.width
+
+        y: Qt.inputMethod.visible ? parent.height - inputPanel.height : parent.height
+    }
 }
