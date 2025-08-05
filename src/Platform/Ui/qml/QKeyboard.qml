@@ -17,5 +17,10 @@ Item {
         width: parent.width
 
         y: Qt.inputMethod.visible ? parent.height - inputPanel.height : parent.height
+
+        // TODO based on LanguageService.cpp, set the locale dynamically
+        Component.onCompleted: {
+            VirtualKeyboardSettings.locale = Qt.locale().name;
+        }
     }
 }
