@@ -53,6 +53,12 @@ public:
      * @return A string representing the hostname of the device.
      */
     virtual std::string getHostname() const = 0;
+
+    /**
+     * Sets the hostname of the device.
+     * @param hostname The new hostname to set.
+     */
+    virtual void setHostname(std::string const& hostname) = 0;
 };
 
 #endif

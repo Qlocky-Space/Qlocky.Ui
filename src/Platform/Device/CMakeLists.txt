@@ -13,8 +13,13 @@ set(MODULE_SRC
 )
 
 set(MODULE_QML_SRC
+    qml/internal/SettingHostnameItem.qml
     qml/About.qml
     qml/Develop.qml
+)
+
+set(MODULE_QML_RESOURCES
+    resources/DeviceFrame.png
 )
 
 set(MODULE_INCLUDE

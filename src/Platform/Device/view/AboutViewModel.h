@@ -22,6 +22,7 @@ class AboutViewModel : public QObject {
     Q_PROPERTY(QString serialNumber READ getSerialNumber CONSTANT)
     Q_PROPERTY(QString productName READ getProductName CONSTANT)
 
+    Q_PROPERTY(QString hostname READ getHostname NOTIFY hostnameChanged)
     Q_PROPERTY(uint64_t upTime READ getUpTime NOTIFY upTimeChanged)
 
 public:
@@ -92,9 +93,23 @@ public:
         return m_upElapsedTimer.elapsed() / 1000; // Convert milliseconds to seconds
     }
 
+    /**
+     * Returns the hostname of the device.
+     */
+    QString getHostname() const {
+        return QString::fromStdString(m_deviceInfoProvider.getHostname());
+    }
+
+    /**
+     * Changes the hostname of the device.
+     * @param hostname The new hostname to set.
+     */
+    Q_INVOKABLE void changeHostname(QString const& hostname);
+
 signals:
 
     void upTimeChanged();
+    void hostnameChanged();
 
 private:
 

@@ -59,6 +59,11 @@ public:
         return m_hostname;
     }
 
+    /**
+     * @see DeviceInfoProviderIfc::setHostname
+     */
+    void setHostname(std::string const& hostname) final;
+
 private:
 
     std::string m_modelName {"QL-A100"};
