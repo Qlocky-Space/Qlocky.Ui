@@ -2,6 +2,8 @@ set(MODULE VirtualKeyboardResources)
 
 qt_add_library(${MODULE} STATIC)
 qt_add_qml_module(${MODULE}
+    # NOTE: It's very important that URI matches so virtual keyboard
+    # can find the styles and layouts.
     URI QtQuick.VirtualKeyboard.Styles.qlocky
     PLUGIN_TARGET ${MODULE}Plugin
     VERSION 1.0

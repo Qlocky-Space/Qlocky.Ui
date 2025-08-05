@@ -6,6 +6,8 @@ import QtQuick.Layouts
 import QtQuick.VirtualKeyboard
 import QtQuick.VirtualKeyboard.Styles
 
+import Ui
+
 KeyboardStyle {
     id: currentStyle
     readonly property bool compactSelectionList: [InputEngine.InputMode.Pinyin, InputEngine.InputMode.Cangjie, InputEngine.InputMode.Zhuyin].indexOf(InputContext.inputEngine.inputMode) !== -1
@@ -16,14 +18,14 @@ KeyboardStyle {
     readonly property string resourcePrefix: "qrc:/VirtualKeyboardResources/"
 
     readonly property string inputLocale: InputContext.locale
-    property color primaryColor: "#FFFF00" // "#263238"
-    property color primaryLightColor: "#4f5b62"
-    property color primaryDarkColor: "#000a12"
-    property color textOnPrimaryColor: "#ffffff"
-    property color secondaryColor: "#01579b"
-    property color secondaryLightColor: "#4f83cc"
-    property color secondaryDarkColor: "#002f6c"
-    property color textOnSecondaryColor: "#ffffff"
+    property color primaryColor: ThemeManager.theme.backgroundPrimary
+    property color primaryLightColor: ThemeManager.theme.fillsPrimary
+    property color primaryDarkColor: ThemeManager.theme.fillsTertiary
+    property color textOnPrimaryColor: ThemeManager.theme.labelPrimary
+    property color secondaryColor: ThemeManager.theme.blue
+    property color secondaryLightColor: Qt.lighter(ThemeManager.theme.blue, 1.1)
+    property color secondaryDarkColor: Qt.darker(ThemeManager.theme.blue, 1.1)
+    property color textOnSecondaryColor:  ThemeManager.theme.labelPrimary
 
     property color keyboardBackgroundColor: primaryColor
     property color normalKeyBackgroundColor: primaryDarkColor
