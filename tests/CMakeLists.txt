@@ -16,7 +16,7 @@ endif()
 add_executable(${TARGET_NAME}Test
     #
     TestTimeConverter.cpp
-    TestPskEncrption.cpp
+    TestPskEncryption.cpp
 )
 
 target_include_directories(${TARGET_NAME}Test PRIVATE
