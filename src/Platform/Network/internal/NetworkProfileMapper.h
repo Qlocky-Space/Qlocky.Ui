@@ -42,9 +42,12 @@ public:
      * @return  The corresponding NetworkProfileNew.
      */
     static NetworkInfo toNetworkInfo(NetworkProfileEntity const& profile) {
+        // Assumes PskEncryption with ASCII hexdump is used, which leads to a string of 64 characters
+        constexpr uint32_t encryptedKeyLength {64};
+
         NetworkInfo info {};
         info.ssid = profile.ssid;
-        if (profile.psk.length() >= 64) {
+        if (profile.psk.length() >= encryptedKeyLength) {
             info.passphrase = StringUtil::hexDumpToBytes(profile.psk);
         }
         else {
