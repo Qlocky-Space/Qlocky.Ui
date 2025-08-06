@@ -27,6 +27,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkProfileMapper.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkStateMachine.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/NetworkStateMachine.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/PskEncryption.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/PskEncryption.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/view/WiFiSettingsPageViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/WiFiSettingsPageViewModel.cpp
@@ -48,6 +50,8 @@ set(MODULE_LINK
     qlocky::Configuration
 
     nlohmann_json::nlohmann_json
+    ssl
+    crypto
 )
 
 set(MODULE_QML_SRC

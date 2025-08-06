@@ -82,7 +82,12 @@ NetworkResult WpaSupplicantDBusDriver::registerNetwork(NetworkInfo const& networ
     // https://w1.fi/cgit/hostap/plain/wpa_supplicant/wpa_supplicant.conf
     args["ssid"] = sdbus::Variant(std::vector<uint8_t>(network.ssid.begin(), network.ssid.end()));
     args["key_mgmt"] = sdbus::Variant(network.keyMgmnt);
-    args["psk"] = sdbus::Variant(network.psk);
+    if (network.pskEncrypted()) {
+        args["psk"] = sdbus::Variant(network.pskBytes());
+    }
+    else {
+        args["psk"] = sdbus::Variant(network.psk());
+    }
 
     proxy->callMethod("AddNetwork")
         .onInterface("fi.w1.wpa_supplicant1.Interface")

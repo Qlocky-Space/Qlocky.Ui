@@ -1,6 +1,6 @@
 #include <gmock/gmock.h>
 
-#include "internal/SystemPreferencesRepositoryIfc.h"
+#include "SystemPreferencesRepositoryIfc.h"
 #include "view/TimeConverter.h"
 
 using namespace ::testing;

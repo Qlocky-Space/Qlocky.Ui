@@ -7,6 +7,8 @@
 #include "NetworkInfo.h"
 #include "NetworkProfileEntity.h"
 #include "NetworkProfileNew.h"
+#include "PskEncryption.h"
+#include "util/StringUtil.h"
 
 /**
  * NetworkProfileMapper provides conversion between NetworkProfileNew and NetworkProfileEntity.
@@ -24,20 +26,35 @@ public:
      * @return  The corresponding NetworkProfileEntity.
      */
     static NetworkProfileEntity toEntity(NetworkProfileNew const& profile) {
+        PskEncryption::Psk psk {PskEncryption::encrypt(profile.Psk, profile.Ssid)};
+
         return NetworkProfileEntity {
             0,
             profile.Ssid,
-            profile.Psk,
+            StringUtil::bytesToHexDump(psk.data(), psk.size()),
             profile.SecurityType,
             profile.AutoConnect};
     }
 
+    /**
+     * Converts a NetworkProfileEntity to a NetworkProfileNew.
+     * @param entity The network profile entity to convert.
+     * @return  The corresponding NetworkProfileNew.
+     */
     static NetworkInfo toNetworkInfo(NetworkProfileEntity const& profile) {
-        return NetworkInfo {
-            profile.ssid,
-            profile.psk,
-            profile.securityType};
+        NetworkInfo info {};
+        info.ssid = profile.ssid;
+        if (profile.psk.length() >= 64) {
+            info.passphrase = StringUtil::hexDumpToBytes(profile.psk);
+        }
+        else {
+            info.passphrase = profile.psk; // Assume it's not encrypted
+        }
+        info.keyMgmnt = profile.securityType;
+        return info;
     }
+
+private:
 };
 
 #endif
