@@ -10,6 +10,7 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/StationServiceIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/events/StationAddedEvent.h
     ${CMAKE_CURRENT_LIST_DIR}/api/events/StationRemovedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/StationServiceStateChangedEvent.h
     ${CMAKE_CURRENT_LIST_DIR}/api/events/StationUpdatedEvent.h
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/RadioBrowserStationProvider.cpp

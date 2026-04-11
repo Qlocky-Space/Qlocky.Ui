@@ -1,27 +1,11 @@
 #include "StationService.h"
 
 #include <algorithm>
-#include <QCoreApplication>
-#include <QMetaObject>
-#include <QTimer>
+#include <ng-log/logging.h>
 
-constexpr std::size_t APPLY_BATCH_SIZE {250};
-
-struct StationService::ActiveCollectionState {
-    std::vector<StationId> existingStationIds {};
-    std::unordered_set<std::string> seenStationIds {};
-    std::size_t pendingProviders {0};
-};
-
-struct StationService::PendingStationChanges {
-    std::vector<StationEntity> additions {};
-    std::vector<StationId> removals {};
-    std::size_t nextAdditionIndex {0};
-    std::size_t nextRemovalIndex {0};
-};
-
-StationService::StationService(StationRepositoryIfc& repository) :
-    m_repository {repository} {
+StationService::StationService(StationRepositoryIfc& repository, Mediator& mediator) :
+    m_repository {repository},
+    m_mediator {mediator} {
 }
 
 void StationService::registerProvider(std::shared_ptr<StationProviderIfc> provider) {
@@ -37,129 +21,91 @@ void StationService::registerProvider(std::shared_ptr<StationProviderIfc> provid
     }
 }
 
-void StationService::collectStations() {
-    std::uint64_t const collectionGeneration {++m_collectionGeneration};
-
-    auto collectionState = std::make_shared<ActiveCollectionState>();
-    for (StationEntity const& station : m_repository.getAllStations()) {
-        collectionState->existingStationIds.push_back(station.id);
-    }
-
-    if (m_providers.empty()) {
-        finalizeCollection(collectionState, collectionGeneration);
+void StationService::updateStationsAsync() {
+    bool const hadActiveSubscriptions {!m_activeSubscriptions.empty()};
+    if (hadActiveSubscriptions) {
+        LOG(WARNING) << "Station update already in progress, restarting.";
         return;
     }
 
-    collectionState->pendingProviders = m_providers.size();
+    notifyStateChanged(StationServiceStateChangedEvent::State::Updating);
+
+    auto existingStationIds = std::make_shared<std::vector<StationId>>();
+    for (StationEntity const& station : m_repository.getAllStations()) {
+        existingStationIds->push_back(station.id);
+    }
+
+    auto seenStationIds = std::make_shared<std::unordered_set<std::string>>();
+
+    if (m_providers.empty()) {
+        finalizeCollection(existingStationIds, seenStationIds);
+        return;
+    }
+
+    auto pendingProviders = std::make_shared<std::size_t>(m_providers.size());
+    m_activeSubscriptions.reserve(m_providers.size());
 
     for (std::shared_ptr<StationProviderIfc> const& provider : m_providers) {
-        provider->streamAllStationsAsync(
-            [this, collectionState, collectionGeneration](StationEntity const& station) {
-                QCoreApplication* application {QCoreApplication::instance()};
-                if (application == nullptr) {
-                    return;
-                }
-
-                QMetaObject::invokeMethod(application, [this, collectionState, collectionGeneration, station]() { onProviderStation(collectionState, collectionGeneration, station); }, Qt::QueuedConnection);
+        m_activeSubscriptions.push_back(provider->streamAllStations().consume(
+            [this, seenStationIds](StationEntity const& station) {
+                onProviderStation(seenStationIds, station);
             },
-            [this, collectionState, collectionGeneration]() {
-                QCoreApplication* application {QCoreApplication::instance()};
-                if (application == nullptr) {
-                    return;
-                }
+            [this, existingStationIds, seenStationIds, pendingProviders]() {
+                onProviderFinished(existingStationIds, seenStationIds, pendingProviders);
+            }));
+    }
+}
 
-                QMetaObject::invokeMethod(application, [this, collectionState, collectionGeneration]() { onProviderFinished(collectionState, collectionGeneration); }, Qt::QueuedConnection);
-            });
+void StationService::cancel() {
+    bool const hadActiveSubscriptions {!m_activeSubscriptions.empty()};
+    for (Stream<StationEntity>::Subscription const& subscription : m_activeSubscriptions) {
+        subscription.cancel();
+    }
+    m_activeSubscriptions.clear();
+
+    if (hadActiveSubscriptions) {
+        notifyStateChanged(StationServiceStateChangedEvent::State::Canceled);
     }
 }
 
 void StationService::onProviderStation(
-    std::shared_ptr<ActiveCollectionState> collectionState,
-    std::uint64_t collectionGeneration,
+    std::shared_ptr<std::unordered_set<std::string>> const& seenStationIds,
     StationEntity const& station) {
-    if (collectionGeneration != m_collectionGeneration) {
-        return;
-    }
-
     if (!station.id.isValid()) {
         return;
     }
 
-    collectionState->seenStationIds.insert(station.id.toString());
+    seenStationIds->insert(station.id.toString());
     m_repository.addStation(station);
 }
 
 void StationService::onProviderFinished(
-    std::shared_ptr<ActiveCollectionState> collectionState,
-    std::uint64_t collectionGeneration) {
-    if (collectionGeneration != m_collectionGeneration) {
+    std::shared_ptr<std::vector<StationId>> const& existingStationIds,
+    std::shared_ptr<std::unordered_set<std::string>> const& seenStationIds,
+    std::shared_ptr<std::size_t> const& pendingProviders) {
+    if (*pendingProviders == 0) {
         return;
     }
 
-    if (collectionState->pendingProviders == 0) {
-        return;
-    }
-
-    --collectionState->pendingProviders;
-    if (collectionState->pendingProviders == 0) {
-        finalizeCollection(collectionState, collectionGeneration);
+    --(*pendingProviders);
+    if (*pendingProviders == 0) {
+        m_activeSubscriptions.clear();
+        finalizeCollection(existingStationIds, seenStationIds);
     }
 }
 
 void StationService::finalizeCollection(
-    std::shared_ptr<ActiveCollectionState> collectionState,
-    std::uint64_t collectionGeneration) {
-    if (collectionGeneration != m_collectionGeneration) {
-        return;
-    }
-
-    auto pendingChanges = std::make_shared<PendingStationChanges>();
-
-    for (StationId const& stationId : collectionState->existingStationIds) {
-        if (collectionState->seenStationIds.count(stationId.toString()) == 0) {
-            pendingChanges->removals.push_back(stationId);
+    std::shared_ptr<std::vector<StationId>> const& existingStationIds,
+    std::shared_ptr<std::unordered_set<std::string>> const& seenStationIds) {
+    for (StationId const& stationId : *existingStationIds) {
+        if (seenStationIds->count(stationId.toString()) == 0) {
+            m_repository.removeStation(stationId);
         }
     }
 
-    if (pendingChanges->removals.empty()) {
-        return;
-    }
-
-    applyPendingChanges(pendingChanges, collectionGeneration);
+    notifyStateChanged(StationServiceStateChangedEvent::State::Finished);
 }
 
-void StationService::applyPendingChanges(
-    std::shared_ptr<PendingStationChanges> pendingChanges,
-    std::uint64_t collectionGeneration) {
-    if (collectionGeneration != m_collectionGeneration) {
-        return;
-    }
-
-    std::size_t processedCount {0};
-    while (pendingChanges->nextAdditionIndex < pendingChanges->additions.size() && processedCount < APPLY_BATCH_SIZE) {
-        m_repository.addStation(pendingChanges->additions.at(pendingChanges->nextAdditionIndex));
-        ++pendingChanges->nextAdditionIndex;
-        ++processedCount;
-    }
-
-    while (pendingChanges->nextAdditionIndex >= pendingChanges->additions.size() && pendingChanges->nextRemovalIndex < pendingChanges->removals.size() && processedCount < APPLY_BATCH_SIZE) {
-        m_repository.removeStation(pendingChanges->removals.at(pendingChanges->nextRemovalIndex));
-        ++pendingChanges->nextRemovalIndex;
-        ++processedCount;
-    }
-
-    bool const hasMoreAdditions {pendingChanges->nextAdditionIndex < pendingChanges->additions.size()};
-    bool const hasMoreRemovals {pendingChanges->nextRemovalIndex < pendingChanges->removals.size()};
-    if (!hasMoreAdditions && !hasMoreRemovals) {
-        return;
-    }
-
-    QCoreApplication* application {QCoreApplication::instance()};
-    if (application == nullptr) {
-        return;
-    }
-
-    QTimer::singleShot(0, application, [this, pendingChanges, collectionGeneration]() mutable {
-        applyPendingChanges(pendingChanges, collectionGeneration);
-    });
+void StationService::notifyStateChanged(StationServiceStateChangedEvent::State state) const {
+    m_mediator.notify(StationServiceStateChangedEvent {state});
 }

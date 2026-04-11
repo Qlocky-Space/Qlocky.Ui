@@ -1,10 +1,17 @@
 #include "RadioSettingsPageViewModel.h"
 
-RadioSettingsPageViewModel::RadioSettingsPageViewModel(Mediator& mediator) :
+#include <QMetaObject>
+
+RadioSettingsPageViewModel::RadioSettingsPageViewModel(Mediator& mediator, StationServiceIfc& stationService) :
     QObject {nullptr},
-    m_mediator {mediator} {
+    m_stationService {stationService} {
     mediator.subscribe<StationAddedEvent>(this, &RadioSettingsPageViewModel::onStationAdded);
     mediator.subscribe<StationRemovedEvent>(this, &RadioSettingsPageViewModel::onStationRemoved);
+    mediator.subscribe<StationServiceStateChangedEvent>(this, &RadioSettingsPageViewModel::onStationServiceStateChanged);
+}
+
+void RadioSettingsPageViewModel::updateStations() {
+    m_stationService.updateStationsAsync();
 }
 
 void RadioSettingsPageViewModel::setStationCount(int stationCount) {
@@ -14,6 +21,15 @@ void RadioSettingsPageViewModel::setStationCount(int stationCount) {
 
     m_stationCount = stationCount;
     emit stationCountChanged();
+}
+
+void RadioSettingsPageViewModel::setDownloading(bool downloading) {
+    if (m_downloading == downloading) {
+        return;
+    }
+
+    m_downloading = downloading;
+    emit downloadingChanged();
 }
 
 void RadioSettingsPageViewModel::onStationAdded(StationAddedEvent const& event) {
@@ -28,4 +44,16 @@ void RadioSettingsPageViewModel::onStationRemoved(StationRemovedEvent const& eve
     }
 
     setStationCount(m_stationCount - 1);
+}
+
+void RadioSettingsPageViewModel::onStationServiceStateChanged(StationServiceStateChangedEvent const& event) {
+    switch (event.state) {
+        case StationServiceStateChangedEvent::State::Updating:
+            setDownloading(true);
+            break;
+        case StationServiceStateChangedEvent::State::Canceled:
+        case StationServiceStateChangedEvent::State::Finished:
+            setDownloading(false);
+            break;
+    }
 }

@@ -20,8 +20,24 @@ ColumnLayout {
         title: qsTr("General")
 
         SettingKeyValueItem {
-            title: qsTr("Number of Stations")
+            title: qsTr("Stations")
             value: viewModel.stationCount
+
+            additionalContent: QButton {
+                id: scanButton
+                buttonStyle: QButton.ButtonStyle.Plain
+                image: "\uf021"
+                onClicked: viewModel.updateStations()
+
+                // Rotation animation while downloading
+                RotationAnimator on rotation {
+                    running: viewModel.downloading
+                    from: 0
+                    to: 360
+                    duration: 800
+                    loops: Animation.Infinite
+                }
+            }
         }
     }
 }

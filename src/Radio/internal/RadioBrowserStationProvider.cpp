@@ -1,5 +1,6 @@
 #include "RadioBrowserStationProvider.h"
 
+#include <array>
 #include <ng-log/logging.h>
 #include <nlohmann/json.hpp>
 #include <optional>
@@ -7,15 +8,22 @@
 #include <QMetaObject>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QStringList>
+#include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
 #include <thread>
 
 namespace {
 
-constexpr char const* RADIO_BROWSER_API_URL {"https://de1.api.radio-browser.info/json/stations"};
+constexpr std::array<char const*, 3> RADIO_BROWSER_API_URLS {{
+    "https://all.api.radio-browser.info/json/stations",
+    "https://de1.api.radio-browser.info/json/stations",
+    "https://nl1.api.radio-browser.info/json/stations",
+}};
 constexpr char const* RADIO_BROWSER_USER_AGENT {"Qlocky/1.0"};
 constexpr int RADIO_BROWSER_LIMIT {100000};
+constexpr std::size_t STATION_EMIT_BATCH_SIZE {100};
 
 struct RadioBrowserStationRecord {
     std::string stationuuid;
@@ -161,54 +169,183 @@ void collectStationsFromJson(
     }
 }
 
+std::string describeReplyFailure(QNetworkReply const& reply) {
+    QStringList parts {};
+    parts.push_back(reply.errorString());
+
+    QVariant const statusCode {reply.attribute(QNetworkRequest::HttpStatusCodeAttribute)};
+    if (statusCode.isValid()) {
+        parts.push_back(QStringLiteral("status=%1").arg(statusCode.toInt()));
+    }
+
+    QVariant const reasonPhrase {reply.attribute(QNetworkRequest::HttpReasonPhraseAttribute)};
+    if (reasonPhrase.isValid()) {
+        parts.push_back(QStringLiteral("reason=%1").arg(reasonPhrase.toString()));
+    }
+
+    if (reply.url().isValid()) {
+        parts.push_back(QStringLiteral("url=%1").arg(reply.url().toString()));
+    }
+
+    return parts.join(QStringLiteral(", ")).toStdString();
+}
+
 } // namespace
+
+struct RadioBrowserStationProvider::StationFetchRequestState {
+    Stream<StationEntity>::ItemHandler onStation {};
+    Stream<StationEntity>::FinishedHandler onFinished {};
+    Stream<StationEntity>::Subscription subscription {};
+    std::size_t nextUrlIndex {0};
+};
 
 RadioBrowserStationProvider::RadioBrowserStationProvider() :
     m_networkAccessManager {} {
 }
 
-void RadioBrowserStationProvider::streamAllStationsAsync(StationHandler onStation, FinishedHandler onFinished) {
-    QUrl url {QString::fromUtf8(RADIO_BROWSER_API_URL)};
+Stream<StationEntity> RadioBrowserStationProvider::streamAllStations() {
+    return Stream<StationEntity> {[this](Stream<StationEntity>::ItemHandler onStation, Stream<StationEntity>::FinishedHandler onFinished, Stream<StationEntity>::Subscription const& subscription) {
+        startNextRequest(createRequestState(std::move(onStation), std::move(onFinished), subscription));
+    }};
+}
+
+std::shared_ptr<RadioBrowserStationProvider::StationFetchRequestState> RadioBrowserStationProvider::createRequestState(
+    Stream<StationEntity>::ItemHandler onStation,
+    Stream<StationEntity>::FinishedHandler onFinished,
+    Stream<StationEntity>::Subscription const& subscription) const {
+    auto requestState = std::make_shared<StationFetchRequestState>();
+    requestState->onStation = std::move(onStation);
+    requestState->onFinished = std::move(onFinished);
+    requestState->subscription = subscription;
+    return requestState;
+}
+
+void RadioBrowserStationProvider::startNextRequest(std::shared_ptr<StationFetchRequestState> const& state) {
+    if (state->subscription.isCanceled()) {
+        return;
+    }
+
+    if (state->nextUrlIndex >= RADIO_BROWSER_API_URLS.size()) {
+        LOG(ERROR) << "Failed to fetch stations from radio-browser.info: all configured mirrors failed.";
+        finishRequest(state);
+        return;
+    }
+
+    QNetworkRequest const request {createNetworkRequest(createStationsUrl(state->nextUrlIndex))};
+    ++state->nextUrlIndex;
+
+    QNetworkReply* reply {m_networkAccessManager.get(request)};
+    QObject::connect(reply, &QNetworkReply::finished, [this, reply, state]() {
+        handleReplyFinished(reply, state);
+    });
+}
+
+void RadioBrowserStationProvider::finishRequest(std::shared_ptr<StationFetchRequestState> const& state) const {
+    if (state->subscription.isCanceled()) {
+        return;
+    }
+
+    state->onFinished();
+}
+
+void RadioBrowserStationProvider::handleReplyFinished(
+    QNetworkReply* reply,
+    std::shared_ptr<StationFetchRequestState> const& state) {
+    std::unique_ptr<QNetworkReply, void (*)(QNetworkReply*)> replyGuard(reply, [](QNetworkReply* currentReply) {
+        if (currentReply != nullptr) {
+            currentReply->deleteLater();
+        }
+    });
+
+    if (reply->error() != QNetworkReply::NoError) {
+        if (state->subscription.isCanceled()) {
+            return;
+        }
+
+        LOG(WARNING) << "Failed to fetch stations from radio-browser.info mirror: " << describeReplyFailure(*reply);
+        startNextRequest(state);
+        return;
+    }
+
+    parseAndEmitStations(reply->readAll(), state);
+}
+
+void RadioBrowserStationProvider::parseAndEmitStations(
+    QByteArray payload,
+    std::shared_ptr<StationFetchRequestState> const& state) const {
+    std::thread([this, payload, state]() mutable {
+        if (state->subscription.isCanceled()) {
+            return;
+        }
+
+        emitStations(parseStations(payload), state);
+    }).detach();
+}
+
+void RadioBrowserStationProvider::emitStations(
+    std::vector<StationEntity> stations,
+    std::shared_ptr<StationFetchRequestState> const& state) const {
+    QCoreApplication* application {QCoreApplication::instance()};
+    if (application == nullptr) {
+        return;
+    }
+
+    auto sharedStations = std::make_shared<std::vector<StationEntity>>(std::move(stations));
+    QMetaObject::invokeMethod(application, [this, state, sharedStations]() { emitStationBatch(sharedStations, 0, state); }, Qt::QueuedConnection);
+}
+
+void RadioBrowserStationProvider::emitStationBatch(
+    std::shared_ptr<std::vector<StationEntity>> const& stations,
+    std::size_t nextIndex,
+    std::shared_ptr<StationFetchRequestState> const& state) const {
+    if (state->subscription.isCanceled()) {
+        return;
+    }
+
+    std::size_t currentIndex {nextIndex};
+    std::size_t processedCount {0};
+    while (currentIndex < stations->size() && processedCount < STATION_EMIT_BATCH_SIZE) {
+        if (state->subscription.isCanceled()) {
+            return;
+        }
+
+        state->onStation(stations->at(currentIndex));
+        ++currentIndex;
+        ++processedCount;
+    }
+
+    if (currentIndex >= stations->size()) {
+        finishRequest(state);
+        return;
+    }
+
+    QCoreApplication* application {QCoreApplication::instance()};
+    if (application == nullptr) {
+        return;
+    }
+
+    QTimer::singleShot(0, application, [this, stations, currentIndex, state]() {
+        emitStationBatch(stations, currentIndex, state);
+    });
+}
+
+QUrl RadioBrowserStationProvider::createStationsUrl(std::size_t urlIndex) const {
+    QUrl url {QString::fromUtf8(RADIO_BROWSER_API_URLS.at(urlIndex))};
+
     QUrlQuery query {};
     query.addQueryItem("hidebroken", "true");
     query.addQueryItem("limit", QString::number(RADIO_BROWSER_LIMIT));
     url.setQuery(query);
 
+    return url;
+}
+
+QNetworkRequest RadioBrowserStationProvider::createNetworkRequest(QUrl const& url) const {
     QNetworkRequest request {url};
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json; charset=utf-8");
     request.setRawHeader("User-Agent", QByteArray {RADIO_BROWSER_USER_AGENT});
-
-    QNetworkReply* reply {m_networkAccessManager.get(request)};
-    QObject::connect(reply, &QNetworkReply::finished, [this, reply, onStation = std::move(onStation), onFinished = std::move(onFinished)]() mutable {
-        std::unique_ptr<QNetworkReply, void (*)(QNetworkReply*)> replyGuard(reply, [](QNetworkReply* currentReply) {
-            if (currentReply != nullptr) {
-                currentReply->deleteLater();
-            }
-        });
-
-        if (reply->error() != QNetworkReply::NoError) {
-            LOG(ERROR) << "Failed to fetch stations from radio-browser.info: " << reply->errorString().toStdString();
-            onFinished();
-            return;
-        }
-
-        QByteArray const payload {reply->readAll()};
-        std::thread([this, payload, onStation = std::move(onStation), onFinished = std::move(onFinished)]() mutable {
-            std::vector<StationEntity> const stations {parseStations(payload)};
-
-            QCoreApplication* application {QCoreApplication::instance()};
-            if (application == nullptr) {
-                return;
-            }
-
-            QMetaObject::invokeMethod(application, [onStation = std::move(onStation), onFinished = std::move(onFinished), stations]() mutable {
-                for (StationEntity const& station : stations) {
-                    onStation(station);
-                }
-
-                onFinished(); }, Qt::QueuedConnection);
-        }).detach();
-    });
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    return request;
 }
 
 std::vector<StationEntity> RadioBrowserStationProvider::parseStations(QByteArray const& payload) const {

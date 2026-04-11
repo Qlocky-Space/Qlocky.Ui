@@ -23,9 +23,14 @@ public:
     virtual void registerProvider(std::shared_ptr<StationProviderIfc> provider) = 0;
 
     /**
-     * Collect stations from all registered providers asynchronously.
+     * Start updating stations from all registered providers asynchronously.
      */
-    virtual void collectStations() = 0;
+    virtual void updateStationsAsync() = 0;
+
+    /**
+     * Cancel the active asynchronous station update.
+     */
+    virtual void cancel() = 0;
 };
 
 #endif // SRC_RADIO_API_STATION_SERVICE_IFC_H
