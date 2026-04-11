@@ -15,6 +15,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/types/Uri.h
     ${CMAKE_CURRENT_LIST_DIR}/types/UriQuery.cpp
     ${CMAKE_CURRENT_LIST_DIR}/types/UriQuery.h
+    ${CMAKE_CURRENT_LIST_DIR}/types/Uuid.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/types/Uuid.h
 )
 
 setup_module()

@@ -17,6 +17,7 @@ add_executable(${TARGET_NAME}Test
     #
     TestTimeConverter.cpp
     TestPskEncryption.cpp
+    TestUuid.cpp
 )
 
 target_include_directories(${TARGET_NAME}Test PRIVATE
