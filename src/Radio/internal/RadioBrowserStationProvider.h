@@ -2,8 +2,9 @@
 #define SRC_RADIO_INTERNAL_RADIO_BROWSER_STATION_PROVIDER_H
 
 #include <memory>
-#include <QNetworkAccessManager>
+#include <RestApi.h>
 
+#include "RadioBrowserAPIv1.h"
 #include "StationProviderIfc.h"
 
 /**
@@ -12,7 +13,7 @@
 class RadioBrowserStationProvider final : public StationProviderIfc {
 public:
 
-    RadioBrowserStationProvider();
+    explicit RadioBrowserStationProvider(RestApi& restApi);
     ~RadioBrowserStationProvider() final = default;
 
     /**
@@ -22,27 +23,25 @@ public:
 
 private:
 
-    struct StationFetchRequestState;
-
-    std::shared_ptr<StationFetchRequestState> createRequestState(
-        Stream<StationEntity>::ItemHandler onStation,
-        Stream<StationEntity>::FinishedHandler onFinished,
+    void handleStationsResponse(
+        Result<RadioBrowserAPIv1, RestApiCode> const& result,
+        Stream<StationEntity>::ItemHandler const& onStation,
+        Stream<StationEntity>::FinishedHandler const& onFinished,
+        Stream<StationEntity>::Subscription const& subscription);
+    void emitStations(
+        std::vector<StationEntity> stations,
+        Stream<StationEntity>::ItemHandler const& onStation,
+        Stream<StationEntity>::FinishedHandler const& onFinished,
         Stream<StationEntity>::Subscription const& subscription) const;
-    void startNextRequest(std::shared_ptr<StationFetchRequestState> const& state);
-    void finishRequest(std::shared_ptr<StationFetchRequestState> const& state) const;
-    void handleReplyFinished(QNetworkReply* reply, std::shared_ptr<StationFetchRequestState> const& state);
-    void parseAndEmitStations(QByteArray payload, std::shared_ptr<StationFetchRequestState> const& state) const;
-    void emitStations(std::vector<StationEntity> stations, std::shared_ptr<StationFetchRequestState> const& state) const;
     void emitStationBatch(
         std::shared_ptr<std::vector<StationEntity>> const& stations,
         std::size_t nextIndex,
-        std::shared_ptr<StationFetchRequestState> const& state) const;
-    QUrl createStationsUrl(std::size_t urlIndex) const;
-    QNetworkRequest createNetworkRequest(QUrl const& url) const;
+        Stream<StationEntity>::ItemHandler const& onStation,
+        Stream<StationEntity>::FinishedHandler const& onFinished,
+        Stream<StationEntity>::Subscription const& subscription) const;
+    std::string createStationsUrl() const;
 
-    std::vector<StationEntity> parseStations(QByteArray const& payload) const;
-
-    QNetworkAccessManager m_networkAccessManager;
+    RestApi& m_restApi;
 };
 
 #endif // SRC_RADIO_INTERNAL_RADIO_BROWSER_STATION_PROVIDER_H

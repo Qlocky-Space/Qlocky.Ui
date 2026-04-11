@@ -17,6 +17,7 @@
 #include "PersistenceModule.h"
 #include "QlockyConfig.h"
 #include "RadioModule.h"
+#include "RestApiModule.h"
 #include "UiModule.h"
 #include "WidgetModule.h"
 
@@ -64,6 +65,7 @@ int main(int argc, char* argv[]) {
     app->addModule<OsModule>();
     app->addModule<PersistenceModule>();
     app->addModule<ConfigurationModule>();
+    app->addModule<RestApiModule>();
     app->addModule<DeviceModule>();
     app->addModule<NetworkModule>();
     app->addModule<WidgetModule>();
