@@ -1,24 +1,31 @@
 #include "RadioSettingsPageViewModel.h"
 
-#include "internal/StationMapper.h"
-
-RadioSettingsPageViewModel::RadioSettingsPageViewModel(Mediator& mediator, StationListModel& stationListModel) :
+RadioSettingsPageViewModel::RadioSettingsPageViewModel(Mediator& mediator) :
     QObject {nullptr},
-    m_mediator {mediator},
-    m_stationListModel {stationListModel} {
+    m_mediator {mediator} {
     mediator.subscribe<StationAddedEvent>(this, &RadioSettingsPageViewModel::onStationAdded);
     mediator.subscribe<StationRemovedEvent>(this, &RadioSettingsPageViewModel::onStationRemoved);
-    mediator.subscribe<StationUpdatedEvent>(this, &RadioSettingsPageViewModel::onStationUpdated);
+}
+
+void RadioSettingsPageViewModel::setStationCount(int stationCount) {
+    if (m_stationCount == stationCount) {
+        return;
+    }
+
+    m_stationCount = stationCount;
+    emit stationCountChanged();
 }
 
 void RadioSettingsPageViewModel::onStationAdded(StationAddedEvent const& event) {
-    m_stationListModel.updateStation(StationMapper::toProfile(event.station));
+    Q_UNUSED(event);
+    setStationCount(m_stationCount + 1);
 }
 
 void RadioSettingsPageViewModel::onStationRemoved(StationRemovedEvent const& event) {
-    m_stationListModel.removeStation(event.stationId.toString());
-}
+    Q_UNUSED(event);
+    if (m_stationCount == 0) {
+        return;
+    }
 
-void RadioSettingsPageViewModel::onStationUpdated(StationUpdatedEvent const& event) {
-    m_stationListModel.updateStation(StationMapper::toProfile(event.station));
+    setStationCount(m_stationCount - 1);
 }

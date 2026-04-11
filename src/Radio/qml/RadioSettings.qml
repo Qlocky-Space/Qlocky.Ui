@@ -21,7 +21,7 @@ ColumnLayout {
 
         SettingKeyValueItem {
             title: qsTr("Number of Stations")
-            value: viewModel.radios.rowCount()
+            value: viewModel.stationCount
         }
     }
 }

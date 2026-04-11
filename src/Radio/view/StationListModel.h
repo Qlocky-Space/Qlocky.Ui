@@ -4,9 +4,8 @@
 #include <QAbstractListModel>
 #include <QVector>
 
-#include "StationProfile.h"
+#include "StationEntity.h"
 #include "StationViewModel.h"
-#include "types/Uri.h"
 
 /**
  * StationListModel is a model that holds a list of stations.
@@ -55,19 +54,19 @@ public:
      * Adds a station to the model.
      * @param station The station to add.
      */
-    void addStation(StationProfile const& profile);
+    void addStation(StationEntity const& station);
 
     /**
      * Updates an existing station in the model.
      * @param station The station to update.
      */
-    void updateStation(StationProfile const& profile);
+    void updateStation(StationEntity const& station);
 
     /**
      * Removes a station from the model.
      * @param station The station to remove.
      */
-    void removeStation(std::string const& id);
+    void removeStation(Uuid const& id);
 
     /**
      * Clears all stations from the model.
@@ -78,7 +77,7 @@ private:
 
     void removeStation(int index);
 
-    QVector<StationViewModel*>::iterator findStationById(std::string const& id);
+    QVector<StationViewModel*>::iterator findStationById(Uuid const& id);
 
     QVector<StationViewModel*> m_stations;
 };

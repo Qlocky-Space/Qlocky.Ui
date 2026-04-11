@@ -15,13 +15,13 @@ public:
     ~RadioBrowserStationProvider() final = default;
 
     /**
-     * @see StationProviderIfc::getAllStations
+        * @see StationProviderIfc::streamAllStationsAsync
      */
-    std::vector<StationProfile> getAllStations() final;
+    void streamAllStationsAsync(StationHandler onStation, FinishedHandler onFinished) final;
 
 private:
 
-    std::vector<StationProfile> parseStations(QByteArray const& payload) const;
+    std::vector<StationEntity> parseStations(QByteArray const& payload) const;
 
     QNetworkAccessManager m_networkAccessManager;
 };

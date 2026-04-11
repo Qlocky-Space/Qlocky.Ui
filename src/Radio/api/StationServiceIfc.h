@@ -17,18 +17,13 @@ public:
     virtual ~StationServiceIfc() = default;
 
     /**
-     * Initialize the station service.
-     */
-    virtual void initialize() = 0;
-
-    /**
      * Register a station provider.
      * @param provider The provider to register.
      */
     virtual void registerProvider(std::shared_ptr<StationProviderIfc> provider) = 0;
 
     /**
-     * Collect stations from all registered providers.
+     * Collect stations from all registered providers asynchronously.
      */
     virtual void collectStations() = 0;
 };

@@ -6,8 +6,6 @@
 
 #include "events/StationAddedEvent.h"
 #include "events/StationRemovedEvent.h"
-#include "events/StationUpdatedEvent.h"
-#include "StationListModel.h"
 
 /**
  * ViewModel for Radio settings page.
@@ -16,31 +14,30 @@
 class RadioSettingsPageViewModel : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QAbstractListModel* radios READ radios CONSTANT)
+    Q_PROPERTY(int stationCount READ stationCount NOTIFY stationCountChanged)
 
 public:
 
-    explicit RadioSettingsPageViewModel(Mediator& mediator, StationListModel& stationListModel);
+    explicit RadioSettingsPageViewModel(Mediator& mediator);
     ~RadioSettingsPageViewModel() final = default;
 
-    /**
-     * Gets the list of radios.
-     * @return The model containing the list of radios.
-     */
-    QAbstractListModel* radios() {
-        return &m_stationListModel;
+    int stationCount() const {
+        return m_stationCount;
     }
 
 signals:
 
+    void stationCountChanged();
+
 private:
+
+    void setStationCount(int stationCount);
 
     void onStationAdded(StationAddedEvent const& event);
     void onStationRemoved(StationRemovedEvent const& event);
-    void onStationUpdated(StationUpdatedEvent const& event);
 
     Mediator& m_mediator;
-    StationListModel& m_stationListModel;
+    int m_stationCount {0};
 };
 
 #endif

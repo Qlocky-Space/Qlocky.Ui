@@ -5,17 +5,27 @@
 namespace {
 
 QStringList toStringList(std::string const& value) {
-    return QString::fromStdString(value).split(',', Qt::SkipEmptyParts);
+    QStringList const values {QString::fromStdString(value).split(',', Qt::SkipEmptyParts)};
+    QStringList normalizedValues {};
+
+    for (QString const& item : values) {
+        QString const trimmed {item.trimmed()};
+        if (!trimmed.isEmpty()) {
+            normalizedValues.push_back(trimmed);
+        }
+    }
+
+    return normalizedValues;
 }
 
-void assignProfile(StationViewModel& station, StationProfile const& profile) {
-    station.setName(QString::fromStdString(profile.Name));
-    station.setUrl(QString::fromStdString(profile.Url));
-    station.setFavicon(QString::fromStdString(profile.Favicon));
-    station.setTags(toStringList(profile.Tags));
-    station.setLanguage(toStringList(profile.Language));
-    station.setCountryCode(QString::fromStdString(profile.CountryCode));
-    station.setVotes(static_cast<int>(profile.Votes));
+void assignStation(StationViewModel& station, StationEntity const& entity) {
+    station.setName(QString::fromStdString(entity.name).trimmed());
+    station.setUrl(QString::fromStdString(entity.url).trimmed());
+    station.setFavicon(QString::fromStdString(entity.favicon).trimmed());
+    station.setTags(toStringList(entity.tags));
+    station.setLanguage(toStringList(entity.language));
+    station.setCountryCode(QString::fromStdString(entity.countryCode).trimmed());
+    station.setVotes(entity.votes);
 }
 
 } // namespace
@@ -62,7 +72,7 @@ QVariant StationListModel::data(QModelIndex const& index, int role) const {
 }
 
 QHash<int, QByteArray> StationListModel::roleNames() const {
-    QHash<int, QByteArray> roles;
+    QHash<int, QByteArray> roles {};
     roles[StationId] = "stationId";
     roles[Language] = "language";
     roles[Country] = "countryCode";
@@ -74,11 +84,11 @@ QHash<int, QByteArray> StationListModel::roleNames() const {
     return roles;
 }
 
-void StationListModel::addStation(StationProfile const& profile) {
+void StationListModel::addStation(StationEntity const& stationEntity) {
     beginInsertRows(QModelIndex(), m_stations.size(), m_stations.size());
 
-    StationViewModel* station = new StationViewModel {profile.StationId};
-    assignProfile(*station, profile);
+    StationViewModel* station = new StationViewModel {stationEntity.id};
+    assignStation(*station, stationEntity);
     m_stations.append(station);
 
     endInsertRows();
@@ -94,21 +104,21 @@ void StationListModel::removeStation(int index) {
     endRemoveRows();
 }
 
-void StationListModel::updateStation(StationProfile const& profile) {
-    auto it = findStationById(profile.StationId.toString());
+void StationListModel::updateStation(StationEntity const& stationEntity) {
+    auto it = findStationById(stationEntity.id);
 
     if (it == m_stations.end()) {
-        addStation(profile);
+        addStation(stationEntity);
         return;
     }
 
-    assignProfile(*(*it), profile);
+    assignStation(*(*it), stationEntity);
 
     int const index = std::distance(m_stations.begin(), it);
     emit dataChanged(createIndex(index, 0), createIndex(index, 0));
 }
 
-void StationListModel::removeStation(std::string const& id) {
+void StationListModel::removeStation(Uuid const& id) {
     auto it = findStationById(id);
 
     if (it != m_stations.end()) {
@@ -123,8 +133,9 @@ void StationListModel::clearStations() {
     endResetModel();
 }
 
-QVector<StationViewModel*>::iterator StationListModel::findStationById(std::string const& id) {
-    return std::find_if(m_stations.begin(), m_stations.end(), [&id](StationViewModel* station) {
-        return station->stationId() == QString::fromStdString(id);
+QVector<StationViewModel*>::iterator StationListModel::findStationById(Uuid const& id) {
+    QString const stationId {QString::fromStdString(id.toString())};
+    return std::find_if(m_stations.begin(), m_stations.end(), [&stationId](StationViewModel* station) {
+        return station->stationId() == stationId;
     });
 }
