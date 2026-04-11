@@ -1,16 +1,16 @@
 #ifndef SRC_RADIO_API_EVENTS_STATION_ADDED_EVENT_H
 #define SRC_RADIO_API_EVENTS_STATION_ADDED_EVENT_H
 
-#include "../StationProfile.h"
+#include "../StationEntity.h"
 #include "EventIfc.h"
 
 /**
  * Event representing that a station was added.
  */
 struct StationAddedEvent : public EventIfc {
-    StationProfile station;
+    StationEntity station;
 
-    explicit StationAddedEvent(StationProfile const& station) :
+    explicit StationAddedEvent(StationEntity const& station) :
         station {station} {
     }
 };

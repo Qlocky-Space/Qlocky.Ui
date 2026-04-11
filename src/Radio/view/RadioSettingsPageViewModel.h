@@ -6,6 +6,7 @@
 
 #include "events/StationAddedEvent.h"
 #include "events/StationRemovedEvent.h"
+#include "events/StationUpdatedEvent.h"
 #include "StationListModel.h"
 
 /**
@@ -36,6 +37,7 @@ private:
 
     void onStationAdded(StationAddedEvent const& event);
     void onStationRemoved(StationRemovedEvent const& event);
+    void onStationUpdated(StationUpdatedEvent const& event);
 
     Mediator& m_mediator;
     StationListModel& m_stationListModel;
