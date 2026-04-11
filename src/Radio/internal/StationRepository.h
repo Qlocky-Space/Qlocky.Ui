@@ -2,6 +2,8 @@
 #define SRC_RADIO_INTERNAL_STATION_REPOSITORY_H
 
 #include <Mediator.h>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "StationRepositoryIfc.h"
@@ -44,10 +46,14 @@ public:
 
 private:
 
+    static constexpr std::size_t INITIAL_CAPACITY {60000};
+
     static bool areEqual(StationEntity const& lhs, StationEntity const& rhs);
+    std::string toKey(StationId const& stationId) const;
 
     Mediator& m_mediator;
-    std::vector<StationEntity> m_stations;
+    std::vector<StationEntity> m_stations {};
+    std::unordered_map<std::string, std::size_t> m_stationIndexById {};
 };
 
 #endif // SRC_RADIO_INTERNAL_STATION_REPOSITORY_H
