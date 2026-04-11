@@ -55,8 +55,8 @@ RadioBrowserStationProvider::RadioBrowserStationProvider(RestApi& restApi) :
 }
 
 Stream<StationEntity> RadioBrowserStationProvider::streamAllStations() {
-    return Stream<StationEntity> {[this](Stream<StationEntity>::ItemHandler onStation, Stream<StationEntity>::FinishedHandler onFinished, Stream<StationEntity>::Subscription const& subscription) {
-        if (subscription.isCanceled()) {
+    return Stream<StationEntity> {[this](Stream<StationEntity>::Observer const& observer) {
+        if (observer.isCanceled()) {
             return;
         }
 
@@ -64,24 +64,22 @@ Stream<StationEntity> RadioBrowserStationProvider::streamAllStations() {
         options.url = createStationsUrl();
         options.headers.push_back(RestApiHeader {"User-Agent", RADIO_BROWSER_USER_AGENT});
 
-        m_restApi.get<RadioBrowserAPIv1>(options, [this, onStation = std::move(onStation), onFinished = std::move(onFinished), subscription](Result<RadioBrowserAPIv1, RestApiCode> const& result) {
-            handleStationsResponse(result, onStation, onFinished, subscription);
+        m_restApi.get<RadioBrowserAPIv1>(options, [this, observer](Result<RadioBrowserAPIv1, RestApiCode> const& result) {
+            handleStationsResponse(result, observer);
         });
     }};
 }
 
 void RadioBrowserStationProvider::handleStationsResponse(
     Result<RadioBrowserAPIv1, RestApiCode> const& result,
-    Stream<StationEntity>::ItemHandler const& onStation,
-    Stream<StationEntity>::FinishedHandler const& onFinished,
-    Stream<StationEntity>::Subscription const& subscription) {
+    Stream<StationEntity>::Observer const& observer) {
     if (result.isError()) {
-        if (subscription.isCanceled()) {
+        if (observer.isCanceled()) {
             return;
         }
 
         LOG(WARNING) << "Failed to fetch stations from radio-browser.info: " << describeRestApiError(result.error());
-        onFinished();
+        observer.finish();
         return;
     }
 
@@ -103,49 +101,43 @@ void RadioBrowserStationProvider::handleStationsResponse(
         LOG(WARNING) << "Rejected " << invalidUuidRecords << " radio-browser station records because of invalid UUIDs.";
     }
 
-    emitStations(std::move(stations), onStation, onFinished, subscription);
+    emitStations(std::move(stations), observer);
 }
 
 void RadioBrowserStationProvider::emitStations(
     std::vector<StationEntity> stations,
-    Stream<StationEntity>::ItemHandler const& onStation,
-    Stream<StationEntity>::FinishedHandler const& onFinished,
-    Stream<StationEntity>::Subscription const& subscription) const {
+    Stream<StationEntity>::Observer const& observer) const {
     QCoreApplication* application {QCoreApplication::instance()};
     if (application == nullptr) {
         return;
     }
 
     auto sharedStations = std::make_shared<std::vector<StationEntity>>(std::move(stations));
-    QMetaObject::invokeMethod(application, [this, sharedStations, onStation, onFinished, subscription]() { emitStationBatch(sharedStations, 0, onStation, onFinished, subscription); }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(application, [this, sharedStations, observer]() { emitStationBatch(sharedStations, 0, observer); }, Qt::QueuedConnection);
 }
 
 void RadioBrowserStationProvider::emitStationBatch(
     std::shared_ptr<std::vector<StationEntity>> const& stations,
     std::size_t nextIndex,
-    Stream<StationEntity>::ItemHandler const& onStation,
-    Stream<StationEntity>::FinishedHandler const& onFinished,
-    Stream<StationEntity>::Subscription const& subscription) const {
-    if (subscription.isCanceled()) {
+    Stream<StationEntity>::Observer const& observer) const {
+    if (observer.isCanceled()) {
         return;
     }
 
     std::size_t currentIndex {nextIndex};
     std::size_t processedCount {0};
     while (currentIndex < stations->size() && processedCount < STATION_EMIT_BATCH_SIZE) {
-        if (subscription.isCanceled()) {
+        if (observer.isCanceled()) {
             return;
         }
 
-        onStation(stations->at(currentIndex));
+        observer.publish(stations->at(currentIndex));
         ++currentIndex;
         ++processedCount;
     }
 
     if (currentIndex >= stations->size()) {
-        if (!subscription.isCanceled()) {
-            onFinished();
-        }
+        observer.finish();
         return;
     }
 
@@ -154,8 +146,8 @@ void RadioBrowserStationProvider::emitStationBatch(
         return;
     }
 
-    QTimer::singleShot(0, application, [this, stations, currentIndex, onStation, onFinished, subscription]() {
-        emitStationBatch(stations, currentIndex, onStation, onFinished, subscription);
+    QTimer::singleShot(0, application, [this, stations, currentIndex, observer]() {
+        emitStationBatch(stations, currentIndex, observer);
     });
 }
 

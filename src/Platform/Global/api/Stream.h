@@ -20,8 +20,8 @@
  * cancellation through Subscription.
  *
  * Typical usage has two sides:
- * - A producer creates a Stream<T> and calls the provided item and finished
- *   handlers when results become available.
+ * - A producer creates a Stream<T> and uses Observer to publish items and mark
+ *   the stream as finished.
  * - A consumer calls consume(...) and provides the handlers that should run for
  *   each item and for stream completion.
  *
@@ -29,18 +29,16 @@
  * @code
  * Stream<int> createCounterStream() {
  *     return Stream<int> {
- *         [](Stream<int>::ItemHandler onItem,
- *            Stream<int>::FinishedHandler onFinished,
- *            Stream<int>::Subscription const& subscription) {
+ *         [](Stream<int>::Observer const& observer) {
  *             for (int value {0}; value < 3; ++value) {
- *                 if (subscription.isCanceled()) {
+ *                 if (observer.isCanceled()) {
  *                     return;
  *                 }
  *
- *                 onItem(value);
+ *                 observer.publish(value);
  *             }
  *
- *             onFinished();
+ *             observer.finish();
  *         }
  *     };
  * }
@@ -123,13 +121,57 @@ public:
     using FinishedHandler = std::function<void()>;
 
     /**
+     * Consumer-side stream interface exposed to producers.
+     *
+     * Observer bundles the wrapped item callback, completion callback, and the
+     * active subscription into one object. Producers can keep the API concise by
+     * accepting a single Observer instead of three separate parameters.
+     */
+    struct Observer final {
+        ItemHandler onItem {};
+        FinishedHandler onFinished {};
+        Subscription subscription {};
+
+        /**
+         * Publish one item to the consumer.
+         * @param item The item to forward to the consumer callback.
+         */
+        void publish(T const& item) const {
+            if (subscription.isCanceled() || !onItem) {
+                return;
+            }
+
+            onItem(item);
+        }
+
+        /**
+         * Signal stream completion to the consumer.
+         */
+        void finish() const {
+            if (subscription.isCanceled() || !onFinished) {
+                return;
+            }
+
+            onFinished();
+        }
+
+        /**
+         * Check whether cancellation was requested for this observer.
+         * @return True when the associated subscription has been canceled.
+         */
+        bool isCanceled() const {
+            return subscription.isCanceled();
+        }
+    };
+
+    /**
      * Function object used to produce stream items.
      *
-     * The producer receives the consumer callbacks together with the active
-     * subscription. A well-behaved producer should stop work when
-     * subscription.isCanceled() becomes true.
+     * The producer receives an Observer that contains the wrapped callbacks and
+     * the active subscription. A well-behaved producer should stop work when
+     * observer.isCanceled() becomes true.
      */
-    using Producer = std::function<void(ItemHandler, FinishedHandler, Subscription const&)>;
+    using Producer = std::function<void(Observer const&)>;
 
     Stream() = default;
 
@@ -178,7 +220,13 @@ public:
             onFinished();
         }};
 
-        m_producer(std::move(wrappedOnItem), std::move(wrappedOnFinished), subscription);
+        Observer observer {
+            std::move(wrappedOnItem),
+            std::move(wrappedOnFinished),
+            subscription,
+        };
+
+        m_producer(observer);
         return subscription;
     }
 
