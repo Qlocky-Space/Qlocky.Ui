@@ -26,17 +26,8 @@ ColumnLayout {
             additionalContent: QButton {
                 id: scanButton
                 buttonStyle: QButton.ButtonStyle.Plain
-                image: "\uf021"
-                onClicked: viewModel.updateStations()
-
-                // Rotation animation while downloading
-                RotationAnimator on rotation {
-                    running: viewModel.downloading
-                    from: 0
-                    to: 360
-                    duration: 800
-                    loops: Animation.Infinite
-                }
+                image: "\uf002"
+                onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
             }
         }
     }

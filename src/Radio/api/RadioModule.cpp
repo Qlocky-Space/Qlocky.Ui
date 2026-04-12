@@ -11,6 +11,7 @@
 #include "StationRepositoryIfc.h"
 #include "StationServiceIfc.h"
 #include "view/RadioSettingsPageViewModel.h"
+#include "view/RadioSourceSelectDialogViewModel.h"
 
 void RadioModule::registerExports(Injector& container) {
     container.install(boost::di::bind<StationRepositoryIfc>().to<StationRepository>());
@@ -19,6 +20,7 @@ void RadioModule::registerExports(Injector& container) {
 
 void RadioModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<RadioSettingsPageViewModel>(*this, "RadioSettingsPageViewModel");
+    QmlRegistryUtil::qmlRegisterViewModel<RadioSourceSelectDialogViewModel>(*this, "RadioSourceSelectDialogViewModel");
 }
 
 void RadioModule::onInitialize() {
@@ -30,6 +32,9 @@ void RadioModule::onInitialize() {
 
     auto widgetRegistrator = resolve<WidgetRegistratorIfc>();
     widgetRegistrator->registerWidget(WidgetMetadata("RadioCard", WidgetLayout("qrc:/qt/qml/Radio/qml/RadioCard.qml", 2, 1, 0, 3)));
+
+    auto irRegistry = resolve<InteractiveUriRegistryIfc>();
+    irRegistry->registerUri(Uri {"qlocky://radioSourceSelectDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Radio/qml/RadioSourceSelectDialog.qml"});
 
     // Register Configuration page
     auto configRegistry = resolve<ConfigurationRegistryIfc>();

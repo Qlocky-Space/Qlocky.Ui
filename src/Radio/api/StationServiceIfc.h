@@ -8,8 +8,7 @@
 /**
  * Station service interface.
  *
- * The station service aggregates stations from registered providers and stores
- * the resulting collection in the repository.
+ * The station service coordinates station searches across registered providers.
  */
 class StationServiceIfc {
 public:
@@ -23,15 +22,11 @@ public:
     virtual void registerProvider(std::shared_ptr<StationProviderIfc> provider) = 0;
 
     /**
-      * Start updating stations from all registered providers asynchronously.
-      * @param filter The station filter applied to the update.
+     * Search stations asynchronously.
+     * @param filter The station filter applied to the search.
+     * @return A stream of matching stations.
      */
-    virtual void updateStations(StationFilter const& filter = {}) = 0;
-
-    /**
-     * Cancel the active asynchronous station update.
-     */
-    virtual void cancel() = 0;
+    virtual Stream<StationEntity> searchStations(StationFilter const& filter) = 0;
 };
 
 #endif // SRC_RADIO_API_STATION_SERVICE_IFC_H

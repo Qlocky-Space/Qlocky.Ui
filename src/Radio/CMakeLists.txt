@@ -25,6 +25,8 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSettingsPageViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSettingsPageViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/RadioSourceSelectDialogViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/RadioSourceSelectDialogViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/StationListModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/StationListModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/StationViewModel.cpp
@@ -33,7 +35,12 @@ set(MODULE_SRC
 
 set(MODULE_QML_SRC
     qml/RadioCard.qml
+    qml/RadioSourceSelectDialog.qml
     qml/RadioSettings.qml
+    qml/internal/RadioSourceFavorites.qml
+    qml/internal/RadioSourceLibrary.qml
+    qml/internal/RadioSourceSearchItem.qml
+    qml/internal/RadioSourceSearch.qml
 )
 
 set(MODULE_QML_RESOURCES

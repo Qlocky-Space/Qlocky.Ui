@@ -6,8 +6,7 @@
 
 #include "events/StationAddedEvent.h"
 #include "events/StationRemovedEvent.h"
-#include "events/StationServiceStateChangedEvent.h"
-#include "StationServiceIfc.h"
+#include "StationRepositoryIfc.h"
 
 /**
  * ViewModel for Radio settings page.
@@ -21,7 +20,7 @@ class RadioSettingsPageViewModel : public QObject {
 
 public:
 
-    RadioSettingsPageViewModel(Mediator& mediator, StationServiceIfc& stationService);
+    RadioSettingsPageViewModel(Mediator& mediator, StationRepositoryIfc& stationRepository);
     ~RadioSettingsPageViewModel() final = default;
 
     int stationCount() const {
@@ -32,8 +31,6 @@ public:
         return m_downloading;
     }
 
-    Q_INVOKABLE void updateStations();
-
 signals:
 
     void stationCountChanged();
@@ -42,13 +39,10 @@ signals:
 private:
 
     void setStationCount(int stationCount);
-    void setDownloading(bool downloading);
 
     void onStationAdded(StationAddedEvent const& event);
     void onStationRemoved(StationRemovedEvent const& event);
-    void onStationServiceStateChanged(StationServiceStateChangedEvent const& event);
 
-    StationServiceIfc& m_stationService;
     int m_stationCount {0};
     bool m_downloading {false};
 };

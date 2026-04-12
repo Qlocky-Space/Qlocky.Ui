@@ -9,6 +9,17 @@ Widget {
     id: card
     color: ThemeManager.theme.fillsSecondary
 
+    QButton {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: 20
+        anchors.rightMargin: 20
+
+        text: qsTr("Source")
+
+        onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
+    }
+
     Row {
         id: metadata
         spacing: 10
