@@ -48,6 +48,7 @@ set(MODULE_QML_SRC
     qml/QIcon.qml
     qml/QInteractiveProvider.qml
     qml/QDialog.qml
+    qml/QBusyIndicator.qml
     qml/QLabel.qml
     qml/QRoundedRectangle.qml
     qml/QToggleButton.qml
