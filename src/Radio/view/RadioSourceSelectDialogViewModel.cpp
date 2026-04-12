@@ -1,33 +1,27 @@
 #include "RadioSourceSelectDialogViewModel.h"
 
 #include <algorithm>
-#include <ng-log/logging.h>
 #include <QVariantMap>
 
-#include "StationEntity.h"
-#include "StationFilter.h"
-#include "StationRepositoryIfc.h"
-#include "StationServiceIfc.h"
+#include "RadioSearchFilter.h"
+#include "RadioServiceIfc.h"
 
 namespace {
 
-QVariantMap toSearchResult(StationEntity const& station) {
-    QVariantMap result {};
-    result.insert("id", QString::fromStdString(station.id.toString()));
-    result.insert("name", QString::fromStdString(station.name));
-    result.insert("votes", QVariant::fromValue(station.votes));
-    result.insert("favicon", QString::fromStdString(station.favicon));
-    result.insert("language", QString::fromStdString(station.language));
-    return result;
+QVariantMap toSearchResult(RadioSearchResult const& searchResult) {
+    QVariantMap resultMap {};
+    resultMap.insert("id", QString::fromStdString(searchResult.radio.id));
+    resultMap.insert("name", QString::fromStdString(searchResult.radio.name));
+    resultMap.insert("votes", QVariant::fromValue(searchResult.votes));
+    resultMap.insert("favicon", QString::fromStdString(searchResult.favicon));
+    resultMap.insert("language", QString::fromStdString(searchResult.language));
+    return resultMap;
 }
 
 } // namespace
 
-RadioSourceSelectDialogViewModel::RadioSourceSelectDialogViewModel(
-    StationServiceIfc& stationService,
-    StationRepositoryIfc& stationRepository) :
-    m_stationService {stationService},
-    m_stationRepository {stationRepository} {
+RadioSourceSelectDialogViewModel::RadioSourceSelectDialogViewModel(RadioServiceIfc& radioService) :
+    m_radioService {radioService} {
 }
 
 void RadioSourceSelectDialogViewModel::setSearchText(QString const& searchText) {
@@ -55,7 +49,7 @@ void RadioSourceSelectDialogViewModel::resetSelection() {
     setSearching(false);
     setSearched(false);
     setSelectedSource({});
-    m_searchStations.clear();
+    m_searchResultsData.clear();
 }
 
 void RadioSourceSelectDialogViewModel::search() {
@@ -66,7 +60,7 @@ void RadioSourceSelectDialogViewModel::search() {
     QString const trimmedSearchText {m_searchText.trimmed()};
     if (trimmedSearchText.isEmpty()) {
         m_searchSubscription.cancel();
-        m_searchStations.clear();
+        m_searchResultsData.clear();
         setSearchResults({});
         setSearching(false);
         setSearched(false);
@@ -77,29 +71,24 @@ void RadioSourceSelectDialogViewModel::search() {
     setSearching(true);
     setSearched(true);
     setSearchResults({});
-    m_searchStations.clear();
+    m_searchResultsData.clear();
 
-    StationFilter filter {};
+    RadioSearchFilter filter {};
     filter.name = trimmedSearchText.toStdString();
 
-    m_searchSubscription = m_stationService.searchStations(filter).consume(
-        [this](StationEntity const& station) {
-            onSearchStation(station);
-        },
-        [this]() {
-            onSearchFinished();
-        });
+    m_searchSubscription = m_radioService.searchRadios(filter).consume([this](RadioSearchResult const& result) { onSearchResult(result); }, [this]() { onSearchFinished(); });
 }
 
 void RadioSourceSelectDialogViewModel::chooseSelectedStation() {
-    auto const it = std::find_if(m_searchStations.begin(), m_searchStations.end(), [this](StationEntity const& station) {
-        return QString::fromStdString(station.id.toString()) == m_selectedSource;
+    auto const it = std::find_if(m_searchResultsData.begin(), m_searchResultsData.end(), [this](RadioSearchResult const& result) {
+        return QString::fromStdString(result.radio.id) == m_selectedSource;
     });
-    if (it == m_searchStations.end()) {
+    if (it == m_searchResultsData.end()) {
         return;
     }
 
-    m_stationRepository.addStation(*it);
+    m_radioService.addFavorite(it->radio);
+    m_radioService.selectRadio(it->radio);
 }
 
 void RadioSourceSelectDialogViewModel::setSearchResults(QVariantList const& searchResults) {
@@ -129,28 +118,20 @@ void RadioSourceSelectDialogViewModel::setSearched(bool searched) {
     emit searchedChanged();
 }
 
-void RadioSourceSelectDialogViewModel::onSearchStation(StationEntity const& station) {
-    m_searchStations.push_back(station);
+void RadioSourceSelectDialogViewModel::onSearchResult(RadioSearchResult const& result) {
+    m_searchResultsData.push_back(result);
 }
 
 void RadioSourceSelectDialogViewModel::onSearchFinished() {
-    std::sort(m_searchStations.begin(), m_searchStations.end(), [](StationEntity const& lhs, StationEntity const& rhs) {
-        if (lhs.votes == rhs.votes) {
-            return lhs.name < rhs.name;
-        }
-
-        return lhs.votes > rhs.votes;
-    });
-
     setSearching(false);
     applySearchResults();
 }
 
 void RadioSourceSelectDialogViewModel::applySearchResults() {
     QVariantList searchResults {};
-    searchResults.reserve(static_cast<qsizetype>(m_searchStations.size()));
-    for (StationEntity const& station : m_searchStations) {
-        searchResults.push_back(toSearchResult(station));
+    searchResults.reserve(static_cast<qsizetype>(m_searchResultsData.size()));
+    for (RadioSearchResult const& result : m_searchResultsData) {
+        searchResults.push_back(toSearchResult(result));
     }
 
     setSearchResults(searchResults);

@@ -1,10 +1,12 @@
 #include "RadioSettingsPageViewModel.h"
 
-RadioSettingsPageViewModel::RadioSettingsPageViewModel(Mediator& mediator, StationRepositoryIfc& stationRepository) :
+#include "RadioRepositoryIfc.h"
+
+RadioSettingsPageViewModel::RadioSettingsPageViewModel(Mediator& mediator, RadioRepositoryIfc& radioRepository) :
     QObject {nullptr} {
-    setStationCount(static_cast<int>(stationRepository.getAllStations().size()));
-    mediator.subscribe<StationAddedEvent>(this, &RadioSettingsPageViewModel::onStationAdded);
-    mediator.subscribe<StationRemovedEvent>(this, &RadioSettingsPageViewModel::onStationRemoved);
+    setStationCount(static_cast<int>(radioRepository.getFavorites().size()));
+    mediator.subscribe<RadioFavoriteAddedEvent>(this, &RadioSettingsPageViewModel::onFavoriteAdded);
+    mediator.subscribe<RadioFavoriteRemovedEvent>(this, &RadioSettingsPageViewModel::onFavoriteRemoved);
 }
 
 void RadioSettingsPageViewModel::setStationCount(int stationCount) {
@@ -16,12 +18,12 @@ void RadioSettingsPageViewModel::setStationCount(int stationCount) {
     emit stationCountChanged();
 }
 
-void RadioSettingsPageViewModel::onStationAdded(StationAddedEvent const& event) {
+void RadioSettingsPageViewModel::onFavoriteAdded(RadioFavoriteAddedEvent const& event) {
     Q_UNUSED(event);
     setStationCount(m_stationCount + 1);
 }
 
-void RadioSettingsPageViewModel::onStationRemoved(StationRemovedEvent const& event) {
+void RadioSettingsPageViewModel::onFavoriteRemoved(RadioFavoriteRemovedEvent const& event) {
     Q_UNUSED(event);
     if (m_stationCount == 0) {
         return;

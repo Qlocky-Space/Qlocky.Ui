@@ -6,10 +6,9 @@
 #include <QVariantList>
 #include <Stream.h>
 
-#include "StationEntity.h"
+#include "RadioSearchResult.h"
 
-class StationRepositoryIfc;
-class StationServiceIfc;
+class RadioServiceIfc;
 
 /**
  * ViewModel for the radio source selection dialog.
@@ -25,7 +24,7 @@ class RadioSourceSelectDialogViewModel : public QObject {
 
 public:
 
-    RadioSourceSelectDialogViewModel(StationServiceIfc& stationService, StationRepositoryIfc& stationRepository);
+    RadioSourceSelectDialogViewModel(RadioServiceIfc& radioService);
     ~RadioSourceSelectDialogViewModel() final = default;
 
     /**
@@ -101,19 +100,18 @@ private:
     void setSearchResults(QVariantList const& searchResults);
     void setSearching(bool searching);
     void setSearched(bool searched);
-    void onSearchStation(StationEntity const& station);
+    void onSearchResult(RadioSearchResult const& result);
     void onSearchFinished();
     void applySearchResults();
 
-    StationServiceIfc& m_stationService;
-    StationRepositoryIfc& m_stationRepository;
+    RadioServiceIfc& m_radioService;
     QString m_searchText {};
     QVariantList m_searchResults {};
     bool m_searching {false};
     bool m_searched {false};
     QString m_selectedSource {};
-    std::vector<StationEntity> m_searchStations {};
-    Stream<StationEntity>::Subscription m_searchSubscription {};
+    std::vector<RadioSearchResult> m_searchResultsData {};
+    Stream<RadioSearchResult>::Subscription m_searchSubscription {};
 };
 
 #endif

@@ -3,34 +3,35 @@ declare_module(Radio)
 set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/RadioModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/RadioModule.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/StationEntity.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/StationFilter.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/StationProfile.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/StationProviderIfc.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/StationRepositoryIfc.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/StationServiceIfc.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/events/StationAddedEvent.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/events/StationRemovedEvent.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/events/StationServiceStateChangedEvent.h
-    ${CMAKE_CURRENT_LIST_DIR}/api/events/StationUpdatedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioPlayerIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioEntity.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioSearchFilter.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioRepositoryIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioSearchResult.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioServiceIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioSourceProviderIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/RadioFavoriteAddedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/RadioFavoriteRemovedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/RadioFavoriteUpdatedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/RadioPlaybackStateChangedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/RadioSelectionChangedEvent.h
 
-    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioBrowserStationProvider.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioBrowserStationProvider.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioPlayer.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioPlayer.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioRepository.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioRepository.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioService.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioService.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioBrowserProvider.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/RadioBrowserProvider.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/RadioBrowserAPIv1.h
-    ${CMAKE_CURRENT_LIST_DIR}/internal/StationRepository.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/internal/StationRepository.h
-    ${CMAKE_CURRENT_LIST_DIR}/internal/StationMapper.h
-    ${CMAKE_CURRENT_LIST_DIR}/internal/StationService.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/internal/StationService.h
 
+    ${CMAKE_CURRENT_LIST_DIR}/view/RadioCardViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/RadioCardViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSettingsPageViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSettingsPageViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSourceSelectDialogViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSourceSelectDialogViewModel.h
-    ${CMAKE_CURRENT_LIST_DIR}/view/StationListModel.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/StationListModel.h
-    ${CMAKE_CURRENT_LIST_DIR}/view/StationViewModel.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/StationViewModel.h
 )
 
 set(MODULE_QML_SRC
@@ -50,6 +51,7 @@ set(MODULE_QML_RESOURCES
 )
 
 set(MODULE_LINK
+    qlocky::Os
     qlocky::RestAPI
     qlocky::Ui
     qlocky::Widget

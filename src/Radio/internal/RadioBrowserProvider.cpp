@@ -1,6 +1,5 @@
-#include "RadioBrowserStationProvider.h"
+#include "RadioBrowserProvider.h"
 
-#include <array>
 #include <ng-log/logging.h>
 #include <QCoreApplication>
 #include <QMetaObject>
@@ -10,11 +9,11 @@
 
 namespace {
 
-constexpr char const* RADIO_BROWSER_API_URL {"https://de1.api.radio-browser.info/json/stations/search"};
-
+constexpr char const* RADIO_BROWSER_PROVIDER_ID {"radio-browser"};
+constexpr char const* RADIO_BROWSER_SEARCH_URL {"https://de1.api.radio-browser.info/json/stations/search"};
 constexpr char const* RADIO_BROWSER_USER_AGENT {"Qlocky/1.0"};
 constexpr int RADIO_BROWSER_LIMIT {100000};
-constexpr std::size_t STATION_EMIT_BATCH_SIZE {100};
+constexpr std::size_t RESULT_EMIT_BATCH_SIZE {100};
 
 std::string joinTags(std::vector<std::string> const& tags) {
     std::string result {};
@@ -31,23 +30,6 @@ std::string joinTags(std::vector<std::string> const& tags) {
     }
 
     return result;
-}
-
-} // namespace
-
-StationEntity toStationEntity(RadioBrowserApiStationRecord const& record) {
-    std::string const streamUrl {record.url_resolved.empty() ? record.url : record.url_resolved};
-
-    return StationEntity {
-        Uuid {record.stationuuid},
-        record.name,
-        streamUrl,
-        record.favicon,
-        record.tags,
-        record.language,
-        record.countrycode,
-        record.votes,
-    };
 }
 
 std::string describeRestApiError(RestApiCode code) {
@@ -69,109 +51,131 @@ std::string describeRestApiError(RestApiCode code) {
     return "unknown";
 }
 
-RadioBrowserStationProvider::RadioBrowserStationProvider(RestApi& restApi) :
+} // namespace
+
+RadioBrowserProvider::RadioBrowserProvider(RestApi& restApi) :
     m_restApi {restApi} {
 }
 
-Stream<StationEntity> RadioBrowserStationProvider::streamStations(StationFilter const& filter) {
-    return Stream<StationEntity> {[this, filter](Stream<StationEntity>::Observer const& observer) {
-        if (observer.isCanceled()) {
+std::string RadioBrowserProvider::providerId() const {
+    return RADIO_BROWSER_PROVIDER_ID;
+}
+
+Stream<RadioSearchResult> RadioBrowserProvider::searchRadios(RadioSearchFilter const& filter) {
+    return Stream<RadioSearchResult> {[this, filter](Stream<RadioSearchResult>::Observer const& observer) {
+        if (observer.isCanceled() || filter.isEmpty()) {
+            observer.finish();
             return;
         }
 
         RestApiRequestOptions options {};
-        options.url = createStationsUrl(filter);
+        options.url = createSearchUrl(filter);
         options.headers.push_back(RestApiHeader {"User-Agent", RADIO_BROWSER_USER_AGENT});
 
         m_restApi.get<RadioBrowserAPIv1>(options, [this, observer](Result<RadioBrowserAPIv1, RestApiCode> const& result) {
-            handleStationsResponse(result, observer);
+            handleSearchResponse(result, observer);
         });
     }};
 }
 
-void RadioBrowserStationProvider::handleStationsResponse(
+void RadioBrowserProvider::handleSearchResponse(
     Result<RadioBrowserAPIv1, RestApiCode> const& result,
-    Stream<StationEntity>::Observer const& observer) {
+    Stream<RadioSearchResult>::Observer const& observer) {
     if (result.isError()) {
-        if (observer.isCanceled()) {
-            return;
+        if (!observer.isCanceled()) {
+            LOG(WARNING) << "Failed to fetch stations from radio-browser.info: " << describeRestApiError(result.error());
         }
 
-        LOG(WARNING) << "Failed to fetch stations from radio-browser.info: " << describeRestApiError(result.error());
         observer.finish();
         return;
     }
 
-    std::vector<StationEntity> stations {};
-    std::size_t invalidUuidRecords {0};
-    stations.reserve(result.value().stations.size());
+    auto results {std::make_shared<std::vector<RadioSearchResult>>()};
+    std::size_t invalidRecords {0};
+    results->reserve(result.value().stations.size());
+
     for (RadioBrowserApiStationRecord const& record : result.value().stations) {
-        StationEntity const station {toStationEntity(record)};
-        if (!station.id.isValid()) {
-            ++invalidUuidRecords;
+        if (record.stationuuid.empty()) {
+            ++invalidRecords;
             continue;
         }
 
-        stations.push_back(station);
+        results->push_back(toSearchResult(record));
     }
 
-    LOG(INFO) << "Accepted " << stations.size() << " radio-browser stations.";
-    if (invalidUuidRecords > 0) {
-        LOG(WARNING) << "Rejected " << invalidUuidRecords << " radio-browser station records because of invalid UUIDs.";
+    LOG(INFO) << "Accepted " << results->size() << " radio-browser stations.";
+    if (invalidRecords > 0) {
+        LOG(WARNING) << "Rejected " << invalidRecords << " radio-browser station records because of missing UUIDs.";
     }
 
-    emitStations(std::move(stations), observer);
-}
-
-void RadioBrowserStationProvider::emitStations(
-    std::vector<StationEntity> stations,
-    Stream<StationEntity>::Observer const& observer) const {
     QCoreApplication* application {QCoreApplication::instance()};
     if (application == nullptr) {
+        observer.finish();
         return;
     }
 
-    auto sharedStations = std::make_shared<std::vector<StationEntity>>(std::move(stations));
-    QMetaObject::invokeMethod(application, [this, sharedStations, observer]() { emitStationBatch(sharedStations, 0, observer); }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(application, [this, results, observer]() { emitBatch(results, 0, observer); }, Qt::QueuedConnection);
 }
 
-void RadioBrowserStationProvider::emitStationBatch(
-    std::shared_ptr<std::vector<StationEntity>> const& stations,
+void RadioBrowserProvider::emitBatch(
+    std::shared_ptr<std::vector<RadioSearchResult>> const& results,
     std::size_t nextIndex,
-    Stream<StationEntity>::Observer const& observer) const {
+    Stream<RadioSearchResult>::Observer const& observer) const {
     if (observer.isCanceled()) {
         return;
     }
 
     std::size_t currentIndex {nextIndex};
     std::size_t processedCount {0};
-    while (currentIndex < stations->size() && processedCount < STATION_EMIT_BATCH_SIZE) {
+
+    while (currentIndex < results->size() && processedCount < RESULT_EMIT_BATCH_SIZE) {
         if (observer.isCanceled()) {
             return;
         }
 
-        observer.publish(stations->at(currentIndex));
+        observer.publish(results->at(currentIndex));
         ++currentIndex;
         ++processedCount;
     }
 
-    if (currentIndex >= stations->size()) {
+    if (currentIndex >= results->size()) {
         observer.finish();
         return;
     }
 
     QCoreApplication* application {QCoreApplication::instance()};
     if (application == nullptr) {
+        observer.finish();
         return;
     }
 
-    QTimer::singleShot(0, application, [this, stations, currentIndex, observer]() {
-        emitStationBatch(stations, currentIndex, observer);
+    QTimer::singleShot(0, application, [this, results, currentIndex, observer]() {
+        emitBatch(results, currentIndex, observer);
     });
 }
 
-std::string RadioBrowserStationProvider::createStationsUrl(StationFilter const& filter) const {
-    QUrl url {QString::fromUtf8(RADIO_BROWSER_API_URL)};
+RadioSearchResult RadioBrowserProvider::toSearchResult(RadioBrowserApiStationRecord const& record) const {
+    std::string const streamUrl {record.url_resolved.empty() ? record.url : record.url_resolved};
+
+    RadioEntity radio {
+        makeRadioId(RADIO_BROWSER_PROVIDER_ID, record.stationuuid),
+        record.name,
+        RADIO_BROWSER_PROVIDER_ID,
+        record.stationuuid,
+        streamUrl,
+    };
+
+    return RadioSearchResult {
+        radio,
+        streamUrl,
+        record.votes,
+        record.favicon,
+        record.language,
+    };
+}
+
+std::string RadioBrowserProvider::createSearchUrl(RadioSearchFilter const& filter) const {
+    QUrl url {QString::fromUtf8(RADIO_BROWSER_SEARCH_URL)};
     QUrlQuery query {};
     query.addQueryItem("hidebroken", "true");
     query.addQueryItem("limit", QString::number(RADIO_BROWSER_LIMIT));

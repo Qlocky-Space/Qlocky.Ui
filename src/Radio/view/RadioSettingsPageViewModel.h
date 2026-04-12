@@ -4,9 +4,10 @@
 #include <Mediator.h>
 #include <QObject>
 
-#include "events/StationAddedEvent.h"
-#include "events/StationRemovedEvent.h"
-#include "StationRepositoryIfc.h"
+#include "events/RadioFavoriteAddedEvent.h"
+#include "events/RadioFavoriteRemovedEvent.h"
+
+class RadioRepositoryIfc;
 
 /**
  * ViewModel for Radio settings page.
@@ -20,7 +21,7 @@ class RadioSettingsPageViewModel : public QObject {
 
 public:
 
-    RadioSettingsPageViewModel(Mediator& mediator, StationRepositoryIfc& stationRepository);
+    RadioSettingsPageViewModel(Mediator& mediator, RadioRepositoryIfc& radioRepository);
     ~RadioSettingsPageViewModel() final = default;
 
     int stationCount() const {
@@ -40,8 +41,8 @@ private:
 
     void setStationCount(int stationCount);
 
-    void onStationAdded(StationAddedEvent const& event);
-    void onStationRemoved(StationRemovedEvent const& event);
+    void onFavoriteAdded(RadioFavoriteAddedEvent const& event);
+    void onFavoriteRemoved(RadioFavoriteRemovedEvent const& event);
 
     int m_stationCount {0};
     bool m_downloading {false};

@@ -9,6 +9,8 @@ Widget {
     id: card
     color: ThemeManager.theme.fillsSecondary
 
+    property var viewModel: RadioCardViewModel
+
     QButton {
         anchors.top: parent.top
         anchors.right: parent.right
@@ -41,13 +43,13 @@ Widget {
             id: infos
 
             Text {
-                text: qsTr("SongName")
+                text: viewModel.title
                 color: ThemeManager.theme.labelPrimary
                 font.pixelSize: 32
             }
 
             Text {
-                text: qsTr("AlbumName")
+                text: viewModel.subtitle
                 color: ThemeManager.theme.labelPrimary
                 font.pixelSize: 32
             }
@@ -58,43 +60,28 @@ Widget {
         id: radio
 
         anchors.top: metadata.bottom
-        anchors.topMargin: 110
+        anchors.topMargin: 90
         anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 18
 
-        function formatTime(ms) {
-            let totalSeconds = Math.floor(ms / 1000);
-            let minutes = Math.floor(totalSeconds / 60);
-            let seconds = totalSeconds % 60;
-
-            return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-        }
-
-        Slider {
-            id: slider
-            orientation: Qt.Horizontal
-            from: 0
-            to: 100
-            value: 40
+        Rectangle {
             width: card.width * 0.7
-            snapMode: Slider.NoSnap
-            height: 20
+            height: 8
+            radius: height / 2
+            color: ThemeManager.theme.fillsTertiary
 
-            anchors.centerIn: radio
+            Rectangle {
+                width: viewModel.playing ? parent.width : parent.width * 0.2
+                height: parent.height
+                radius: parent.radius
+                color: ThemeManager.theme.fillsPrimary
+            }
         }
 
         Text {
-            anchors.top: slider.bottom
-            anchors.left: slider.left
-            text: radio.formatTime(slider.value / 100 * 221000)
-            color: ThemeManager.theme.labelPrimary
-            font.pixelSize: 24
-        }
-
-        Text {
-            anchors.top: slider.bottom
-            anchors.right: slider.right
-            text: radio.formatTime((100 - slider.value) / 100 * 221000)
-            color: ThemeManager.theme.labelPrimary
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: viewModel.playing ? qsTr("Playing") : qsTr("Ready")
+            color: ThemeManager.theme.labelSecondary
             font.pixelSize: 24
         }
     }
@@ -120,6 +107,17 @@ Widget {
 
             width: 80
             height: 80
+            opacity: viewModel.hasRadio ? 1.0 : 0.4
+
+            MouseArea {
+                anchors.fill: parent
+                enabled: viewModel.hasRadio
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+                onClicked: {
+                    viewModel.togglePlayback();
+                }
+            }
         }
 
         Image {
