@@ -23,9 +23,10 @@ public:
     virtual void registerProvider(std::shared_ptr<StationProviderIfc> provider) = 0;
 
     /**
-     * Start updating stations from all registered providers asynchronously.
+      * Start updating stations from all registered providers asynchronously.
+      * @param filter The station filter applied to the update.
      */
-    virtual void updateStationsAsync() = 0;
+    virtual void updateStations(StationFilter const& filter = {}) = 0;
 
     /**
      * Cancel the active asynchronous station update.

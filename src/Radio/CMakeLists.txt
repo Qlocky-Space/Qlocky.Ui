@@ -4,6 +4,7 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/RadioModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/RadioModule.h
     ${CMAKE_CURRENT_LIST_DIR}/api/StationEntity.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/StationFilter.h
     ${CMAKE_CURRENT_LIST_DIR}/api/StationProfile.h
     ${CMAKE_CURRENT_LIST_DIR}/api/StationProviderIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/StationRepositoryIfc.h

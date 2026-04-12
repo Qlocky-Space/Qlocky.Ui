@@ -5,14 +5,33 @@
 #include <QCoreApplication>
 #include <QMetaObject>
 #include <QTimer>
+#include <QUrl>
+#include <QUrlQuery>
 
 namespace {
 
-constexpr char const* RADIO_BROWSER_API_URL {"https://de1.api.radio-browser.info/json/stations"};
+constexpr char const* RADIO_BROWSER_API_URL {"https://de1.api.radio-browser.info/json/stations/search"};
 
 constexpr char const* RADIO_BROWSER_USER_AGENT {"Qlocky/1.0"};
 constexpr int RADIO_BROWSER_LIMIT {100000};
 constexpr std::size_t STATION_EMIT_BATCH_SIZE {100};
+
+std::string joinTags(std::vector<std::string> const& tags) {
+    std::string result {};
+    for (std::string const& tag : tags) {
+        if (tag.empty()) {
+            continue;
+        }
+
+        if (!result.empty()) {
+            result += ",";
+        }
+
+        result += tag;
+    }
+
+    return result;
+}
 
 } // namespace
 
@@ -54,14 +73,14 @@ RadioBrowserStationProvider::RadioBrowserStationProvider(RestApi& restApi) :
     m_restApi {restApi} {
 }
 
-Stream<StationEntity> RadioBrowserStationProvider::streamAllStations() {
-    return Stream<StationEntity> {[this](Stream<StationEntity>::Observer const& observer) {
+Stream<StationEntity> RadioBrowserStationProvider::streamStations(StationFilter const& filter) {
+    return Stream<StationEntity> {[this, filter](Stream<StationEntity>::Observer const& observer) {
         if (observer.isCanceled()) {
             return;
         }
 
         RestApiRequestOptions options {};
-        options.url = createStationsUrl();
+        options.url = createStationsUrl(filter);
         options.headers.push_back(RestApiHeader {"User-Agent", RADIO_BROWSER_USER_AGENT});
 
         m_restApi.get<RadioBrowserAPIv1>(options, [this, observer](Result<RadioBrowserAPIv1, RestApiCode> const& result) {
@@ -151,6 +170,29 @@ void RadioBrowserStationProvider::emitStationBatch(
     });
 }
 
-std::string RadioBrowserStationProvider::createStationsUrl() const {
-    return std::string {RADIO_BROWSER_API_URL} + "?hidebroken=true&limit=" + std::to_string(RADIO_BROWSER_LIMIT);
+std::string RadioBrowserStationProvider::createStationsUrl(StationFilter const& filter) const {
+    QUrl url {QString::fromUtf8(RADIO_BROWSER_API_URL)};
+    QUrlQuery query {};
+    query.addQueryItem("hidebroken", "true");
+    query.addQueryItem("limit", QString::number(RADIO_BROWSER_LIMIT));
+
+    if (!filter.language.empty()) {
+        query.addQueryItem("language", QString::fromStdString(filter.language));
+    }
+
+    if (!filter.country.empty()) {
+        query.addQueryItem("country", QString::fromStdString(filter.country));
+    }
+
+    std::string const tagList {joinTags(filter.tags)};
+    if (!tagList.empty()) {
+        query.addQueryItem("tagList", QString::fromStdString(tagList));
+    }
+
+    if (filter.name.has_value() && !filter.name->empty()) {
+        query.addQueryItem("name", QString::fromStdString(*filter.name));
+    }
+
+    url.setQuery(query);
+    return url.toString(QUrl::FullyEncoded).toStdString();
 }

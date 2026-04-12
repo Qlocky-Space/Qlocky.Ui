@@ -2,6 +2,7 @@
 #define SRC_RADIO_API_STATION_PROVIDER_IFC_H
 
 #include "StationEntity.h"
+#include "StationFilter.h"
 #include "Stream.h"
 
 /**
@@ -16,10 +17,11 @@ public:
     virtual ~StationProviderIfc() = default;
 
     /**
-     * Create a stream that yields all stations from the provider asynchronously.
+     * Create a stream that yields matching stations from the provider asynchronously.
+     * @param filter The station filter to apply at the provider level.
      * @return The asynchronous station stream.
      */
-    virtual Stream<StationEntity> streamAllStations() = 0;
+    virtual Stream<StationEntity> streamStations(StationFilter const& filter) = 0;
 };
 
 #endif // SRC_RADIO_API_STATION_PROVIDER_IFC_H

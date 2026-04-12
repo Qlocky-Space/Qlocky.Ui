@@ -26,9 +26,9 @@ public:
     void registerProvider(std::shared_ptr<StationProviderIfc> provider) final;
 
     /**
-     * @see StationServiceIfc::updateStationsAsync
+        * @see StationServiceIfc::updateStations
      */
-    void updateStationsAsync() final;
+    void updateStations(StationFilter const& filter) final;
 
     /**
      * @see StationServiceIfc::cancel

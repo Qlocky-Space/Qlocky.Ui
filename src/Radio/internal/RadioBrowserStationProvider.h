@@ -17,9 +17,9 @@ public:
     ~RadioBrowserStationProvider() final = default;
 
     /**
-        * @see StationProviderIfc::streamAllStations
+     * @see StationProviderIfc::streamStations
      */
-    Stream<StationEntity> streamAllStations() final;
+    Stream<StationEntity> streamStations(StationFilter const& filter) final;
 
 private:
 
@@ -33,7 +33,7 @@ private:
         std::shared_ptr<std::vector<StationEntity>> const& stations,
         std::size_t nextIndex,
         Stream<StationEntity>::Observer const& observer) const;
-    std::string createStationsUrl() const;
+    std::string createStationsUrl(StationFilter const& filter) const;
 
     RestApi& m_restApi;
 };

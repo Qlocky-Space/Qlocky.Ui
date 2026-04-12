@@ -21,7 +21,7 @@ void StationService::registerProvider(std::shared_ptr<StationProviderIfc> provid
     }
 }
 
-void StationService::updateStationsAsync() {
+void StationService::updateStations(StationFilter const& filter) {
     bool const hadActiveSubscriptions {!m_activeSubscriptions.empty()};
     if (hadActiveSubscriptions) {
         LOG(WARNING) << "Station update already in progress, restarting.";
@@ -46,7 +46,7 @@ void StationService::updateStationsAsync() {
     m_activeSubscriptions.reserve(m_providers.size());
 
     for (std::shared_ptr<StationProviderIfc> const& provider : m_providers) {
-        m_activeSubscriptions.push_back(provider->streamAllStations().consume(
+        m_activeSubscriptions.push_back(provider->streamStations(filter).consume(
             [this, seenStationIds](StationEntity const& station) {
                 onProviderStation(seenStationIds, station);
             },

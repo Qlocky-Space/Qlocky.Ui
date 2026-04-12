@@ -11,7 +11,9 @@ RadioSettingsPageViewModel::RadioSettingsPageViewModel(Mediator& mediator, Stati
 }
 
 void RadioSettingsPageViewModel::updateStations() {
-    m_stationService.updateStationsAsync();
+    StationFilter filter {}; // TODO: Expose filter options in the UI
+    filter.country = "CH";
+    m_stationService.updateStations(filter);
 }
 
 void RadioSettingsPageViewModel::setStationCount(int stationCount) {
