@@ -15,8 +15,13 @@ RUN apt update && apt -y install \
 RUN apt update && apt -y install \
     qt6-base-dev qt6-declarative-dev-tools \
     libgl1-mesa-dev libboost-all-dev \
-    librocksdb-dev libssl-dev
-
+    librocksdb-dev libssl-dev \
+    libpulse-dev \
+    libpulse0 pulseaudio-utils \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-libav
 
 # Git configuration
 RUN git config --global --add safe.directory /workspaces/build/_deps/*

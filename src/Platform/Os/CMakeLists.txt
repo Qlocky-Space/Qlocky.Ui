@@ -33,6 +33,9 @@ else()
         ${CMAKE_CURRENT_LIST_DIR}/internal/mock/NetworkDriverStub.cpp
         ${CMAKE_CURRENT_LIST_DIR}/internal/mock/NetworkDriverStub.h
     )
+    list(APPEND _links
+        Qt6::Multimedia
+    )
 endif()
 
 set(MODULE_LINK ${_links})
