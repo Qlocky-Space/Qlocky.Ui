@@ -7,6 +7,9 @@
 #include <QString>
 
 #include "events/RadioPlaybackStateChangedEvent.h"
+#include "events/RadioFavoriteAddedEvent.h"
+#include "events/RadioFavoriteRemovedEvent.h"
+#include "events/RadioFavoriteUpdatedEvent.h"
 #include "events/RadioSelectionChangedEvent.h"
 #include "RadioPlayerIfc.h"
 #include "RadioServiceIfc.h"
@@ -21,6 +24,7 @@ class RadioCardViewModel : public QObject {
     Q_PROPERTY(QString subtitle READ subtitle NOTIFY subtitleChanged)
     Q_PROPERTY(QString iconUrl READ iconUrl NOTIFY iconUrlChanged)
     Q_PROPERTY(bool playing READ playing NOTIFY playingChanged)
+    Q_PROPERTY(bool favorite READ favorite NOTIFY favoriteChanged)
     Q_PROPERTY(bool hasSelection READ hasSelection NOTIFY hasSelectionChanged)
     Q_PROPERTY(bool isControllable READ isControllable NOTIFY isControllableChanged)
 
@@ -51,6 +55,10 @@ public:
         return m_playing;
     }
 
+    bool favorite() const {
+        return m_favorite;
+    }
+
     bool hasSelection() const {
         return m_hasSelection;
     }
@@ -64,12 +72,18 @@ public:
      */
     Q_INVOKABLE void togglePlayback();
 
+    /**
+     * Toggle the favorite state for the currently selected radio.
+     */
+    Q_INVOKABLE void toggleFavorite();
+
 signals:
 
     void titleChanged();
     void subtitleChanged();
     void iconUrlChanged();
     void playingChanged();
+    void favoriteChanged();
     void hasSelectionChanged();
     void isControllableChanged();
 
@@ -79,11 +93,16 @@ private:
     void setSubtitle(QString const& subtitle);
     void setIconUrl(QString const& iconUrl);
     void setPlaying(bool playing);
+    void setFavorite(bool favorite);
     void setHasSelection(bool hasSelection);
     void setIsControllable(bool isControllable);
+    void refreshFavoriteState();
     void applyRadio(std::optional<RadioEntity> const& radio);
     void onSelectionChanged(RadioSelectionChangedEvent const& event);
     void onPlaybackStateChanged(RadioPlaybackStateChangedEvent const& event);
+    void onFavoriteAdded(RadioFavoriteAddedEvent const& event);
+    void onFavoriteRemoved(RadioFavoriteRemovedEvent const& event);
+    void onFavoriteUpdated(RadioFavoriteUpdatedEvent const& event);
 
     RadioServiceIfc& m_radioService;
     RadioPlayerIfc& m_radioController;
@@ -91,6 +110,7 @@ private:
     QString m_subtitle {"Choose a source"};
     QString m_iconUrl {};
     bool m_playing {false};
+    bool m_favorite {false};
     bool m_hasSelection {false};
     bool m_isControllable {false};
 };

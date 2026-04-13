@@ -104,26 +104,50 @@ Widget {
             }
         }
 
-        // Top-right source action (icon-only)
-        Item {
+        // Top-right actions
+        Row {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.topMargin: 20
             anchors.rightMargin: 20
-            width: 42
-            height: 42
+            spacing: 18
 
-            QIcon {
-                anchors.centerIn: parent
-                icon: "\uf0c9"
-                size: 34
-                color: ThemeManager.theme.labelPrimary
+            Item {
+                width: 42
+                height: 42
+                visible: card.showPlayPauseControl
+
+                Text {
+                    anchors.centerIn: parent
+                    text: viewModel.favorite ? "\u2665" : "\u2661"
+                    font.pixelSize: 34
+                    color: ThemeManager.theme.white
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: card.showPlayPauseControl
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: viewModel.toggleFavorite()
+                }
             }
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
+            Item {
+                width: 42
+                height: 42
+
+                QIcon {
+                    anchors.centerIn: parent
+                    icon: "\uf0c9"
+                    size: 34
+                    color: ThemeManager.theme.labelPrimary
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
+                }
             }
         }
 

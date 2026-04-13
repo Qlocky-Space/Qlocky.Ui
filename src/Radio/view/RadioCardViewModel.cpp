@@ -9,6 +9,9 @@ RadioCardViewModel::RadioCardViewModel(Mediator& mediator, RadioServiceIfc& radi
 
     mediator.subscribe<RadioSelectionChangedEvent>(this, &RadioCardViewModel::onSelectionChanged);
     mediator.subscribe<RadioPlaybackStateChangedEvent>(this, &RadioCardViewModel::onPlaybackStateChanged);
+    mediator.subscribe<RadioFavoriteAddedEvent>(this, &RadioCardViewModel::onFavoriteAdded);
+    mediator.subscribe<RadioFavoriteRemovedEvent>(this, &RadioCardViewModel::onFavoriteRemoved);
+    mediator.subscribe<RadioFavoriteUpdatedEvent>(this, &RadioCardViewModel::onFavoriteUpdated);
 }
 
 void RadioCardViewModel::togglePlayback() {
@@ -23,6 +26,20 @@ void RadioCardViewModel::togglePlayback() {
     }
 
     m_radioController.play(*selectedRadio);
+}
+
+void RadioCardViewModel::toggleFavorite() {
+    auto const selectedRadio = m_radioService.selectedRadio();
+    if (!selectedRadio.has_value()) {
+        return;
+    }
+
+    if (m_favorite) {
+        m_radioService.removeFavorite(selectedRadio->id);
+        return;
+    }
+
+    m_radioService.addFavorite(*selectedRadio);
 }
 
 void RadioCardViewModel::setTitle(QString const& title) {
@@ -61,6 +78,15 @@ void RadioCardViewModel::setPlaying(bool playing) {
     emit playingChanged();
 }
 
+void RadioCardViewModel::setFavorite(bool favorite) {
+    if (m_favorite == favorite) {
+        return;
+    }
+
+    m_favorite = favorite;
+    emit favoriteChanged();
+}
+
 void RadioCardViewModel::setHasSelection(bool hasSelection) {
     if (m_hasSelection == hasSelection) {
         return;
@@ -79,11 +105,26 @@ void RadioCardViewModel::setIsControllable(bool isControllable) {
     emit isControllableChanged();
 }
 
+void RadioCardViewModel::refreshFavoriteState() {
+    auto const selectedRadio = m_radioService.selectedRadio();
+    if (!selectedRadio.has_value()) {
+        setFavorite(false);
+        return;
+    }
+
+    auto const favorites = m_radioService.favorites();
+    auto const favoriteIt = std::find_if(favorites.begin(), favorites.end(), [&selectedRadio](RadioEntity const& radio) {
+        return radio.id == selectedRadio->id;
+    });
+    setFavorite(favoriteIt != favorites.end());
+}
+
 void RadioCardViewModel::applyRadio(std::optional<RadioEntity> const& radio) {
     if (!radio.has_value()) {
         setTitle("No Radio Selected");
         setSubtitle("Choose a source");
         setIconUrl({});
+        setFavorite(false);
         setHasSelection(false);
         setIsControllable(false);
         return;
@@ -94,6 +135,7 @@ void RadioCardViewModel::applyRadio(std::optional<RadioEntity> const& radio) {
     setIconUrl(QString::fromStdString(radio->iconUrl));
     setHasSelection(true);
     setIsControllable(false);
+    refreshFavoriteState();
 }
 
 void RadioCardViewModel::onSelectionChanged(RadioSelectionChangedEvent const& event) {
@@ -108,4 +150,19 @@ void RadioCardViewModel::onSelectionChanged(RadioSelectionChangedEvent const& ev
 
 void RadioCardViewModel::onPlaybackStateChanged(RadioPlaybackStateChangedEvent const& event) {
     setPlaying(event.playing);
+}
+
+void RadioCardViewModel::onFavoriteAdded(RadioFavoriteAddedEvent const& event) {
+    Q_UNUSED(event);
+    refreshFavoriteState();
+}
+
+void RadioCardViewModel::onFavoriteRemoved(RadioFavoriteRemovedEvent const& event) {
+    Q_UNUSED(event);
+    refreshFavoriteState();
+}
+
+void RadioCardViewModel::onFavoriteUpdated(RadioFavoriteUpdatedEvent const& event) {
+    Q_UNUSED(event);
+    refreshFavoriteState();
 }

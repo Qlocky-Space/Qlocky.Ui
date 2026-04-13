@@ -8,14 +8,14 @@ QDialog {
     id: root
 
     property var viewModel: RadioSourceSelectDialogViewModel
-    property int currentPage: 1
+    property int currentPage: 0
 
     implicitWidth: 1000
     implicitHeight: 850
     acceptText: qsTr("Choose")
 
     onOpened: {
-        currentPage = 1;
+        currentPage = 0;
         viewModel.resetSelection();
     }
 
@@ -42,10 +42,18 @@ QDialog {
                 switch (root.currentPage) {
                     case 0:
                         return "internal/RadioSourceFavorites.qml";
+                                      case 1:
+                        return "internal/RadioSourceSearch.qml";
                     case 2:
                         return "internal/RadioSourceLibrary.qml";
                     default:
                         return "internal/RadioSourceSearch.qml";
+                }
+            }
+
+            onLoaded: {
+                if (item && item.viewModel !== undefined) {
+                    item.viewModel = root.viewModel;
                 }
             }
         }
@@ -65,9 +73,9 @@ QDialog {
 
                 Repeater {
                     model: [
-                        { title: qsTr("Favorites"), icon: "\uf004" },
-                        { title: qsTr("Search"), icon: "\uf002" },
-                        { title: qsTr("Your Library"), icon: "\uf07c" }
+                        { title: qsTr("Favorites"), icon: "" },
+                        { title: qsTr("Search"), icon: "" },
+                        { title: qsTr("Your Library"), icon: "" }
                     ]
 
                     delegate: Item {

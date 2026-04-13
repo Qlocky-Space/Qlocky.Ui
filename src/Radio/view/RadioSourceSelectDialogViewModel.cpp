@@ -1,6 +1,7 @@
 #include "RadioSourceSelectDialogViewModel.h"
 
 #include <algorithm>
+#include <optional>
 #include <QVariantMap>
 
 #include "RadioSearchFilter.h"
@@ -8,20 +9,34 @@
 
 namespace {
 
-QVariantMap toSearchResult(RadioSearchResult const& searchResult) {
+QVariantMap toFavoriteResult(RadioEntity const& radio) {
+    QVariantMap resultMap {};
+    resultMap.insert("id", QString::fromStdString(radio.id));
+    resultMap.insert("name", QString::fromStdString(radio.name));
+    resultMap.insert("provider", QString::fromStdString(radio.provider));
+    resultMap.insert("favicon", QString::fromStdString(radio.iconUrl));
+    return resultMap;
+}
+
+QVariantMap toSearchResult(RadioSearchResult const& searchResult, bool favorite) {
     QVariantMap resultMap {};
     resultMap.insert("id", QString::fromStdString(searchResult.radio.id));
     resultMap.insert("name", QString::fromStdString(searchResult.radio.name));
     resultMap.insert("votes", QVariant::fromValue(searchResult.votes));
     resultMap.insert("favicon", QString::fromStdString(searchResult.favicon));
     resultMap.insert("language", QString::fromStdString(searchResult.language));
+    resultMap.insert("isFavorite", favorite);
     return resultMap;
 }
 
 } // namespace
 
-RadioSourceSelectDialogViewModel::RadioSourceSelectDialogViewModel(RadioServiceIfc& radioService) :
+RadioSourceSelectDialogViewModel::RadioSourceSelectDialogViewModel(Mediator& mediator, RadioServiceIfc& radioService) :
     m_radioService {radioService} {
+    refreshFavorites();
+    mediator.subscribe<RadioFavoriteAddedEvent>(this, &RadioSourceSelectDialogViewModel::onFavoriteAdded);
+    mediator.subscribe<RadioFavoriteRemovedEvent>(this, &RadioSourceSelectDialogViewModel::onFavoriteRemoved);
+    mediator.subscribe<RadioFavoriteUpdatedEvent>(this, &RadioSourceSelectDialogViewModel::onFavoriteUpdated);
 }
 
 RadioSourceSelectDialogViewModel::~RadioSourceSelectDialogViewModel() {
@@ -54,6 +69,7 @@ void RadioSourceSelectDialogViewModel::resetSelection() {
     setSearched(false);
     setSelectedSource({});
     m_searchResultsData.clear();
+    refreshFavorites();
 }
 
 void RadioSourceSelectDialogViewModel::search() {
@@ -84,15 +100,42 @@ void RadioSourceSelectDialogViewModel::search() {
 }
 
 void RadioSourceSelectDialogViewModel::chooseSelectedStation() {
-    auto const it = std::find_if(m_searchResultsData.begin(), m_searchResultsData.end(), [this](RadioSearchResult const& result) {
-        return QString::fromStdString(result.radio.id) == m_selectedSource;
-    });
-    if (it == m_searchResultsData.end()) {
+    auto const radio = findRadioById(m_selectedSource);
+    if (!radio.has_value()) {
         return;
     }
 
-    m_radioService.addFavorite(it->radio);
-    m_radioService.selectRadio(it->radio);
+    m_radioService.selectRadio(*radio);
+}
+
+void RadioSourceSelectDialogViewModel::addFavorite(QString const& radioId) {
+    auto const radio = findRadioById(radioId);
+    if (!radio.has_value()) {
+        return;
+    }
+
+    m_radioService.addFavorite(*radio);
+}
+
+void RadioSourceSelectDialogViewModel::removeFavorite(QString const& radioId) {
+    if (radioId.isEmpty()) {
+        return;
+    }
+
+    m_radioService.removeFavorite(radioId.toStdString());
+}
+
+void RadioSourceSelectDialogViewModel::toggleFavorite(QString const& radioId) {
+    if (radioId.isEmpty()) {
+        return;
+    }
+
+    if (isFavorite(radioId.toStdString())) {
+        removeFavorite(radioId);
+        return;
+    }
+
+    addFavorite(radioId);
 }
 
 void RadioSourceSelectDialogViewModel::setSearchResults(QVariantList const& searchResults) {
@@ -102,6 +145,15 @@ void RadioSourceSelectDialogViewModel::setSearchResults(QVariantList const& sear
 
     m_searchResults = searchResults;
     emit searchResultsChanged();
+}
+
+void RadioSourceSelectDialogViewModel::setFavorites(QVariantList const& favorites) {
+    if (m_favorites == favorites) {
+        return;
+    }
+
+    m_favorites = favorites;
+    emit favoritesChanged();
 }
 
 void RadioSourceSelectDialogViewModel::setSearching(bool searching) {
@@ -131,11 +183,43 @@ void RadioSourceSelectDialogViewModel::onSearchFinished() {
     applySearchResults();
 }
 
+void RadioSourceSelectDialogViewModel::onFavoriteAdded(RadioFavoriteAddedEvent const& event) {
+    Q_UNUSED(event);
+    refreshFavorites();
+    applySearchResults();
+}
+
+void RadioSourceSelectDialogViewModel::onFavoriteRemoved(RadioFavoriteRemovedEvent const& event) {
+    Q_UNUSED(event);
+    refreshFavorites();
+    applySearchResults();
+}
+
+void RadioSourceSelectDialogViewModel::onFavoriteUpdated(RadioFavoriteUpdatedEvent const& event) {
+    Q_UNUSED(event);
+    refreshFavorites();
+    applySearchResults();
+}
+
+void RadioSourceSelectDialogViewModel::refreshFavorites() {
+    m_favoritesData = m_radioService.favorites();
+    m_favoriteIds.clear();
+
+    QVariantList favorites {};
+    favorites.reserve(static_cast<qsizetype>(m_favoritesData.size()));
+    for (RadioEntity const& radio : m_favoritesData) {
+        m_favoriteIds.insert(radio.id);
+        favorites.push_back(toFavoriteResult(radio));
+    }
+
+    setFavorites(favorites);
+}
+
 void RadioSourceSelectDialogViewModel::applySearchResults() {
     QVariantList searchResults {};
     searchResults.reserve(static_cast<qsizetype>(m_searchResultsData.size()));
     for (RadioSearchResult const& result : m_searchResultsData) {
-        searchResults.push_back(toSearchResult(result));
+        searchResults.push_back(toSearchResult(result, isFavorite(result.radio.id)));
     }
 
     setSearchResults(searchResults);
@@ -147,10 +231,45 @@ void RadioSourceSelectDialogViewModel::applySearchResults() {
         }
     }
 
-    if (searchResults.isEmpty()) {
+    for (QVariant const& stationVariant : m_favorites) {
+        QVariantMap const station {stationVariant.toMap()};
+        if (station.value("id").toString() == m_selectedSource) {
+            return;
+        }
+    }
+
+    if (searchResults.isEmpty() && m_favorites.isEmpty()) {
         setSelectedSource({});
         return;
     }
 
-    setSelectedSource(searchResults.first().toMap().value("id").toString());
+    if (!searchResults.isEmpty()) {
+        setSelectedSource(searchResults.first().toMap().value("id").toString());
+    }
+}
+
+bool RadioSourceSelectDialogViewModel::isFavorite(std::string const& radioId) const {
+    return m_favoriteIds.find(radioId) != m_favoriteIds.end();
+}
+
+std::optional<RadioEntity> RadioSourceSelectDialogViewModel::findRadioById(QString const& radioId) const {
+    if (radioId.isEmpty()) {
+        return std::nullopt;
+    }
+
+    auto const searchIt = std::find_if(m_searchResultsData.begin(), m_searchResultsData.end(), [&radioId](RadioSearchResult const& result) {
+        return QString::fromStdString(result.radio.id) == radioId;
+    });
+    if (searchIt != m_searchResultsData.end()) {
+        return searchIt->radio;
+    }
+
+    auto const favoriteIt = std::find_if(m_favoritesData.begin(), m_favoritesData.end(), [&radioId](RadioEntity const& radio) {
+        return QString::fromStdString(radio.id) == radioId;
+    });
+    if (favoriteIt != m_favoritesData.end()) {
+        return *favoriteIt;
+    }
+
+    return std::nullopt;
 }

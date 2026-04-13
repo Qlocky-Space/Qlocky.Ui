@@ -39,7 +39,7 @@ Item {
                 Layout.preferredWidth: 64
                 Layout.preferredHeight: 64
                 buttonStyle: QButton.ButtonStyle.Tinted
-                image: "\uf002"
+                image: ""
                 enabled: viewModel.searchText.trim().length > 0 && !viewModel.searching
 
                 onClicked: {
@@ -80,11 +80,18 @@ Item {
                 stationName: modelData.name
                 votes: modelData.votes
                 favicon: modelData.favicon
-                language: modelData.language
+                secondaryText: modelData.language.length > 0 ? modelData.language : qsTr("Unknown language")
                 selected: viewModel.selectedSource === modelData.id
+                showVotes: true
+                showFavoriteAction: true
+                isFavorite: modelData.isFavorite
 
                 onClicked: {
                     viewModel.selectedSource = modelData.id;
+                }
+
+                onFavoriteClicked: {
+                    viewModel.toggleFavorite(modelData.id);
                 }
             }
         }
