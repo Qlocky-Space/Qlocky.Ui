@@ -11,13 +11,13 @@ RestApiCode mapReplyError(QNetworkReply const& reply) {
         return RestApiCode::Canceled;
     }
 
-    if (reply.error() != QNetworkReply::NoError) {
-        return RestApiCode::NetworkError;
-    }
-
     QVariant const statusCode {reply.attribute(QNetworkRequest::HttpStatusCodeAttribute)};
     if (statusCode.isValid() && statusCode.toInt() >= 400) {
         return RestApiCode::HttpError;
+    }
+
+    if (reply.error() != QNetworkReply::NoError) {
+        return RestApiCode::NetworkError;
     }
 
     return RestApiCode::Unknown;
