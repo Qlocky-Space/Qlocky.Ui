@@ -121,7 +121,7 @@ std::optional<RadioEntity> RadioRepository::getFavorite(RadioId const& radioId) 
     return m_favorites.at(it->second);
 }
 
-void RadioRepository::setLastSelected(RadioEntity const& radio) {
+void RadioRepository::setLastSelected(std::optional<RadioEntity> const& radio) {
     m_lastSelected = radio;
     persistLastSelected();
 }

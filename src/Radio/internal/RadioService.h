@@ -27,6 +27,11 @@ public:
     ~RadioService() final = default;
 
     /**
+     * @see RadioServiceIfc::initialize
+     */
+    void initialize() final;
+
+    /**
      * @see RadioServiceIfc::registerProvider
      */
     void registerProvider(std::shared_ptr<RadioSourceProviderIfc> provider) final;
@@ -54,7 +59,7 @@ public:
     /**
      * @see RadioServiceIfc::selectRadio
      */
-    void selectRadio(RadioEntity const& radio) final;
+    void selectRadio(std::optional<RadioEntity> const& radio) final;
 
     /**
      * @see RadioServiceIfc::selectedRadio

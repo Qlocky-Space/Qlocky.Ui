@@ -26,6 +26,11 @@ public:
     virtual void registerProvider(std::shared_ptr<RadioSourceProviderIfc> provider) = 0;
 
     /**
+    * Initialize the service, loading persisted state and notifying listeners.
+    */
+    virtual void initialize() = 0;
+
+    /**
      * Search radios across registered providers.
      *
      * @note If a search is already in progress, the request is ignored and the
@@ -55,10 +60,10 @@ public:
     virtual std::vector<RadioEntity> favorites() const = 0;
 
     /**
-     * Persist the last selected radio.
-     * @param radio The radio to persist.
+     * Persist the last selected radio. Pass an empty optional to clear the selection.
+     * @param radio The radio to persist, or empty to clear.
      */
-    virtual void selectRadio(RadioEntity const& radio) = 0;
+    virtual void selectRadio(std::optional<RadioEntity> const& radio) = 0;
 
     /**
      * Retrieve the last selected radio.

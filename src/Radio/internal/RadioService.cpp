@@ -69,6 +69,10 @@ Stream<RadioSearchResult> RadioService::searchRadios(RadioSearchFilter const& fi
     }};
 }
 
+void RadioService::initialize() {
+    selectRadio(m_repository.getLastSelected());
+}
+
 void RadioService::addFavorite(RadioEntity const& radio) {
     m_repository.addFavorite(radio);
 }
@@ -81,7 +85,7 @@ std::vector<RadioEntity> RadioService::favorites() const {
     return m_repository.getFavorites();
 }
 
-void RadioService::selectRadio(RadioEntity const& radio) {
+void RadioService::selectRadio(std::optional<RadioEntity> const& radio) {
     m_repository.setLastSelected(radio);
     m_mediator.notify(RadioSelectionChangedEvent {radio});
 }

@@ -100,9 +100,9 @@ void RadioCardViewModel::onSelectionChanged(RadioSelectionChangedEvent const& ev
     applyRadio(event.radio);
 
     // if radio is already playing, start playback for the new selection
-    if (m_playing) {
+    if (m_playing && event.radio.has_value()) {
         m_radioController.stop();
-        m_radioController.play(event.radio);
+        m_radioController.play(event.radio.value());
     }
 }
 

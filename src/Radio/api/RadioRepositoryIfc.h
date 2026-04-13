@@ -47,10 +47,10 @@ public:
     virtual std::vector<RadioEntity> getFavorites() const = 0;
 
     /**
-     * Persist the last selected radio.
-     * @param radio The radio entity to persist as selected.
+     * Persist the last selected radio. Pass an empty optional to clear the selection.
+     * @param radio The radio entity to persist as selected, or empty to clear.
      */
-    virtual void setLastSelected(RadioEntity const& radio) = 0;
+    virtual void setLastSelected(std::optional<RadioEntity> const& radio) = 0;
 
     /**
      * Retrieve the last selected radio.

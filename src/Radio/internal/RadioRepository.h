@@ -23,7 +23,7 @@ public:
     std::vector<RadioEntity> getFavorites() const final {
         return m_favorites;
     }
-    void setLastSelected(RadioEntity const& radio) final;
+    void setLastSelected(std::optional<RadioEntity> const& radio) final;
     std::optional<RadioEntity> getLastSelected() const final {
         return m_lastSelected;
     }

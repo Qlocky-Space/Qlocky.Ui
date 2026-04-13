@@ -34,6 +34,7 @@ void RadioModule::onInitialize() {
 
     auto radioService = resolve<RadioServiceIfc>();
     radioService->registerProvider(resolve<RadioBrowserProvider>());
+    radioService->initialize();
 
     auto widgetRegistrator = resolve<WidgetRegistratorIfc>();
     widgetRegistrator->registerWidget(WidgetMetadata("RadioCard", WidgetLayout("qrc:/qt/qml/Radio/qml/RadioCard.qml", 2, 1, 0, 3)));
