@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVariantList>
 #include <Stream.h>
+#include <vector>
 
 #include "RadioSearchResult.h"
 
@@ -25,7 +26,7 @@ class RadioSourceSelectDialogViewModel : public QObject {
 public:
 
     RadioSourceSelectDialogViewModel(RadioServiceIfc& radioService);
-    ~RadioSourceSelectDialogViewModel() final = default;
+    ~RadioSourceSelectDialogViewModel() final;
 
     /**
      * @return The search text.

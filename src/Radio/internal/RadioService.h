@@ -66,6 +66,7 @@ private:
     RadioRepositoryIfc& m_repository;
     Mediator& m_mediator;
     std::vector<std::shared_ptr<RadioSourceProviderIfc>> m_providers {};
+    bool m_searchInProgress {false};
 };
 
 #endif // SRC_RADIO_INTERNAL_RADIO_SERVICE_H

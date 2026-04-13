@@ -8,6 +8,7 @@ set(_components
     Core
     Gui
     Multimedia
+    Network
     Qml
     Quick
     ShaderTools

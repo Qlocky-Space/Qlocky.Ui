@@ -26,10 +26,17 @@ void RadioService::registerProvider(std::shared_ptr<RadioSourceProviderIfc> prov
 
 Stream<RadioSearchResult> RadioService::searchRadios(RadioSearchFilter const& filter) {
     return Stream<RadioSearchResult> {[this, filter](Stream<RadioSearchResult>::Observer const& observer) {
+        if (m_searchInProgress) {
+            observer.finish();
+            return;
+        }
+
         if (filter.isEmpty() || m_providers.empty()) {
             observer.finish();
             return;
         }
+
+        m_searchInProgress = true;
 
         auto seenRadioIds = std::make_shared<std::unordered_set<std::string>>();
         auto pendingProviders = std::make_shared<std::size_t>(m_providers.size());
@@ -47,13 +54,14 @@ Stream<RadioSearchResult> RadioService::searchRadios(RadioSearchFilter const& fi
 
                     observer.publish(result);
                 },
-                [observer, pendingProviders]() {
+                [this, observer, pendingProviders]() {
                     if (*pendingProviders == 0) {
                         return;
                     }
 
                     --(*pendingProviders);
                     if (*pendingProviders == 0) {
+                        m_searchInProgress = false;
                         observer.finish();
                     }
                 });

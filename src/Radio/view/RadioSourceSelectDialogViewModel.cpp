@@ -24,6 +24,10 @@ RadioSourceSelectDialogViewModel::RadioSourceSelectDialogViewModel(RadioServiceI
     m_radioService {radioService} {
 }
 
+RadioSourceSelectDialogViewModel::~RadioSourceSelectDialogViewModel() {
+    m_searchSubscription.cancel();
+}
+
 void RadioSourceSelectDialogViewModel::setSearchText(QString const& searchText) {
     if (m_searchText == searchText) {
         return;

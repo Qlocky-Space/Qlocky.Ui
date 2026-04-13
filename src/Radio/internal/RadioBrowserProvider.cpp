@@ -12,7 +12,7 @@ namespace {
 constexpr char const* RADIO_BROWSER_PROVIDER_ID {"radio-browser"};
 constexpr char const* RADIO_BROWSER_SEARCH_URL {"https://de1.api.radio-browser.info/json/stations/search"};
 constexpr char const* RADIO_BROWSER_USER_AGENT {"Qlocky/1.0"};
-constexpr int RADIO_BROWSER_LIMIT {100000};
+constexpr int RADIO_BROWSER_LIMIT {1000};
 constexpr std::size_t RESULT_EMIT_BATCH_SIZE {100};
 
 std::string joinTags(std::vector<std::string> const& tags) {
