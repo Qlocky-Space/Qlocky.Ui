@@ -7,6 +7,8 @@ set(CMAKE_AUTORCC ON)
 set(_components
     Core
     Gui
+    Multimedia
+    Network
     Qml
     Quick
     ShaderTools

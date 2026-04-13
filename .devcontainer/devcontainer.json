@@ -23,12 +23,14 @@
 		}
 	},
 	"containerEnv": {
-		"QT_IM_MODULE": "qtvirtualkeyboard"
+		"QT_IM_MODULE": "qtvirtualkeyboard",
+		"PULSE_SERVER": "unix:/mnt/wslg/PulseServer"
 	},
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind,consistency=cached",
 	"workspaceFolder": "/workspaces/qlocky.code-workspace",
 	"mounts": [
 		"source=/opt/qlocky,target=/opt/qlocky,type=bind,consistency=delegated",
 		"source=/opt/qt,target=/opt/qt,type=bind,consistency=delegated",
+		"source=/mnt/wslg,target=/mnt/wslg,type=bind",
 	]
 }
