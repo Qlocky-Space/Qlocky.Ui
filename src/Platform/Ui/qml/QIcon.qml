@@ -17,6 +17,8 @@ Item {
         anchors.fill: parent
         anchors.centerIn: parent
         z: 0
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
 
         text: icon.length === 2 ? icon[1] : null
         visible: icon.length === 2
@@ -31,6 +33,8 @@ Item {
 
         anchors.fill: parent
         anchors.centerIn: parent
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
 
         text: icon.length > 0 ? icon[0] : null
         font.family: FontStyle.fontAwesome.family
