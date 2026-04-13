@@ -10,7 +10,7 @@
             "label": "Qlocky: Publish App",
             "type": "shell",
             "hide": true,
-            "command": "set -a; . \"$ENV_FILE\"; ${workspaceFolder}/.vscode/tasks/task_prepare_target.sh /usr/local/bin/QlockyApp",
+            "command": "set -a; . \"$ENV_FILE\"; ${workspaceFolder}/.vscode/tasks/task_prepare_target.sh /usr/bin/QlockyApp",
             "runOptions": {
                 "instanceLimit": 1
             },
