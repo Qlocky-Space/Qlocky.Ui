@@ -134,8 +134,7 @@ Widget {
                 QIcon {
                     anchors.centerIn: parent
                     icon: viewModel.favorite ? "\u2665" : "\u2661"
-                    size: 52
-                    color: ThemeManager.theme.white
+                    size: 58
                 }
 
                 MouseArea {
@@ -153,8 +152,7 @@ Widget {
                 QIcon {
                     anchors.centerIn: parent
                     icon: "\uf0c9"
-                    size: 52
-                    color: ThemeManager.theme.labelPrimary
+                    size: 58
                 }
 
                 MouseArea {
