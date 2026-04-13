@@ -40,7 +40,7 @@ set(MODULE_QML_SRC
     qml/RadioSettings.qml
     qml/internal/RadioSourceFavorites.qml
     qml/internal/RadioSourceLibrary.qml
-    qml/internal/RadioSourceSearchItem.qml
+    qml/internal/RadioSourceItem.qml
     qml/internal/RadioSourceSearch.qml
 )
 

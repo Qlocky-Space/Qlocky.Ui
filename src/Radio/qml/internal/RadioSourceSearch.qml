@@ -72,7 +72,7 @@ Item {
             model: viewModel.searchResults
             visible: !viewModel.searching && viewModel.searchResults.length > 0
 
-            delegate: RadioSourceSearchItem {
+            delegate: RadioSourceItem {
                 required property var modelData
 
                 width: resultList.width

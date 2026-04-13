@@ -6,10 +6,10 @@
 #include <QObject>
 #include <QString>
 
-#include "events/RadioPlaybackStateChangedEvent.h"
 #include "events/RadioFavoriteAddedEvent.h"
 #include "events/RadioFavoriteRemovedEvent.h"
 #include "events/RadioFavoriteUpdatedEvent.h"
+#include "events/RadioPlaybackStateChangedEvent.h"
 #include "events/RadioSelectionChangedEvent.h"
 #include "RadioPlayerIfc.h"
 #include "RadioServiceIfc.h"

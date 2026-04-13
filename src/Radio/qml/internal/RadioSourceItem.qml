@@ -38,7 +38,6 @@ Item {
         anchors.rightMargin: 18
         spacing: 16
 
-        // Icon
         Item {
             Layout.preferredWidth: 55
             Layout.preferredHeight: 55
@@ -52,7 +51,7 @@ Item {
 
             QIcon {
                 anchors.centerIn: parent
-                icon: ""
+                icon: "\uf001"
                 size: 24
                 color: ThemeManager.theme.labelSecondary
                 visible: stationIcon.status !== Image.Ready
@@ -109,7 +108,7 @@ Item {
 
             QIcon {
                 anchors.centerIn: parent
-                icon: ""
+                icon: "\uf004"
                 size: 28
                 color: isFavorite ? ThemeManager.theme.pink : ThemeManager.theme.labelSecondary
             }

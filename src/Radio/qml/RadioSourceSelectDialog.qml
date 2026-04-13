@@ -42,7 +42,7 @@ QDialog {
                 switch (root.currentPage) {
                     case 0:
                         return "internal/RadioSourceFavorites.qml";
-                                      case 1:
+                    case 1:
                         return "internal/RadioSourceSearch.qml";
                     case 2:
                         return "internal/RadioSourceLibrary.qml";

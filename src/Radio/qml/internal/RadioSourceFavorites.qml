@@ -41,7 +41,7 @@ Item {
             model: viewModel.favorites
             visible: viewModel.favorites.length > 0
 
-            delegate: RadioSourceSearchItem {
+            delegate: RadioSourceItem {
                 required property var modelData
 
                 width: favoritesList.width
