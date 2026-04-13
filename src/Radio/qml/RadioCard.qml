@@ -61,31 +61,45 @@ Widget {
                 visible: !stationArtwork.visible
             }
 
-            Item {
+            // Playback controls
+            Row {
+                id: controls
+                spacing: 40
                 anchors.centerIn: parent
-                width: 92
-                height: 92
-                z: 2
-                visible: card.showPlayPauseControl
 
-                QIcon {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: viewModel.playing ? 2 : 0
-                    icon: viewModel.playing ? "\uf04c" : "\uf04b"
-                    size: 82
-                    color: ThemeManager.theme.labelPrimary
+                QButton {
+                    width: 80
+                    height: 80
+                    buttonStyle: QButton.ButtonStyle.Plain
+                    image: "\uf048"
+                    imageSize: 72
+                    visible: card.showTransportControls
+                    onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: card.showPlayPauseControl
-                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                QButton {
+                    width: 80
+                    height: 80
+                    buttonStyle: QButton.ButtonStyle.Plain
+                    image: viewModel.playing ? "\uf04c" : "\uf04b"
+                    imageSize: 72
+                    visible: card.showPlayPauseControl
                     onClicked: viewModel.togglePlayback()
+                }
+
+                QButton {
+                    width: 80
+                    height: 80
+                    buttonStyle: QButton.ButtonStyle.Plain
+                    image: "\uf051"
+                    imageSize: 72
+                    visible: card.showTransportControls
+                    onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
                 }
             }
 
             MouseArea {
+                enabled: !card.showPlayPauseControl
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
@@ -113,14 +127,14 @@ Widget {
             spacing: 18
 
             Item {
-                width: 42
-                height: 42
+                width: 60
+                height: 60
                 visible: card.showPlayPauseControl
 
-                Text {
+                QIcon {
                     anchors.centerIn: parent
-                    text: viewModel.favorite ? "\u2665" : "\u2661"
-                    font.pixelSize: 34
+                    icon: viewModel.favorite ? "\u2665" : "\u2661"
+                    size: 52
                     color: ThemeManager.theme.white
                 }
 
@@ -133,13 +147,13 @@ Widget {
             }
 
             Item {
-                width: 42
-                height: 42
+                width: 60
+                height: 60
 
                 QIcon {
                     anchors.centerIn: parent
                     icon: "\uf0c9"
-                    size: 34
+                    size: 52
                     color: ThemeManager.theme.labelPrimary
                 }
 
@@ -208,25 +222,6 @@ Widget {
                     text: viewModel.playing ? qsTr("Playing") : qsTr("Ready")
                     color: ThemeManager.theme.labelSecondary
                     font.pixelSize: 20
-                }
-            }
-
-            // Playback controls
-            Row {
-                id: controls
-                spacing: 36
-                visible: card.showTransportControls
-
-                QIcon {
-                    icon: "\uf048"
-                    size: 58
-                    color: Qt.alpha(ThemeManager.theme.labelPrimary, 0.45)
-                }
-
-                QIcon {
-                    icon: "\uf051"
-                    size: 58
-                    color: Qt.alpha(ThemeManager.theme.labelPrimary, 0.45)
                 }
             }
         }
