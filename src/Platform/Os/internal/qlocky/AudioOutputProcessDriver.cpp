@@ -16,7 +16,7 @@ namespace {
 
 constexpr char const* PLAYER_EXECUTABLE {"gst-launch-1.0"};
 constexpr char const* BUFFER_DURATION {"buffer-duration=5000000000"}; // 5 seconds in nanoseconds
-constexpr char const* BUFFER_SIZE {"buffer-size=2097152"};            // 2 MB in bytes
+constexpr char const* BUFFER_SIZE {"buffer-size=4194304"};            // 4 MB in bytes
 // TODO Just a rough estimation, shall be tuned and made it configurable. Ensure Min/Max audio volume (See AudioOutputMixer) is adjusted as well.
 constexpr char const* EQ_FILTER_ARGUMENT {
     "audio-filter=equalizer-nbands num-bands=31 "
