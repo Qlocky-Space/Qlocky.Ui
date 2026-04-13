@@ -4,6 +4,8 @@
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
+#include <dirent.h>
+#include <fstream>
 #include <ng-log/logging.h>
 #include <sstream>
 #include <sys/types.h>
@@ -11,6 +13,44 @@
 #include <unistd.h>
 
 namespace {
+
+constexpr char const* PLAYER_EXECUTABLE {"gst-launch-1.0"};
+constexpr char const* BUFFER_DURATION {"buffer-duration=5000000000"}; // 5 seconds in nanoseconds
+constexpr char const* BUFFER_SIZE {"buffer-size=2097152"};            // 2 MB in bytes
+// TODO Just a rough estimation, shall be tuned and made it configurable. Ensure Min/Max audio volume (See AudioOutputMixer) is adjusted as well.
+constexpr char const* EQ_FILTER_ARGUMENT {
+    "audio-filter=equalizer-nbands num-bands=31 "
+    "band0::gain=0 "
+    "band1::gain=0.08 "
+    "band2::gain=0.72 "
+    "band3::gain=0.72 "
+    "band4::gain=-0.88 "
+    "band5::gain=-2.4 "
+    "band6::gain=-4 "
+    "band7::gain=-1.52 "
+    "band8::gain=-0.56 "
+    "band9::gain=-4.96 "
+    "band10::gain=-7.12 "
+    "band11::gain=-9.6 "
+    "band12::gain=-12.4 "
+    "band13::gain=-12.4 "
+    "band14::gain=-13.36 "
+    "band15::gain=-18.96 "
+    "band16::gain=-12.16 "
+    "band17::gain=-11.52 "
+    "band18::gain=-11.216 "
+    "band19::gain=-10.88 "
+    "band20::gain=-10.88 "
+    "band21::gain=-10.88 "
+    "band22::gain=-11.04 "
+    "band23::gain=-10.24 "
+    "band24::gain=-7.76 "
+    "band25::gain=-6.24 "
+    "band26::gain=-4.32 "
+    "band27::gain=-4.96 "
+    "band28::gain=-5.6 "
+    "band29::gain=-5.28 "
+    "band30::gain=-6.48"};
 
 std::vector<std::string> splitPath(std::string const& path) {
     std::vector<std::string> entries {};
@@ -26,6 +66,10 @@ std::vector<std::string> splitPath(std::string const& path) {
 }
 
 } // namespace
+
+AudioOutputProcessDriver::AudioOutputProcessDriver() {
+    terminateExistingPlayers();
+}
 
 AudioOutputProcessDriver::~AudioOutputProcessDriver() {
     stop();
@@ -59,11 +103,13 @@ AudioOutputResult AudioOutputProcessDriver::play(std::string const& source) {
     }
 
     if (pid == 0) {
+        std::string const uriArgument = std::string {"uri="} + source;
+
         std::vector<std::string> commandParts {};
-        commandParts.reserve(playerCommand->arguments.size() + 2);
+        commandParts.reserve(playerCommand->arguments.size() + 1);
         commandParts.push_back(playerCommand->executable);
         commandParts.insert(commandParts.end(), playerCommand->arguments.begin(), playerCommand->arguments.end());
-        commandParts.push_back(source);
+        commandParts.push_back(uriArgument);
 
         std::vector<char*> argv {};
         argv.reserve(commandParts.size() + 1);
@@ -125,27 +171,51 @@ bool AudioOutputProcessDriver::isPlaying() const {
 }
 
 std::optional<AudioOutputProcessDriver::PlayerCommand> AudioOutputProcessDriver::resolvePlayerCommand() {
-    if (char const* configuredPlayer = std::getenv("QLOCKY_AUDIO_PLAYER")) {
-        std::string const executable {configuredPlayer};
-        if (!executable.empty() && isExecutableAvailable(executable)) {
-            return PlayerCommand {executable, {}};
-        }
-    }
-
-    std::vector<PlayerCommand> const supportedPlayers {
-        {"gst-play-1.0", {"--no-interactive"}},
-        {"ffplay", {"-nodisp", "-autoexit"}},
-        {"mpv", {"--no-video"}},
-        {"cvlc", {"--intf", "dummy"}},
-    };
-
-    for (PlayerCommand const& player : supportedPlayers) {
-        if (isExecutableAvailable(player.executable)) {
-            return player;
-        }
+    if (isExecutableAvailable(PLAYER_EXECUTABLE)) {
+        return PlayerCommand {PLAYER_EXECUTABLE, {"playbin", BUFFER_DURATION, BUFFER_SIZE, EQ_FILTER_ARGUMENT}};
     }
 
     return std::nullopt;
+}
+
+void AudioOutputProcessDriver::terminateExistingPlayers() {
+    DIR* procDir {opendir("/proc")};
+    if (procDir == nullptr) {
+        LOG(WARNING) << "Failed to open /proc for stale audio player cleanup";
+        return;
+    }
+
+    pid_t const currentPid {getpid()};
+    dirent* entry {nullptr};
+    while ((entry = readdir(procDir)) != nullptr) {
+        char* endPtr {nullptr};
+        long const rawPid {std::strtol(entry->d_name, &endPtr, 10)};
+        if (endPtr == nullptr || *endPtr != '\0' || rawPid <= 0) {
+            continue;
+        }
+
+        pid_t const candidatePid {static_cast<pid_t>(rawPid)};
+        if (candidatePid == currentPid) {
+            continue;
+        }
+
+        std::ifstream commandFile {std::string {"/proc/"} + entry->d_name + "/comm"};
+        if (!commandFile.is_open()) {
+            continue;
+        }
+
+        std::string commandName {};
+        std::getline(commandFile, commandName);
+        if (commandName != PLAYER_EXECUTABLE) {
+            continue;
+        }
+
+        if (kill(candidatePid, SIGTERM) != 0 && errno != ESRCH) {
+            LOG(WARNING) << "Failed to terminate stale audio player process pid=" << candidatePid;
+        }
+    }
+
+    closedir(procDir);
 }
 
 bool AudioOutputProcessDriver::isExecutableAvailable(std::string const& executable) {

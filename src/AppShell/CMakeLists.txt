@@ -50,5 +50,6 @@ set(MODULE_LINK
     qlocky::Ui
     qlocky::Widget
     qlocky::Network
+    qlocky::Os
 )
 setup_module()

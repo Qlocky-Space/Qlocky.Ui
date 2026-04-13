@@ -12,6 +12,11 @@ public:
     virtual ~RadioPlayerIfc() = default;
 
     /**
+     * Initialize the player. Must be called before any other method.
+     */
+    virtual void initialize() = 0;
+
+    /**
      * Start playback for the given radio entity.
      * @param radio The radio to play.
      */

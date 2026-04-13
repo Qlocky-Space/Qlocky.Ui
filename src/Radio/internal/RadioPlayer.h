@@ -3,6 +3,8 @@
 
 #include <Mediator.h>
 
+#include "AudioMixerIfc.h"
+#include "AudioMixerListenerIfc.h"
 #include "AudioOutputIfc.h"
 #include "AudioOutputListenerIfc.h"
 #include "RadioPlayerIfc.h"
@@ -10,20 +12,26 @@
 /**
  * Default player implementation for radio playback commands.
  */
-class RadioPlayer final : public RadioPlayerIfc, public AudioOutputListenerIfc {
+class RadioPlayer final : public RadioPlayerIfc, public AudioOutputListenerIfc, public AudioMixerListenerIfc {
 public:
 
     /**
      * Create a radio player.
      * @param audioPlayer Audio player used for playback.
+     * @param audioMixer Audio mixer used for output volume changes.
      * @param mediator Event mediator used to publish playback state changes.
      */
-    RadioPlayer(AudioOutputIfc& audioPlayer, Mediator& mediator);
+    RadioPlayer(AudioOutputIfc& audioPlayer, AudioMixerIfc& audioMixer, Mediator& mediator);
 
     /**
      * Destroy the player.
      */
     ~RadioPlayer() final;
+
+    /**
+     * @see RadioPlayerIfc::initialize
+     */
+    void initialize() final;
 
     /**
      * @see RadioPlayerIfc::play
@@ -55,11 +63,17 @@ public:
      */
     void onPlaybackFailed(AudioOutputErrorCode errorCode) final;
 
+    /**
+     * @see AudioMixerListenerIfc::onVolumeChanged
+     */
+    void onVolumeChanged(uint8_t volumePercent) final;
+
 private:
 
     void setPlaying(bool playing);
 
     AudioOutputIfc& m_audioPlayer;
+    AudioMixerIfc& m_audioMixer;
     Mediator& m_mediator;
     bool m_playing {false};
 };

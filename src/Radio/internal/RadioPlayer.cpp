@@ -2,16 +2,27 @@
 
 #include <ng-log/logging.h>
 
+#include "events/AudioOutputVolumeEvent.h"
 #include "events/RadioPlaybackStateChangedEvent.h"
 
-RadioPlayer::RadioPlayer(AudioOutputIfc& audioPlayer, Mediator& mediator) :
+RadioPlayer::RadioPlayer(AudioOutputIfc& audioPlayer, AudioMixerIfc& audioMixer, Mediator& mediator) :
     m_audioPlayer {audioPlayer},
+    m_audioMixer {audioMixer},
     m_mediator {mediator} {
     m_audioPlayer.attach(this);
+    m_audioMixer.attach(this);
 }
 
 RadioPlayer::~RadioPlayer() {
+    m_audioMixer.detach(this);
     m_audioPlayer.detach(this);
+}
+
+void RadioPlayer::initialize() {
+    // TODO this must be loaded from settings, set to 50% for now to avoid blasting users with full volume when they start playback for the first time
+    m_audioMixer.setOutputVolume(50);
+
+    m_mediator.notify(AudioOutputVolumeEvent {m_audioMixer.outputVolume()});
 }
 
 void RadioPlayer::play(RadioEntity const& radio) {
@@ -51,6 +62,10 @@ void RadioPlayer::onPlaybackStopped() {
 
 void RadioPlayer::onPlaybackFailed(AudioOutputErrorCode errorCode) {
     setPlaying(false);
+}
+
+void RadioPlayer::onVolumeChanged(uint8_t volumePercent) {
+    m_mediator.notify(AudioOutputVolumeEvent {volumePercent});
 }
 
 void RadioPlayer::setPlaying(bool playing) {

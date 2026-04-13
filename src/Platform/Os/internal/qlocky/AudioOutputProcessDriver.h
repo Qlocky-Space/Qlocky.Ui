@@ -11,22 +11,49 @@
 
 #include "AudioOutputIfc.h"
 
+/**
+ * Process-based audio output driver using gst-play-1.0 on qlocky targets.
+ */
 class AudioOutputProcessDriver final : public Subject<AudioOutputListenerIfc>, public AudioOutputIfc {
 public:
 
-    AudioOutputProcessDriver() = default;
+    /**
+     * Create the audio output driver.
+     */
+    AudioOutputProcessDriver();
+
+    /**
+     * Destroy the audio output driver.
+     */
     ~AudioOutputProcessDriver() final;
 
+    /**
+     * @see SubjectIfc::attach
+     */
     void attach(AudioOutputListenerIfc* observer) final {
         Subject<AudioOutputListenerIfc>::attach(observer);
     }
 
+    /**
+     * @see SubjectIfc::detach
+     */
     void detach(AudioOutputListenerIfc* observer) final {
         Subject<AudioOutputListenerIfc>::detach(observer);
     }
 
+    /**
+     * @see AudioOutputIfc::play
+     */
     AudioOutputResult play(std::string const& source) final;
+
+    /**
+     * @see AudioOutputIfc::stop
+     */
     AudioOutputResult stop() final;
+
+    /**
+     * @see AudioOutputIfc::isPlaying
+     */
     bool isPlaying() const final;
 
 private:
@@ -36,6 +63,7 @@ private:
         std::vector<std::string> arguments;
     };
 
+    static void terminateExistingPlayers();
     static std::optional<PlayerCommand> resolvePlayerCommand();
     static bool isExecutableAvailable(std::string const& executable);
     void waitForPlayer(pid_t pid);

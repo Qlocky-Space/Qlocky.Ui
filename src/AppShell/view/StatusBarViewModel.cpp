@@ -1,11 +1,13 @@
 #include "StatusBarViewModel.h"
 
-#include <iostream>
+#include <algorithm>
+#include <cmath>
 
-StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository) :
+StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository, AudioMixerIfc& audioMixer) :
     QObject {nullptr},
     m_networkService {networkService},
     m_networkRepository {networkRepository},
+    m_audioMixer {audioMixer},
     m_title {"Qlocky"},
     m_ssid {""},
     m_networkStrength {-1},
@@ -19,8 +21,9 @@ StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& ne
     mediator.subscribe<WifiStatusEvent>(this, &StatusBarViewModel::updateWifiStatus);
     mediator.subscribe<ConnectionStatusEvent>(this, &StatusBarViewModel::updateConnectionStatus);
     mediator.subscribe<CommunicationStatusEvent>(this, &StatusBarViewModel::updateCommunicationStatus);
+    mediator.subscribe<AudioOutputVolumeEvent>(this, &StatusBarViewModel::updateAudioOutputVolume);
 
-    // TODO register events for LightMode, AudioVolume, Brightness, etc.
+    // TODO register events for LightMode, Brightness, etc.
 }
 
 void StatusBarViewModel::setNetworkState(bool enabled) {
@@ -61,12 +64,9 @@ void StatusBarViewModel::setBrightness(float value) {
 }
 
 void StatusBarViewModel::setVolume(float value) {
-    // TODO forward to service
-
-    if (m_volume != value) {
-        m_volume = value;
-        emit volumeChanged();
-    }
+    float const clamped = std::clamp(value, 0.0F, 100.0F);
+    uint8_t const requested = static_cast<uint8_t>(std::lround(clamped));
+    m_audioMixer.setOutputVolume(requested);
 }
 
 void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
@@ -113,5 +113,13 @@ void StatusBarViewModel::updateCommunicationStatus(CommunicationStatusEvent cons
         // Reset the SSID when Wi-Fi mode is disabled
         setSsid("");
         emit networkStateChanged();
+    }
+}
+
+void StatusBarViewModel::updateAudioOutputVolume(AudioOutputVolumeEvent const& event) {
+    float const actualVolume = static_cast<float>(event.volumePercent());
+    if (m_volume != actualVolume) {
+        m_volume = actualVolume;
+        emit volumeChanged();
     }
 }
