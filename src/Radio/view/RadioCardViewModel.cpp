@@ -98,6 +98,12 @@ void RadioCardViewModel::applyRadio(std::optional<RadioEntity> const& radio) {
 
 void RadioCardViewModel::onSelectionChanged(RadioSelectionChangedEvent const& event) {
     applyRadio(event.radio);
+
+    // if radio is already playing, start playback for the new selection
+    if (m_playing) {
+        m_radioController.stop();
+        m_radioController.play(event.radio);
+    }
 }
 
 void RadioCardViewModel::onPlaybackStateChanged(RadioPlaybackStateChangedEvent const& event) {
