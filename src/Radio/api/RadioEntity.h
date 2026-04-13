@@ -18,6 +18,7 @@ struct RadioEntity {
     std::string provider;
     std::string radioId;
     std::string url;
+    std::string iconUrl;
 };
 
 #endif // SRC_RADIO_API_RADIO_ENTITY_H

@@ -43,6 +43,15 @@ void RadioCardViewModel::setSubtitle(QString const& subtitle) {
     emit subtitleChanged();
 }
 
+void RadioCardViewModel::setIconUrl(QString const& iconUrl) {
+    if (m_iconUrl == iconUrl) {
+        return;
+    }
+
+    m_iconUrl = iconUrl;
+    emit iconUrlChanged();
+}
+
 void RadioCardViewModel::setPlaying(bool playing) {
     if (m_playing == playing) {
         return;
@@ -52,26 +61,39 @@ void RadioCardViewModel::setPlaying(bool playing) {
     emit playingChanged();
 }
 
-void RadioCardViewModel::setHasRadio(bool hasRadio) {
-    if (m_hasRadio == hasRadio) {
+void RadioCardViewModel::setHasSelection(bool hasSelection) {
+    if (m_hasSelection == hasSelection) {
         return;
     }
 
-    m_hasRadio = hasRadio;
-    emit hasRadioChanged();
+    m_hasSelection = hasSelection;
+    emit hasSelectionChanged();
+}
+
+void RadioCardViewModel::setIsControllable(bool isControllable) {
+    if (m_isControllable == isControllable) {
+        return;
+    }
+
+    m_isControllable = isControllable;
+    emit isControllableChanged();
 }
 
 void RadioCardViewModel::applyRadio(std::optional<RadioEntity> const& radio) {
     if (!radio.has_value()) {
         setTitle("No Radio Selected");
         setSubtitle("Choose a source");
-        setHasRadio(false);
+        setIconUrl({});
+        setHasSelection(false);
+        setIsControllable(false);
         return;
     }
 
     setTitle(QString::fromStdString(radio->name));
     setSubtitle(QString::fromStdString(radio->provider));
-    setHasRadio(true);
+    setIconUrl(QString::fromStdString(radio->iconUrl));
+    setHasSelection(true);
+    setIsControllable(false);
 }
 
 void RadioCardViewModel::onSelectionChanged(RadioSelectionChangedEvent const& event) {

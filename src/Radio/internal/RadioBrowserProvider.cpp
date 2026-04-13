@@ -163,6 +163,7 @@ RadioSearchResult RadioBrowserProvider::toSearchResult(RadioBrowserApiStationRec
         RADIO_BROWSER_PROVIDER_ID,
         record.stationuuid,
         streamUrl,
+        record.favicon,
     };
 
     return RadioSearchResult {

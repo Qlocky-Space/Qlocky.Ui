@@ -7,124 +7,204 @@ import Ui
 
 Widget {
     id: card
-    color: ThemeManager.theme.fillsSecondary
+    color: "transparent"
+    radius: 34
 
     property var viewModel: RadioCardViewModel
 
-    QButton {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.topMargin: 20
-        anchors.rightMargin: 20
+    readonly property bool showTransportControls: viewModel.hasSelection && viewModel.isControllable
+    readonly property bool showPlayPauseControl: viewModel.hasSelection
 
-        text: qsTr("Source")
+    Rectangle {
+        anchors.fill: parent
+        radius: card.radius
+        clip: true
+        color: ThemeManager.theme.fillsSecondary
 
-        onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
-    }
-
-    Row {
-        id: metadata
-        spacing: 10
-        anchors.top: card.top
-        anchors.topMargin: 30
-
-        anchors.horizontalCenter: parent.horizontalCenter
-
+        // Left artwork panel (click opens source dialog)
         Rectangle {
-            color: "#5197de"
-            width: 70
-            height: 70
-
-            anchors.right: infos.left
-            anchors.rightMargin: 25
-        }
-
-        Column {
-            id: infos
-
-            Text {
-                text: viewModel.title
-                color: ThemeManager.theme.labelPrimary
-                font.pixelSize: 32
-            }
-
-            Text {
-                text: viewModel.subtitle
-                color: ThemeManager.theme.labelPrimary
-                font.pixelSize: 32
-            }
-        }
-    }
-
-    Column {
-        id: radio
-
-        anchors.top: metadata.bottom
-        anchors.topMargin: 90
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 18
-
-        Rectangle {
-            width: card.width * 0.7
-            height: 8
-            radius: height / 2
-            color: ThemeManager.theme.fillsTertiary
+            id: artworkPanel
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: Math.round(parent.width * 0.34)
+            color: ThemeManager.theme.backgroundSecondary
 
             Rectangle {
-                width: viewModel.playing ? parent.width : parent.width * 0.2
-                height: parent.height
-                radius: parent.radius
-                color: ThemeManager.theme.fillsPrimary
+                anchors.fill: parent
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.15) }
+                    GradientStop { position: 1.0; color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.55) }
+                }
             }
-        }
 
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: viewModel.playing ? qsTr("Playing") : qsTr("Ready")
-            color: ThemeManager.theme.labelSecondary
-            font.pixelSize: 24
-        }
-    }
+            Image {
+                id: stationArtwork
+                anchors.fill: parent
+                source: viewModel.iconUrl
+                fillMode: Image.PreserveAspectCrop
+                asynchronous: true
+                cache: true
+                visible: source.toString().length > 0 && status === Image.Ready
+            }
 
-    Row {
-        id: controls
-        spacing: 10
+            Rectangle {
+                anchors.fill: parent
+                color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.32)
+            }
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: radio.bottom
-        anchors.topMargin: 30
+            QIcon {
+                anchors.centerIn: parent
+                icon: "\uf001"
+                size: Math.min(parent.width, parent.height) * 0.32
+                color: Qt.alpha(ThemeManager.theme.labelPrimary, 0.7)
+                visible: !stationArtwork.visible
+            }
 
-        // TODO replace images with font awesome
-        Image {
-            source: "/Radio/resources/previous.png"
+            Item {
+                anchors.centerIn: parent
+                width: 92
+                height: 92
+                z: 2
+                visible: card.showPlayPauseControl
 
-            width: 80
-            height: 80
-        }
+                QIcon {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: viewModel.playing ? 2 : 0
+                    icon: viewModel.playing ? "\uf04c" : "\uf04b"
+                    size: 82
+                    color: ThemeManager.theme.labelPrimary
+                }
 
-        Image {
-            source: "/Radio/resources/play.png"
-
-            width: 80
-            height: 80
-            opacity: viewModel.hasRadio ? 1.0 : 0.4
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: card.showPlayPauseControl
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: viewModel.togglePlayback()
+                }
+            }
 
             MouseArea {
                 anchors.fill: parent
-                enabled: viewModel.hasRadio
-                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-
-                onClicked: {
-                    viewModel.togglePlayback();
-                }
+                cursorShape: Qt.PointingHandCursor
+                onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
             }
         }
 
-        Image {
-            source: "/Radio/resources/skip.png"
+        // Right side blend for readable text and controls
+        Rectangle {
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.left: artworkPanel.right
+            anchors.right: parent.right
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.05) }
+                GradientStop { position: 1.0; color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.40) }
+            }
+        }
 
-            width: 80
-            height: 80
+        // Top-right source action (icon-only)
+        Item {
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: 20
+            anchors.rightMargin: 20
+            width: 42
+            height: 42
+
+            QIcon {
+                anchors.centerIn: parent
+                icon: "\uf0c9"
+                size: 34
+                color: ThemeManager.theme.labelPrimary
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
+            }
+        }
+
+        // Main content
+        Column {
+            id: content
+            spacing: 24
+
+            anchors.left: artworkPanel.right
+            anchors.right: parent.right
+            anchors.leftMargin: 26
+            anchors.rightMargin: 26
+            anchors.verticalCenter: parent.verticalCenter
+
+            Column {
+                width: parent.width - 110
+                spacing: 6
+
+                Text {
+                    width: parent.width
+                    text: viewModel.title
+                    elide: Text.ElideRight
+                    color: ThemeManager.theme.labelPrimary
+                    font.bold: true
+                    font.pixelSize: 52
+                }
+
+                Text {
+                    width: parent.width
+                    text: viewModel.subtitle
+                    elide: Text.ElideRight
+                    color: ThemeManager.theme.labelSecondary
+                    font.pixelSize: 30
+                }
+            }
+
+            // Progress / status
+            Column {
+                width: parent.width
+                spacing: 14
+                visible: card.showTransportControls
+
+                Rectangle {
+                    width: parent.width
+                    height: 8
+                    radius: height / 2
+                    color: ThemeManager.theme.fillsTertiary
+
+                    Rectangle {
+                        width: viewModel.playing ? parent.width * 0.35 : 0
+                        height: parent.height
+                        radius: parent.radius
+                        color: ThemeManager.theme.fillsPrimary
+                    }
+                }
+
+                Text {
+                    text: viewModel.playing ? qsTr("Playing") : qsTr("Ready")
+                    color: ThemeManager.theme.labelSecondary
+                    font.pixelSize: 20
+                }
+            }
+
+            // Playback controls
+            Row {
+                id: controls
+                spacing: 36
+                visible: card.showTransportControls
+
+                QIcon {
+                    icon: "\uf048"
+                    size: 58
+                    color: Qt.alpha(ThemeManager.theme.labelPrimary, 0.45)
+                }
+
+                QIcon {
+                    icon: "\uf051"
+                    size: 58
+                    color: Qt.alpha(ThemeManager.theme.labelPrimary, 0.45)
+                }
+            }
         }
     }
 }

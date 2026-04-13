@@ -15,6 +15,7 @@ namespace {
         {"provider", radio.provider},
         {"radioId", radio.radioId},
         {"url", radio.url},
+        {"iconUrl", radio.iconUrl},
     };
 }
 
@@ -25,6 +26,7 @@ namespace {
         json.value("provider", std::string {}),
         json.value("radioId", std::string {}),
         json.value("url", std::string {}),
+        json.value("iconUrl", std::string {}),
     };
 }
 
@@ -125,7 +127,7 @@ void RadioRepository::setLastSelected(RadioEntity const& radio) {
 }
 
 bool RadioRepository::areEqual(RadioEntity const& lhs, RadioEntity const& rhs) {
-    return lhs.id == rhs.id && lhs.name == rhs.name && lhs.provider == rhs.provider && lhs.radioId == rhs.radioId && lhs.url == rhs.url;
+    return lhs.id == rhs.id && lhs.name == rhs.name && lhs.provider == rhs.provider && lhs.radioId == rhs.radioId && lhs.url == rhs.url && lhs.iconUrl == rhs.iconUrl;
 }
 
 ResultVoid RadioRepository::persistFavorites() {

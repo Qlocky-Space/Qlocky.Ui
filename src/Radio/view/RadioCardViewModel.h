@@ -19,8 +19,10 @@ class RadioCardViewModel : public QObject {
 
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QString subtitle READ subtitle NOTIFY subtitleChanged)
+    Q_PROPERTY(QString iconUrl READ iconUrl NOTIFY iconUrlChanged)
     Q_PROPERTY(bool playing READ playing NOTIFY playingChanged)
-    Q_PROPERTY(bool hasRadio READ hasRadio NOTIFY hasRadioChanged)
+    Q_PROPERTY(bool hasSelection READ hasSelection NOTIFY hasSelectionChanged)
+    Q_PROPERTY(bool isControllable READ isControllable NOTIFY isControllableChanged)
 
 public:
 
@@ -41,12 +43,20 @@ public:
         return m_subtitle;
     }
 
+    QString iconUrl() const {
+        return m_iconUrl;
+    }
+
     bool playing() const {
         return m_playing;
     }
 
-    bool hasRadio() const {
-        return m_hasRadio;
+    bool hasSelection() const {
+        return m_hasSelection;
+    }
+
+    bool isControllable() const {
+        return m_isControllable;
     }
 
     /**
@@ -58,15 +68,19 @@ signals:
 
     void titleChanged();
     void subtitleChanged();
+    void iconUrlChanged();
     void playingChanged();
-    void hasRadioChanged();
+    void hasSelectionChanged();
+    void isControllableChanged();
 
 private:
 
     void setTitle(QString const& title);
     void setSubtitle(QString const& subtitle);
+    void setIconUrl(QString const& iconUrl);
     void setPlaying(bool playing);
-    void setHasRadio(bool hasRadio);
+    void setHasSelection(bool hasSelection);
+    void setIsControllable(bool isControllable);
     void applyRadio(std::optional<RadioEntity> const& radio);
     void onSelectionChanged(RadioSelectionChangedEvent const& event);
     void onPlaybackStateChanged(RadioPlaybackStateChangedEvent const& event);
@@ -75,8 +89,10 @@ private:
     RadioPlayerIfc& m_radioController;
     QString m_title {"No Radio Selected"};
     QString m_subtitle {"Choose a source"};
+    QString m_iconUrl {};
     bool m_playing {false};
-    bool m_hasRadio {false};
+    bool m_hasSelection {false};
+    bool m_isControllable {false};
 };
 
 #endif // SRC_RADIO_VIEW_RADIO_CARD_VIEW_MODEL_H
