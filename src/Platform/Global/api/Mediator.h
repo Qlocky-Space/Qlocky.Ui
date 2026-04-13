@@ -11,8 +11,8 @@
 #include <utility>
 #include <vector>
 
-#include "../util/AsyncTaskExecutor.h"
 #include "EventIfc.h"
+#include "TaskExecutorIfc.h"
 
 /**
  * In-process event mediator used for decoupled communication between modules.
@@ -100,7 +100,7 @@ public:
         /**
          * Create an asynchronous delivery configuration.
          *
-         * The callback is executed by the mediator's internal worker pool unless a
+         * The callback is executed by the shared task executor service unless a
          * custom dispatcher is supplied.
          */
         static SubscriptionOptions asynchronous() {
@@ -242,7 +242,16 @@ public:
         }
     }
 
-    Mediator() = default;
+    /**
+     * Constructs a Mediator with the given task executor for asynchronous deliveries.
+     * @param taskExecutor The shared task executor used for asynchronous callback execution.
+     */
+    explicit Mediator(TaskExecutorIfc& taskExecutor) :
+        m_taskExecutor {taskExecutor},
+        m_callbacks {},
+        m_callbacksMutex {} {
+    }
+
     ~Mediator() = default;
 
     // Prevent copying and assignment
@@ -274,7 +283,9 @@ private:
         }
 
         if (options.deliveryMode == DeliveryMode::Async) {
-            m_asyncExecutor.enqueue(std::move(task));
+            m_taskExecutor.enqueue(std::move(task));
+
+            task();
             return;
         }
 
@@ -293,9 +304,9 @@ private:
         });
     }
 
-    AsyncTaskExecutor m_asyncExecutor {};
-    std::unordered_map<std::type_index, std::vector<Subscription>> m_callbacks {};
-    std::mutex m_callbacksMutex {};
+    TaskExecutorIfc& m_taskExecutor;
+    std::unordered_map<std::type_index, std::vector<Subscription>> m_callbacks;
+    std::mutex m_callbacksMutex;
 };
 
 #endif

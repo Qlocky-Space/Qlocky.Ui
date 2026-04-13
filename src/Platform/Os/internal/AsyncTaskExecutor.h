@@ -1,13 +1,14 @@
-#ifndef SRC_PLATFORM_GLOBAL_UTIL_ASYNC_TASK_EXECUTOR_H
-#define SRC_PLATFORM_GLOBAL_UTIL_ASYNC_TASK_EXECUTOR_H
+#ifndef SRC_PLATFORM_OS_INTERNAL_ASYNC_TASK_EXECUTOR_H
+#define SRC_PLATFORM_OS_INTERNAL_ASYNC_TASK_EXECUTOR_H
 
 #include <condition_variable>
 #include <cstddef>
 #include <deque>
-#include <functional>
 #include <mutex>
 #include <thread>
 #include <vector>
+
+#include "TaskExecutorIfc.h"
 
 /**
  * Shared task executor for lightweight asynchronous work.
@@ -16,10 +17,8 @@
  * and can be shared by components that want task-style asynchronous execution
  * without starting one thread per work item.
  */
-class AsyncTaskExecutor final {
+class AsyncTaskExecutor final : public TaskExecutorIfc {
 public:
-
-    using Task = std::function<void()>;
 
     AsyncTaskExecutor();
     ~AsyncTaskExecutor();
@@ -35,7 +34,7 @@ public:
      * If shutdown has already started the task is ignored.
      * @param task The work item to enqueue.
      */
-    void enqueue(Task task);
+    void enqueue(Task task) override;
 
 private:
 
@@ -48,4 +47,4 @@ private:
     bool m_isStopping {false};
 };
 
-#endif // SRC_PLATFORM_GLOBAL_UTIL_ASYNC_TASK_EXECUTOR_H
+#endif // SRC_PLATFORM_OS_INTERNAL_ASYNC_TASK_EXECUTOR_H

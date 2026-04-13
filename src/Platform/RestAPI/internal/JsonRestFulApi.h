@@ -4,21 +4,25 @@
 #include <QNetworkAccessManager>
 
 #include "RestApi.h"
+#include "TaskExecutorIfc.h"
 
 /**
- * Qt-backed JSON REST API implementation.
+ * JSON REST API client implementation using Qt's QNetworkAccessManager.
  */
 class JsonRestFulApi final : public RestApi {
 public:
 
-    JsonRestFulApi();
+    explicit JsonRestFulApi(TaskExecutorIfc& taskExecutor);
     ~JsonRestFulApi() final = default;
+
+protected:
+
+    /// @see RestApi::requestRaw
+    void requestRaw(Method method, RestApiRequestOptions const& options, RawCallback callback) final;
 
 private:
 
-    void requestRaw(Method method, RestApiRequestOptions const& options, RawCallback callback) final;
-
-    QNetworkAccessManager m_networkAccessManager;
+    QNetworkAccessManager m_networkAccessManager {};
 };
 
 #endif // SRC_PLATFORM_RESTAPI_INTERNAL_JSON_REST_FUL_API_H

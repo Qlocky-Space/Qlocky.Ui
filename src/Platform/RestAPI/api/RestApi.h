@@ -4,12 +4,12 @@
 #include <functional>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <thread>
 #include <type_traits>
 #include <types/Result.h>
 
 #include "RestApiCode.h"
 #include "RestApiRequestOptions.h"
+#include "TaskExecutorIfc.h"
 
 /**
  * Generic asynchronous REST API client.
@@ -93,6 +93,10 @@ public:
 
 protected:
 
+    explicit RestApi(TaskExecutorIfc& taskExecutor) :
+        m_taskExecutor {taskExecutor} {
+    }
+
     enum class Method {
         Head,
         Get,
@@ -108,20 +112,24 @@ private:
 
     template<typename T>
     void request(Method method, RestApiRequestOptions const& options, std::function<void(Result<T, RestApiCode> const&)> callback) {
-        requestRaw(method, options, [callback = std::move(callback)](RawResult const& rawResult) mutable {
+        requestRaw(method, options, [this, callback = std::move(callback)](RawResult const& rawResult) mutable {
             if (!callback) {
                 return;
             }
 
             if (rawResult.isError()) {
-                callback(Result<T, RestApiCode>::error(rawResult.error()));
+                RestApiCode const errorCode {rawResult.error()};
+                m_taskExecutor.enqueue([callback = std::move(callback), errorCode]() mutable {
+                    callback(Result<T, RestApiCode>::error(errorCode));
+                });
                 return;
             }
 
-            std::string const responseBody {rawResult.value()};
-            std::thread([callback = std::move(callback), responseBody]() mutable {
+            std::string responseBody {rawResult.value()};
+
+            m_taskExecutor.enqueue([callback = std::move(callback), responseBody = std::move(responseBody)]() mutable {
                 callback(parseResponse<T>(responseBody));
-            }).detach();
+            });
         });
     }
 
@@ -143,6 +151,8 @@ private:
             return Result<T, RestApiCode>::error(RestApiCode::ParseError);
         }
     }
+
+    TaskExecutorIfc& m_taskExecutor;
 };
 
 #endif // SRC_PLATFORM_RESTAPI_API_REST_API_H

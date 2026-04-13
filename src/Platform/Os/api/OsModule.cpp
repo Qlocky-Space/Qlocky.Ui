@@ -1,8 +1,10 @@
 #include "OsModule.h"
 
 #include "AudioOutputIfc.h"
+#include "internal/AsyncTaskExecutor.h"
 #include "internal/TimeProvider.h"
 #include "NetworkDriverIfc.h"
+#include "TaskExecutorIfc.h"
 
 // include platform specific drivers
 #ifdef OS_IS_QLOCKY
@@ -15,6 +17,7 @@
 
 void OsModule::registerExports(Injector& container) {
     container.install(boost::di::bind<TimeProviderIfc>().to<TimeProvider>());
+    container.install(boost::di::bind<TaskExecutorIfc>().to<AsyncTaskExecutor>().in(boost::di::singleton));
 
 #ifdef OS_IS_QLOCKY
     container.install(boost::di::bind<AudioOutputIfc>().to<AudioOutputProcessDriver>());

@@ -41,7 +41,8 @@ QNetworkRequest createRequest(RestApiRequestOptions const& options) {
 
 } // namespace
 
-JsonRestFulApi::JsonRestFulApi() :
+JsonRestFulApi::JsonRestFulApi(TaskExecutorIfc& taskExecutor) :
+    RestApi {taskExecutor},
     m_networkAccessManager {} {
 }
 
