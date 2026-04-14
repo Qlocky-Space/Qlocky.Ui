@@ -14,6 +14,7 @@ Item {
     property string image: ""
 
     property Component trailing
+    property bool trailingClickable: false
 
     signal trailingClicked
 
@@ -57,8 +58,8 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
-                cursorShape: control.trailing !== null ? Qt.PointingHandCursor : Qt.ArrowCursor
-                enabled: control.trailing !== null
+                cursorShape: control.trailingClickable ? Qt.PointingHandCursor : Qt.ArrowCursor
+                enabled: control.trailingClickable && control.trailing !== null
                 onClicked: control.trailingClicked()
             }
         }

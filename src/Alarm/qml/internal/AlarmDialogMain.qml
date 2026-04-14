@@ -43,10 +43,6 @@ Item {
             text: "Active"
             image: "\uf00c"
 
-            button.onClicked: {
-                alarm.state = !alarm.state;
-            }
-
             trailing: QToggleButton {
                 checked: alarm.state
 
@@ -73,6 +69,7 @@ Item {
                 }
             }
 
+            trailingClickable: true
             onTrailingClicked: showComponent(repeatedComponent)
 
             trailing: AlarmDialogNavigateTrailing {
@@ -89,6 +86,7 @@ Item {
             text: "Music"
             image: "\uf001"
 
+            trailingClickable: true
             onTrailingClicked: showComponent(musicComponent)
 
             button.onClicked: {
