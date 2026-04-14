@@ -1,9 +1,9 @@
 #ifndef SRC_RADIO_API_RADIO_SOURCE_PROVIDER_IFC_H
 #define SRC_RADIO_API_RADIO_SOURCE_PROVIDER_IFC_H
 
-#include <functional>
 #include <optional>
 #include <string>
+#include <Task.h>
 
 #include "RadioEntity.h"
 #include "RadioSearchFilter.h"
@@ -34,9 +34,9 @@ public:
     /**
      * Resolve one provider-specific radio by provider ID.
      * @param providerRadioId Provider-local radio identifier.
-     * @param callback Receives the resolved radio or empty if not found.
+     * @return Task resolving to the radio or empty if not found.
      */
-    virtual void findRadioByProviderId(std::string const& providerRadioId, std::function<void(std::optional<RadioEntity> const&)> callback) = 0;
+    virtual Task<std::optional<RadioEntity>> findRadioByProviderId(std::string const& providerRadioId) = 0;
 };
 
 #endif // SRC_RADIO_API_RADIO_SOURCE_PROVIDER_IFC_H

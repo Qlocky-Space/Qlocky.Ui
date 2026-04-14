@@ -24,16 +24,14 @@ void QlockyApp::start(Injector& container) {
     }
 
     auto mediator = resolve<Mediator>();
-    mediator->setSynchronousDispatcher([](Mediator::Task task) {
+    mediator->setSynchronousDispatcher([](Mediator::WorkItem task) {
         QCoreApplication* application {QCoreApplication::instance()};
         if (application == nullptr || QThread::currentThread() == application->thread()) {
             task();
             return;
         }
 
-        QMetaObject::invokeMethod(application, [task = std::move(task)]() mutable {
-            task();
-        }, Qt::BlockingQueuedConnection);
+        QMetaObject::invokeMethod(application, [task = std::move(task)]() mutable { task(); }, Qt::BlockingQueuedConnection);
     });
 
     for (std::unique_ptr<ModuleBase>& module : m_modules) {

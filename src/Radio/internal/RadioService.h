@@ -69,7 +69,7 @@ public:
     /**
      * @see RadioServiceIfc::resolveRadioById
      */
-    void resolveRadioById(RadioId const& radioId, std::function<void(std::optional<RadioEntity> const&)> callback) final;
+    Task<std::optional<RadioEntity>> resolveRadioById(RadioId const& radioId) final;
 
 private:
 

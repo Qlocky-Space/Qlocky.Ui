@@ -41,7 +41,7 @@ public:
     /**
      * @see RadioSourceProviderIfc::findRadioByProviderId
      */
-    void findRadioByProviderId(std::string const& providerRadioId, std::function<void(std::optional<RadioEntity> const&)> callback) final;
+    Task<std::optional<RadioEntity>> findRadioByProviderId(std::string const& providerRadioId) final;
 
 private:
 

@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "EventIfc.h"
+#include "Task.h"
 #include "TaskExecutorIfc.h"
 
 /**
@@ -53,9 +54,9 @@ public:
     };
 
     /** Unit of work used by mediator dispatch operations. */
-    using Task = std::function<void()>;
+    using WorkItem = std::function<void()>;
 
-    using Dispatcher = std::function<void(Task)>;
+    using Dispatcher = std::function<void(WorkItem)>;
 
     /**
      * Shared event storage passed to internal callback wrappers.
@@ -112,6 +113,35 @@ public:
     }
 
     /**
+     * Subscribe a coroutine member-function handler to a specific event type.
+     *
+     * The coroutine is started immediately when the event is dispatched.
+     * @tparam Event The concrete event type to subscribe to.
+     * @tparam T The subscriber type.
+     * @param instance The subscriber instance.
+     * @param method Coroutine member function invoked for matching events.
+     */
+    template<typename Event, typename T>
+    void subscribe(T* instance, DetachedTask (T::*method)(Event const&)) {
+        subscribe<Event>(instance, method, SubscriptionOptions::synchronous());
+    }
+
+    /**
+     * Subscribe a Task-returning member-function handler to a specific event type.
+     *
+     * The task is detached automatically when the event is dispatched.
+     * @tparam Event The concrete event type to subscribe to.
+     * @tparam T The subscriber type.
+     * @tparam TResult Task result type.
+     * @param instance The subscriber instance.
+     * @param method Task-returning member function invoked for matching events.
+     */
+    template<typename Event, typename T, typename TResult>
+    void subscribe(T* instance, ::Task<TResult> (T::*method)(Event const&)) {
+        subscribe<Event>(instance, method, SubscriptionOptions::synchronous());
+    }
+
+    /**
      * Subscribes a callback to a specific event type with custom delivery options.
      *
     * Use this overload when the subscriber must control whether callbacks are
@@ -127,6 +157,41 @@ public:
     void subscribe(T* instance, void (T::*method)(Event const&), SubscriptionOptions options) {
         subscribe<Event>([instance, method](Event const& event) {
             (instance->*method)(event);
+        },
+            std::move(options));
+    }
+
+    /**
+     * Subscribe a coroutine member-function handler to a specific event type
+     * with custom delivery options.
+     * @tparam Event The concrete event type to subscribe to.
+     * @tparam T The subscriber type.
+     * @param instance The subscriber instance.
+     * @param method Coroutine member function invoked for matching events.
+     * @param options Delivery configuration for this subscription.
+     */
+    template<typename Event, typename T>
+    void subscribe(T* instance, DetachedTask (T::*method)(Event const&), SubscriptionOptions options) {
+        subscribe<Event>([instance, method](Event const& event) {
+            (instance->*method)(event);
+        },
+            std::move(options));
+    }
+
+    /**
+     * Subscribe a Task-returning member-function handler to a specific event type
+     * with custom delivery options.
+     * @tparam Event The concrete event type to subscribe to.
+     * @tparam T The subscriber type.
+     * @tparam TResult Task result type.
+     * @param instance The subscriber instance.
+     * @param method Task-returning member function invoked for matching events.
+     * @param options Delivery configuration for this subscription.
+     */
+    template<typename Event, typename T, typename TResult>
+    void subscribe(T* instance, ::Task<TResult> (T::*method)(Event const&), SubscriptionOptions options) {
+        subscribe<Event>([instance, method](Event const& event) {
+            detach((instance->*method)(event));
         },
             std::move(options));
     }
@@ -148,6 +213,31 @@ public:
     }
 
     /**
+     * Subscribe a coroutine callback to a specific event type.
+     *
+     * The coroutine is started immediately when the event is dispatched.
+     * @tparam T The type of the event to subscribe to.
+     * @param callback Coroutine callback invoked when the event occurs.
+     */
+    template<typename T>
+    void subscribe(std::function<DetachedTask(T const&)> callback) {
+        subscribe<T>(std::move(callback), SubscriptionOptions::synchronous());
+    }
+
+    /**
+     * Subscribe a Task-returning callback to a specific event type.
+     *
+     * The task is detached automatically when the event is dispatched.
+     * @tparam T The type of the event to subscribe to.
+     * @tparam TResult Task result type.
+     * @param callback Task-returning callback invoked when the event occurs.
+     */
+    template<typename T, typename TResult>
+    void subscribe(std::function<::Task<TResult>(T const&)> callback) {
+        subscribe<T, TResult>(std::move(callback), SubscriptionOptions::synchronous());
+    }
+
+    /**
     * Subscribes a callback to a specific event type with delivery options.
      *
      * @tparam T The type of the event to subscribe to.
@@ -164,6 +254,43 @@ public:
 
         // Protect the subscription registry so subscribe(...) can safely run
         // concurrently with notify(...) or other subscribe(...) calls.
+        std::lock_guard<std::mutex> const lock {m_callbacksMutex};
+        m_callbacks[typeid(T)].push_back(Subscription {std::move(wrapper), std::move(options)});
+    }
+
+    /**
+     * Subscribe a coroutine callback to a specific event type with delivery options.
+     * @tparam T The type of the event to subscribe to.
+     * @param callback Coroutine callback invoked when the event occurs.
+     * @param options Delivery mode for this subscription.
+     */
+    template<typename T>
+    void subscribe(std::function<DetachedTask(T const&)> callback, SubscriptionOptions options) {
+        static_assert(std::is_base_of<EventIfc, T>::value, "Event must derive from EventIfc");
+
+        auto wrapper = [cb = std::move(callback)](EventPayload const& event) {
+            cb(std::any_cast<T const&>(*event));
+        };
+
+        std::lock_guard<std::mutex> const lock {m_callbacksMutex};
+        m_callbacks[typeid(T)].push_back(Subscription {std::move(wrapper), std::move(options)});
+    }
+
+    /**
+     * Subscribe a Task-returning callback to a specific event type with delivery options.
+     * @tparam T The type of the event to subscribe to.
+     * @tparam TResult Task result type.
+     * @param callback Task-returning callback invoked when the event occurs.
+     * @param options Delivery mode for this subscription.
+     */
+    template<typename T, typename TResult>
+    void subscribe(std::function<::Task<TResult>(T const&)> callback, SubscriptionOptions options) {
+        static_assert(std::is_base_of<EventIfc, T>::value, "Event must derive from EventIfc");
+
+        auto wrapper = [cb = std::move(callback)](EventPayload const& event) {
+            detach(cb(std::any_cast<T const&>(*event)));
+        };
+
         std::lock_guard<std::mutex> const lock {m_callbacksMutex};
         m_callbacks[typeid(T)].push_back(Subscription {std::move(wrapper), std::move(options)});
     }
@@ -259,7 +386,7 @@ private:
      * available, otherwise in the calling thread. Asynchronous delivery is
      * submitted to the shared executor.
      */
-    void executeTask(SubscriptionOptions const& options, Task task) {
+    void executeTask(SubscriptionOptions const& options, WorkItem task) {
         if (options.deliveryMode == DeliveryMode::Async) {
             m_taskExecutor.enqueue(std::move(task));
             return;

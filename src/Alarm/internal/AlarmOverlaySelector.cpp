@@ -13,9 +13,8 @@ void AlarmOverlaySelector::initialize() {
     // Nothing to do
 }
 
-void AlarmOverlaySelector::onAlarmActivated(AlarmActivatedEvent const& event) {
+DetachedTask AlarmOverlaySelector::onAlarmActivated(AlarmActivatedEvent const& event) {
     m_activeAlarmId = event.alarm.id;
-    startRadioForAlarm(event.alarm);
 
     if (isDeviceInSleepMode()) {
         showLockscreenOverlay(event);
@@ -23,6 +22,8 @@ void AlarmOverlaySelector::onAlarmActivated(AlarmActivatedEvent const& event) {
     else {
         showDialogOverlay(event);
     }
+
+    co_await startRadioForAlarm(event.alarm);
 }
 
 void AlarmOverlaySelector::onAlarmUpdated(AlarmUpdatedEvent const& event) {
@@ -43,24 +44,23 @@ bool AlarmOverlaySelector::isDeviceInSleepMode() const {
     return false;
 }
 
-void AlarmOverlaySelector::startRadioForAlarm(AlarmEntity const& alarm) {
+Task<void> AlarmOverlaySelector::startRadioForAlarm(AlarmEntity const& alarm) {
     if (alarm.musicSourceId.empty()) {
-        return;
+        co_return;
     }
 
     AlarmId const alarmId {alarm.id};
-    m_radioService.resolveRadioById(alarm.musicSourceId, [this, alarmId](std::optional<RadioEntity> const& radio) {
-        if (!radio.has_value()) {
-            return;
-        }
+    std::optional<RadioEntity> const radio {co_await m_radioService.resolveRadioById(alarm.musicSourceId)};
+    if (!radio.has_value()) {
+        co_return;
+    }
 
-        if (!m_activeAlarmId.has_value() || m_activeAlarmId.value() != alarmId) {
-            return;
-        }
+    if (!m_activeAlarmId.has_value() || m_activeAlarmId.value() != alarmId) {
+        co_return;
+    }
 
-        m_radioService.selectRadio(*radio);
-        m_radioPlayer.play(*radio);
-    });
+    m_radioService.selectRadio(*radio);
+    m_radioPlayer.play(*radio);
 }
 
 void AlarmOverlaySelector::showLockscreenOverlay(AlarmActivatedEvent const& event) {

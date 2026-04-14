@@ -7,6 +7,7 @@
 #include <optional>
 #include <RadioPlayerIfc.h>
 #include <RadioServiceIfc.h>
+#include <Task.h>
 
 #include "events/AlarmActivatedEvent.h"
 #include "events/AlarmUpdatedEvent.h"
@@ -31,10 +32,10 @@ public:
 
 private:
 
-    void onAlarmActivated(AlarmActivatedEvent const& event);
+    DetachedTask onAlarmActivated(AlarmActivatedEvent const& event);
     void onAlarmUpdated(AlarmUpdatedEvent const& event);
     bool isDeviceInSleepMode() const;
-    void startRadioForAlarm(AlarmEntity const& alarm);
+    Task<void> startRadioForAlarm(AlarmEntity const& alarm);
     void showLockscreenOverlay(AlarmActivatedEvent const& event);
     void showDialogOverlay(AlarmActivatedEvent const& event);
 
