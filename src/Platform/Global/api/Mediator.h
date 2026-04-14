@@ -22,12 +22,11 @@
  * that event to all subscribers registered for the exact same event type.
  *
  * Delivery is synchronous by default. A subscriber may opt into asynchronous
- * delivery or provide a custom dispatcher when the callback must run on a
- * specific execution context, for example a UI thread.
+ * delivery.
  *
- * The mediator itself is intentionally framework-agnostic. Thread affinity,
- * queueing, and UI-thread dispatch are selected by the subscriber through
- * SubscriptionOptions instead of being hard-coded into the mediator.
+ * The mediator itself is intentionally framework-agnostic. Thread affinity
+ * for synchronous delivery can be configured globally, while asynchronous
+ * delivery is routed through the shared task executor.
  *
  * Thread-safety:
  * subscribe(...) and notify(...) may be called concurrently while the mediator
@@ -49,24 +48,13 @@ public:
         /** Execute the callback immediately in the thread calling notify(...). */
         Sync,
 
-        /** Execute the callback asynchronously when no custom dispatcher is supplied. */
+        /** Execute the callback asynchronously on the shared task executor. */
         Async,
     };
 
-    /**
-     * Unit of work used by custom dispatchers.
-     *
-     * A dispatcher receives a task and decides where and when to execute it.
-     * Typical examples are posting to a UI event loop or a worker queue.
-     */
+    /** Unit of work used by mediator dispatch operations. */
     using Task = std::function<void()>;
 
-    /**
-     * Custom dispatch hook used to route callback execution.
-     *
-     * If a dispatcher is present in SubscriptionOptions, it takes precedence
-     * over DeliveryMode.
-     */
     using Dispatcher = std::function<void(Task)>;
 
     /**
@@ -82,13 +70,11 @@ public:
     /**
      * Per-subscription delivery configuration.
      *
-    * Use synchronous() for direct delivery, asynchronous() for background
-     * background execution, or dispatched(...) when the subscriber must control
-     * the execution context explicitly.
+        * Use synchronous() for direct delivery and asynchronous() for background
+        * execution.
      */
     struct SubscriptionOptions {
         DeliveryMode deliveryMode {DeliveryMode::Sync};
-        Dispatcher dispatcher {};
 
         /**
          * Create the default synchronous delivery configuration.
@@ -100,23 +86,11 @@ public:
         /**
          * Create an asynchronous delivery configuration.
          *
-         * The callback is executed by the shared task executor service unless a
-         * custom dispatcher is supplied.
+         * The callback is executed by the shared task executor service.
          */
         static SubscriptionOptions asynchronous() {
             SubscriptionOptions options {};
             options.deliveryMode = DeliveryMode::Async;
-            return options;
-        }
-
-        /**
-         * Create a configuration that delegates execution to a custom dispatcher.
-         * @param dispatcher The dispatcher responsible for running the callback.
-         */
-        static SubscriptionOptions dispatched(Dispatcher dispatcher) {
-            SubscriptionOptions options {};
-            options.deliveryMode = DeliveryMode::Async;
-            options.dispatcher = std::move(dispatcher);
             return options;
         }
     };
@@ -140,8 +114,8 @@ public:
     /**
      * Subscribes a callback to a specific event type with custom delivery options.
      *
-     * Use this overload when the subscriber must control how callbacks are
-     * delivered, for example on a UI thread or asynchronously.
+    * Use this overload when the subscriber must control whether callbacks are
+    * delivered synchronously or asynchronously.
      *
      * @tparam Event The concrete event type to subscribe to.
      * @tparam T The subscriber type.
@@ -174,18 +148,11 @@ public:
     }
 
     /**
-     * Subscribes a callback to a specific event type with custom delivery options.
-     *
-     * Example usage for a UI subscriber:
-     * @code
-     * mediator.subscribe<MyEvent>(
-     *     [this](MyEvent const& event) { updateUi(event); },
-     *     Mediator::SubscriptionOptions::dispatched(uiDispatcher));
-     * @endcode
+    * Subscribes a callback to a specific event type with delivery options.
      *
      * @tparam T The type of the event to subscribe to.
      * @param callback The callback function to be invoked when the event occurs.
-     * @param options Delivery configuration for this subscription.
+    * @param options Delivery mode for this subscription.
      */
     template<typename T>
     void subscribe(std::function<void(T const&)> callback, SubscriptionOptions options) {
@@ -208,8 +175,8 @@ public:
      * The mediator matches subscribers by exact event type. It does not perform
      * inheritance-based routing.
      *
-     * notify(...) returns after all synchronous subscribers have run and after
-     * asynchronous/custom-dispatched subscribers have been scheduled. It does
+    * notify(...) returns after all synchronous subscribers have run and after
+    * asynchronous subscribers have been scheduled. It does
      * not wait for asynchronous work to finish.
      *
      * @param event The event data to be passed to the subscribers.
@@ -248,8 +215,24 @@ public:
      */
     explicit Mediator(TaskExecutorIfc& taskExecutor) :
         m_taskExecutor {taskExecutor},
+        m_synchronousDispatcher {},
         m_callbacks {},
-        m_callbacksMutex {} {
+        m_callbacksMutex {},
+        m_dispatcherMutex {} {
+    }
+
+    /**
+     * Sets the default dispatcher for synchronous subscriptions.
+     *
+     * When configured, subscriptions with SubscriptionOptions::synchronous()
+     * run through this dispatcher. This is typically used to bind synchronous
+     * callbacks to the UI thread.
+     *
+     * @param dispatcher Dispatcher used for synchronous subscriptions.
+     */
+    void setSynchronousDispatcher(Dispatcher dispatcher) {
+        std::lock_guard<std::mutex> const lock {m_dispatcherMutex};
+        m_synchronousDispatcher = std::move(dispatcher);
     }
 
     ~Mediator() = default;
@@ -272,20 +255,24 @@ private:
     /**
      * Execute a task according to the subscription delivery configuration.
      *
-     * Synchronous delivery runs in the calling thread. Asynchronous delivery is
-     * submitted to the shared executor unless a custom dispatcher is present,
-     * in which case the dispatcher defines the execution context.
+     * Synchronous delivery runs via the configured synchronous dispatcher when
+     * available, otherwise in the calling thread. Asynchronous delivery is
+     * submitted to the shared executor.
      */
     void executeTask(SubscriptionOptions const& options, Task task) {
-        if (options.dispatcher) {
-            options.dispatcher(std::move(task));
+        if (options.deliveryMode == DeliveryMode::Async) {
+            m_taskExecutor.enqueue(std::move(task));
             return;
         }
 
-        if (options.deliveryMode == DeliveryMode::Async) {
-            m_taskExecutor.enqueue(std::move(task));
+        Dispatcher synchronousDispatcher {};
+        {
+            std::lock_guard<std::mutex> const lock {m_dispatcherMutex};
+            synchronousDispatcher = m_synchronousDispatcher;
+        }
 
-            task();
+        if (synchronousDispatcher) {
+            synchronousDispatcher(std::move(task));
             return;
         }
 
@@ -305,8 +292,10 @@ private:
     }
 
     TaskExecutorIfc& m_taskExecutor;
+    Dispatcher m_synchronousDispatcher;
     std::unordered_map<std::type_index, std::vector<Subscription>> m_callbacks;
     std::mutex m_callbacksMutex;
+    std::mutex m_dispatcherMutex;
 };
 
 #endif
