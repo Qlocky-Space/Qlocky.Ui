@@ -1,6 +1,7 @@
 #ifndef SRC_RADIO_API_RADIO_SERVICE_IFC_H
 #define SRC_RADIO_API_RADIO_SERVICE_IFC_H
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -70,6 +71,17 @@ public:
      * @return The currently selected radio, if available.
      */
     virtual std::optional<RadioEntity> selectedRadio() const = 0;
+
+    /**
+     * Resolve a radio entity by its stable ID.
+     *
+     * The implementation may use local state (selection/favorites) and
+     * provider lookups when needed.
+     *
+     * @param radioId The radio identifier to resolve.
+     * @param callback Receives the resolved radio or empty if not found.
+     */
+    virtual void resolveRadioById(RadioId const& radioId, std::function<void(std::optional<RadioEntity> const&)> callback) = 0;
 };
 
 #endif // SRC_RADIO_API_RADIO_SERVICE_IFC_H

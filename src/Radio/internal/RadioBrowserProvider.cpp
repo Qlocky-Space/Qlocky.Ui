@@ -11,6 +11,7 @@ namespace {
 
 constexpr char const* RADIO_BROWSER_PROVIDER_ID {"radio-browser"};
 constexpr char const* RADIO_BROWSER_SEARCH_URL {"https://de1.api.radio-browser.info/json/stations/search"};
+constexpr char const* RADIO_BROWSER_BY_UUID_URL_PREFIX {"https://de1.api.radio-browser.info/json/stations/byuuid/"};
 constexpr char const* RADIO_BROWSER_USER_AGENT {"Qlocky/1.0"};
 constexpr int RADIO_BROWSER_LIMIT {1000};
 constexpr std::size_t RESULT_EMIT_BATCH_SIZE {100};
@@ -76,6 +77,30 @@ Stream<RadioSearchResult> RadioBrowserProvider::searchRadios(RadioSearchFilter c
             handleSearchResponse(result, observer);
         });
     }};
+}
+
+void RadioBrowserProvider::findRadioByProviderId(std::string const& providerRadioId, std::function<void(std::optional<RadioEntity> const&)> callback) {
+    if (!callback) {
+        return;
+    }
+
+    if (providerRadioId.empty()) {
+        callback(std::nullopt);
+        return;
+    }
+
+    RestApiRequestOptions options {};
+    options.url = std::string(RADIO_BROWSER_BY_UUID_URL_PREFIX) + QUrl::toPercentEncoding(QString::fromStdString(providerRadioId)).toStdString();
+    options.headers.push_back(RestApiHeader {"User-Agent", RADIO_BROWSER_USER_AGENT});
+
+    m_restApi.get<RadioBrowserAPIv1>(options, [this, callback = std::move(callback)](Result<RadioBrowserAPIv1, RestApiCode> const& result) mutable {
+        if (result.isError() || result.value().stations.empty()) {
+            callback(std::nullopt);
+            return;
+        }
+
+        callback(toSearchResult(result.value().stations.front()).radio);
+    });
 }
 
 void RadioBrowserProvider::handleSearchResponse(

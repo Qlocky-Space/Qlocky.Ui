@@ -93,3 +93,45 @@ void RadioService::selectRadio(std::optional<RadioEntity> const& radio) {
 std::optional<RadioEntity> RadioService::selectedRadio() const {
     return m_repository.getLastSelected();
 }
+
+void RadioService::resolveRadioById(RadioId const& radioId, std::function<void(std::optional<RadioEntity> const&)> callback) {
+    if (!callback) {
+        return;
+    }
+
+    if (radioId.empty()) {
+        callback(std::nullopt);
+        return;
+    }
+
+    auto const selected = m_repository.getLastSelected();
+    if (selected.has_value() && selected->id == radioId) {
+        callback(selected);
+        return;
+    }
+
+    auto const favorite = m_repository.getFavorite(radioId);
+    if (favorite.has_value()) {
+        callback(favorite);
+        return;
+    }
+
+    std::size_t const separatorIndex {radioId.find(':')};
+    if (separatorIndex == std::string::npos || separatorIndex == 0 || (separatorIndex + 1) >= radioId.size()) {
+        callback(std::nullopt);
+        return;
+    }
+
+    std::string const providerId {radioId.substr(0, separatorIndex)};
+    std::string const providerRadioId {radioId.substr(separatorIndex + 1)};
+
+    auto const providerIt = std::find_if(m_providers.begin(), m_providers.end(), [&providerId](std::shared_ptr<RadioSourceProviderIfc> const& provider) {
+        return provider && provider->providerId() == providerId;
+    });
+    if (providerIt == m_providers.end()) {
+        callback(std::nullopt);
+        return;
+    }
+
+    (*providerIt)->findRadioByProviderId(providerRadioId, std::move(callback));
+}
