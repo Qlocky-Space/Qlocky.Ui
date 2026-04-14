@@ -76,10 +76,15 @@ public:
 
 private:
 
+    void joinConnectionThread();
+    void joinScanThread();
+
     std::vector<NetworkInfo> m_networks {};
-    bool m_isUp {false};
-    bool m_connected {false};
-    std::thread m_thread {};
+    std::atomic<bool> m_isUp {false};
+    std::atomic<bool> m_connected {false};
+    std::atomic<bool> m_scanInProgress {false};
+    std::thread m_connectionThread {};
+    std::thread m_scanThread {};
 };
 
 #endif

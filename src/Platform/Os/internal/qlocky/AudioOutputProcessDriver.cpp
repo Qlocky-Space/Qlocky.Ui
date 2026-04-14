@@ -2,19 +2,22 @@
 
 #include <cerrno>
 #include <csignal>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <dirent.h>
 #include <fstream>
 #include <ng-log/logging.h>
-#include <sstream>
+#include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
 namespace {
 
-constexpr char const* PLAYER_EXECUTABLE {"gst-launch-1.0"};
+constexpr char const* PLAYER_EXECUTABLE_DEFAULT {"/usr/bin/gst-launch-1.0"};
+constexpr char const* PLAYER_EXECUTABLE_ENV {"QLOCKY_AUDIO_PLAYER_PATH"};
+constexpr char const* PLAYER_COMMAND_NAME {"gst-launch-1.0"};
+constexpr char const* PLAYER_PID_FILE_PATH {"/tmp/qlocky-audio-player.pid"};
 constexpr char const* BUFFER_DURATION {"buffer-duration=5000000000"}; // 5 seconds in nanoseconds
 constexpr char const* BUFFER_SIZE {"buffer-size=4194304"};            // 4 MB in bytes
 // TODO Just a rough estimation, shall be tuned and made it configurable. Ensure Min/Max audio volume (See AudioOutputMixer) is adjusted as well.
@@ -52,23 +55,10 @@ constexpr char const* EQ_FILTER_ARGUMENT {
     "band29::gain=-5.28 "
     "band30::gain=-6.48"};
 
-std::vector<std::string> splitPath(std::string const& path) {
-    std::vector<std::string> entries {};
-    std::stringstream stream {path};
-    std::string entry {};
-    while (std::getline(stream, entry, ':')) {
-        if (!entry.empty()) {
-            entries.push_back(entry);
-        }
-    }
-
-    return entries;
-}
-
 } // namespace
 
 AudioOutputProcessDriver::AudioOutputProcessDriver() {
-    terminateExistingPlayers();
+    cleanupTrackedPlayer();
 }
 
 AudioOutputProcessDriver::~AudioOutputProcessDriver() {
@@ -86,7 +76,7 @@ AudioOutputResult AudioOutputProcessDriver::play(std::string const& source) {
 
     auto const playerCommand = resolvePlayerCommand();
     if (!playerCommand.has_value()) {
-        LOG(WARNING) << "No supported OS audio player backend found in PATH";
+        LOG(WARNING) << "No supported OS audio player backend found";
         notify(&AudioOutputListenerIfc::onPlaybackFailed, AudioOutputErrorCode::ERROR_BACKEND_NOT_AVAILABLE);
         return AudioOutputResult::error(AudioOutputErrorCode::ERROR_BACKEND_NOT_AVAILABLE);
     }
@@ -118,7 +108,7 @@ AudioOutputResult AudioOutputProcessDriver::play(std::string const& source) {
         }
         argv.push_back(nullptr);
 
-        execvp(playerCommand->executable.c_str(), argv.data());
+        execv(playerCommand->executable.c_str(), argv.data());
         _exit(127);
     }
 
@@ -128,6 +118,8 @@ AudioOutputResult AudioOutputProcessDriver::play(std::string const& source) {
         m_playing = true;
         m_currentSource = source;
     }
+
+    storeTrackedPlayerPid(pid);
 
     m_waitThread = std::thread([this, pid]() {
         waitForPlayer(pid);
@@ -161,6 +153,8 @@ AudioOutputResult AudioOutputProcessDriver::stop() {
         m_waitThread.join();
     }
 
+    clearTrackedPlayerPid();
+
     notify(&AudioOutputListenerIfc::onPlaybackStopped);
     return AudioOutputResult::success(true);
 }
@@ -171,71 +165,87 @@ bool AudioOutputProcessDriver::isPlaying() const {
 }
 
 std::optional<AudioOutputProcessDriver::PlayerCommand> AudioOutputProcessDriver::resolvePlayerCommand() {
-    if (isExecutableAvailable(PLAYER_EXECUTABLE)) {
-        return PlayerCommand {PLAYER_EXECUTABLE, {"playbin", BUFFER_DURATION, BUFFER_SIZE, EQ_FILTER_ARGUMENT}};
+    std::string executable {PLAYER_EXECUTABLE_DEFAULT};
+
+    char const* configuredExecutable = std::getenv(PLAYER_EXECUTABLE_ENV);
+    if (configuredExecutable != nullptr && configuredExecutable[0] != '\0') {
+        std::string const configuredPath {configuredExecutable};
+        if (configuredPath.front() != '/') {
+            LOG(WARNING) << "Ignoring non-absolute audio player path from " << PLAYER_EXECUTABLE_ENV;
+            return std::nullopt;
+        }
+
+        executable = configuredPath;
+    }
+
+    if (isExecutableAvailable(executable)) {
+        return PlayerCommand {executable, {"playbin", BUFFER_DURATION, BUFFER_SIZE, EQ_FILTER_ARGUMENT}};
     }
 
     return std::nullopt;
 }
 
-void AudioOutputProcessDriver::terminateExistingPlayers() {
-    DIR* procDir {opendir("/proc")};
-    if (procDir == nullptr) {
-        LOG(WARNING) << "Failed to open /proc for stale audio player cleanup";
+void AudioOutputProcessDriver::cleanupTrackedPlayer() {
+    std::ifstream pidFile {PLAYER_PID_FILE_PATH};
+    if (!pidFile.is_open()) {
         return;
     }
 
-    pid_t const currentPid {getpid()};
-    dirent* entry {nullptr};
-    while ((entry = readdir(procDir)) != nullptr) {
-        char* endPtr {nullptr};
-        long const rawPid {std::strtol(entry->d_name, &endPtr, 10)};
-        if (endPtr == nullptr || *endPtr != '\0' || rawPid <= 0) {
-            continue;
-        }
-
-        pid_t const candidatePid {static_cast<pid_t>(rawPid)};
-        if (candidatePid == currentPid) {
-            continue;
-        }
-
-        std::ifstream commandFile {std::string {"/proc/"} + entry->d_name + "/comm"};
-        if (!commandFile.is_open()) {
-            continue;
-        }
-
-        std::string commandName {};
-        std::getline(commandFile, commandName);
-        if (commandName != PLAYER_EXECUTABLE) {
-            continue;
-        }
-
-        if (kill(candidatePid, SIGTERM) != 0 && errno != ESRCH) {
-            LOG(WARNING) << "Failed to terminate stale audio player process pid=" << candidatePid;
-        }
+    pid_t trackedPid {-1};
+    pidFile >> trackedPid;
+    if (trackedPid <= 0) {
+        clearTrackedPlayerPid();
+        return;
     }
 
-    closedir(procDir);
+    if (kill(trackedPid, 0) != 0) {
+        clearTrackedPlayerPid();
+        return;
+    }
+
+    if (!isTrackedPlayerProcess(trackedPid)) {
+        clearTrackedPlayerPid();
+        return;
+    }
+
+    if (kill(trackedPid, SIGTERM) != 0 && errno != ESRCH) {
+        LOG(WARNING) << "Failed to terminate tracked audio player process pid=" << trackedPid;
+    }
+
+    clearTrackedPlayerPid();
 }
 
-bool AudioOutputProcessDriver::isExecutableAvailable(std::string const& executable) {
-    if (executable.find('/') != std::string::npos) {
-        return access(executable.c_str(), X_OK) == 0;
+void AudioOutputProcessDriver::storeTrackedPlayerPid(pid_t pid) {
+    std::ofstream pidFile {PLAYER_PID_FILE_PATH, std::ios::trunc};
+    if (!pidFile.is_open()) {
+        LOG(WARNING) << "Failed to write audio player pid file";
+        return;
     }
 
-    char const* pathEnv = std::getenv("PATH");
-    if (pathEnv == nullptr) {
+    pidFile << pid;
+}
+
+void AudioOutputProcessDriver::clearTrackedPlayerPid() {
+    std::remove(PLAYER_PID_FILE_PATH);
+}
+
+bool AudioOutputProcessDriver::isTrackedPlayerProcess(pid_t pid) {
+    std::ifstream commandFile {std::string {"/proc/"} + std::to_string(pid) + "/comm"};
+    if (!commandFile.is_open()) {
         return false;
     }
 
-    for (std::string const& entry : splitPath(pathEnv)) {
-        std::string const candidate = entry + "/" + executable;
-        if (access(candidate.c_str(), X_OK) == 0) {
-            return true;
-        }
+    std::string commandName {};
+    std::getline(commandFile, commandName);
+    return commandName == PLAYER_COMMAND_NAME;
+}
+
+bool AudioOutputProcessDriver::isExecutableAvailable(std::string const& executable) {
+    if (executable.empty() || executable.front() != '/') {
+        return false;
     }
 
-    return false;
+    return access(executable.c_str(), X_OK) == 0;
 }
 
 void AudioOutputProcessDriver::waitForPlayer(pid_t pid) {
@@ -254,6 +264,7 @@ void AudioOutputProcessDriver::waitForPlayer(pid_t pid) {
     }
 
     if (notifyStopped) {
+        clearTrackedPlayerPid();
         notify(&AudioOutputListenerIfc::onPlaybackStopped);
     }
 }

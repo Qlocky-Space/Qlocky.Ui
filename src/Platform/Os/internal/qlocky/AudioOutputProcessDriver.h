@@ -63,7 +63,10 @@ private:
         std::vector<std::string> arguments;
     };
 
-    static void terminateExistingPlayers();
+    static void cleanupTrackedPlayer();
+    static void storeTrackedPlayerPid(pid_t pid);
+    static void clearTrackedPlayerPid();
+    static bool isTrackedPlayerProcess(pid_t pid);
     static std::optional<PlayerCommand> resolvePlayerCommand();
     static bool isExecutableAvailable(std::string const& executable);
     void waitForPlayer(pid_t pid);
