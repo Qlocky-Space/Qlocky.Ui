@@ -11,7 +11,7 @@ Item {
     implicitWidth: content.implicitWidth
 
     signal showComponent(Component component)
-    signal done()
+    signal done
 
     Column {
         id: content
@@ -28,8 +28,8 @@ Item {
             anchors.right: parent.right
             anchors.left: parent.left
 
-            onClicked: function(time) {
-                alarm.dueTime = TimeConverter.relativeTimeToUtc(time)
+            onClicked: function (time) {
+                alarm.dueTime = TimeConverter.relativeTimeToUtc(time);
             }
         }
 
@@ -43,6 +43,10 @@ Item {
             text: "Active"
             image: "\uf00c"
 
+            button.onClicked: {
+                alarm.state = !alarm.state;
+            }
+
             trailing: QToggleButton {
                 checked: alarm.state
 
@@ -51,7 +55,6 @@ Item {
                 }
             }
         }
-
 
         AlarmDialogProperty {
             id: repeatedStatus
@@ -62,26 +65,18 @@ Item {
             text: "Repeat"
             image: "\uf363"
 
-            trailing: Row {
-                spacing: 10
-                QLabel {
-                    text: AlarmDayUtils.getDaysDisplay(alarm.daysOfWeek)
-                    color: ThemeManager.theme.labelSecondary
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                QIcon {
-                    icon: "\uf054"
-                    color: ThemeManager.theme.labelSecondary
-                    anchors.verticalCenter: parent.verticalCenter
+            button.onClicked: {
+                if (alarm.daysOfWeek !== DayOfWeekViewModel.None) {
+                    alarm.daysOfWeek = DayOfWeekViewModel.None;
+                } else {
+                    showComponent(repeatedComponent);
                 }
             }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    showComponent(repeatedComponent);
-                }
+            onTrailingClicked: showComponent(repeatedComponent)
+
+            trailing: AlarmDialogNavigateTrailing {
+                text: AlarmDayUtils.getDaysDisplay(alarm.daysOfWeek)
             }
         }
 
@@ -90,13 +85,23 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            status: false
+            status: alarm.musicSourceId.length > 0
             text: "Music"
             image: "\uf001"
 
-            trailing: QLabel {
-                text: "Not supported yet"
-                color: ThemeManager.theme.labelSecondary
+            onTrailingClicked: showComponent(musicComponent)
+
+            button.onClicked: {
+                if (alarm.musicSourceId.length > 0) {
+                    alarm.musicSourceId = "";
+                    alarm.musicSourceName = "";
+                } else {
+                    showComponent(musicComponent);
+                }
+            }
+
+            trailing: AlarmDialogNavigateTrailing {
+                text: alarm.musicSourceId.length > 0 ? alarm.musicSourceName : qsTr("Choose source")
             }
         }
 

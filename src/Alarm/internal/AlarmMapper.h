@@ -30,6 +30,8 @@ public:
         viewModel->setSnoozeTime(entity.snoozeTime);
         viewModel->setMaxSnoozeCount(entity.maxSnoozeCount);
         viewModel->setSnoozeCount(entity.snoozeCount);
+        viewModel->setMusicSourceId(QString::fromStdString(entity.musicSourceId));
+        viewModel->setMusicSourceName(QString::fromStdString(entity.musicSourceName));
 
         // @note: When adding new attributes to AlarmEntity or AlarmItemViewModel,
         // add the mapping here.
@@ -51,6 +53,8 @@ public:
             static_cast<DayOfWeek>(viewModel.getDaysOfWeek().toInt()),
             viewModel.snoozeTime(),
             viewModel.getMaxSnoozeCount(),
+            viewModel.getMusicSourceId().toStdString(),
+            viewModel.getMusicSourceName().toStdString(),
             viewModel.getSnoozeCount(),
         };
 

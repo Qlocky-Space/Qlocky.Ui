@@ -9,6 +9,10 @@ Item {
 
     signal done()
 
+    function confirmSelection() {
+        done();
+    }
+
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
 
@@ -54,12 +58,5 @@ Item {
             }
         }
 
-        QButton {
-            text: qsTr("Return")
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: {
-                done()
-            }
-        }
     }
 }
