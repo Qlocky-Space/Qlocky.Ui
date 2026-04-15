@@ -97,7 +97,7 @@ void JsonRestFulApi::requestRaw(Method method, RestApiRequestOptions const& opti
             }
             LOG(WARNING) << "Proceeding with request despite SSL certificate validation failure.";
 
-            // Just for debugging purposes, we log the SSL errors but ignore them to allow the request to proceed. Ensure SSL is working
+            // TODO Just for debugging purposes, we log the SSL errors but ignore them to allow the request to proceed. Ensure SSL is working
             reply->ignoreSslErrors();
         });
 

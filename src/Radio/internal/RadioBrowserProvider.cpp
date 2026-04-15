@@ -73,10 +73,15 @@ Stream<RadioSearchResult> RadioBrowserProvider::searchRadios(RadioSearchFilter c
         options.url = createSearchUrl(filter);
         options.headers.push_back(RestApiHeader {"User-Agent", RADIO_BROWSER_USER_AGENT});
 
-        m_restApi.get<RadioBrowserAPIv1>(options, [this, observer](Result<RadioBrowserAPIv1, RestApiCode> const& result) {
-            handleSearchResponse(result, observer);
-        });
+        detach(searchRadiosAsync(std::move(options), observer));
     }};
+}
+
+Task<void> RadioBrowserProvider::searchRadiosAsync(
+    RestApiRequestOptions options,
+    Stream<RadioSearchResult>::Observer observer) {
+    Result<RadioBrowserAPIv1, RestApiCode> const result {co_await m_restApi.get<RadioBrowserAPIv1>(options)};
+    handleSearchResponse(result, observer);
 }
 
 Task<std::optional<RadioEntity>> RadioBrowserProvider::findRadioByProviderId(std::string const& providerRadioId) {

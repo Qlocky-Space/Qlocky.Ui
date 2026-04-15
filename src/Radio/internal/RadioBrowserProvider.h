@@ -48,6 +48,9 @@ private:
     void handleSearchResponse(
         Result<RadioBrowserAPIv1, RestApiCode> const& result,
         Stream<RadioSearchResult>::Observer const& observer);
+    Task<void> searchRadiosAsync(
+        RestApiRequestOptions options,
+        Stream<RadioSearchResult>::Observer observer);
     void emitBatch(
         std::shared_ptr<std::vector<RadioSearchResult>> const& results,
         std::size_t nextIndex,
