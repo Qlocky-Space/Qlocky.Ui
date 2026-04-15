@@ -24,6 +24,11 @@ set(VSCODE_LAUNCH_COMMANDS [[
         "envFile": "/workspaces/.env",
         "miDebuggerServerAddress": "$ENV{REMOTE_HOST}:2000",
         "MIMode": "gdb",
+        "setupCommands": [
+                {
+                    "text": "-enable-pretty-printing"
+                }
+        ],
         "miDebuggerPath": "$ENV{OECORE_NATIVE_SYSROOT}/usr/bin/aarch64-poky-linux/aarch64-poky-linux-gdb"
     }
 ]])

@@ -24,7 +24,12 @@ set(VSCODE_LAUNCH_COMMANDS [[
     "linux": {
         "preLaunchTask": "CMake: build",
         "MIMode": "gdb",
-        "miDebuggerPath": "gdb"
+        "miDebuggerPath": "gdb",
+        "setupCommands": [
+                {
+                    "text": "-enable-pretty-printing"
+                }
+        ],
     },
     "environment": [
         {
