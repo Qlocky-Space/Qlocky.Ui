@@ -14,6 +14,9 @@ Item {
     property string image: ""
 
     property Component trailing
+    property bool trailingClickable: false
+
+    signal trailingClicked
 
     implicitHeight: layout.implicitHeight
     implicitWidth: layout.implicitWidth
@@ -39,12 +42,26 @@ Item {
             text: control.text
         }
 
-        Loader {
-            id: trailingLoader
+        Item {
+            id: trailingContainer
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            implicitWidth: trailingLoader.implicitWidth
+            implicitHeight: trailingLoader.implicitHeight
 
-            sourceComponent: control.trailing
-            active: control.trailing !== null
+            Loader {
+                id: trailingLoader
+                anchors.fill: parent
+
+                sourceComponent: control.trailing
+                active: control.trailing !== null
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: control.trailingClickable ? Qt.PointingHandCursor : Qt.ArrowCursor
+                enabled: control.trailingClickable && control.trailing !== null
+                onClicked: control.trailingClicked()
+            }
         }
     }
 }

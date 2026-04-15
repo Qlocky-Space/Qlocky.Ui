@@ -30,6 +30,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioCardViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSettingsPageViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSettingsPageViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioSourceViewModelBase.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/RadioSourceViewModelBase.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSourceSelectDialogViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/RadioSourceSelectDialogViewModel.h
 )

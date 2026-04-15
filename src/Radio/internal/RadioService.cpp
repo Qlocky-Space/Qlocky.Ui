@@ -93,3 +93,36 @@ void RadioService::selectRadio(std::optional<RadioEntity> const& radio) {
 std::optional<RadioEntity> RadioService::selectedRadio() const {
     return m_repository.getLastSelected();
 }
+
+Task<std::optional<RadioEntity>> RadioService::resolveRadioById(RadioId const& radioId) {
+    if (radioId.empty()) {
+        co_return std::nullopt;
+    }
+
+    auto const selected = m_repository.getLastSelected();
+    if (selected.has_value() && selected->id == radioId) {
+        co_return selected;
+    }
+
+    auto const favorite = m_repository.getFavorite(radioId);
+    if (favorite.has_value()) {
+        co_return favorite;
+    }
+
+    std::size_t const separatorIndex {radioId.find(':')};
+    if (separatorIndex == std::string::npos || separatorIndex == 0 || (separatorIndex + 1) >= radioId.size()) {
+        co_return std::nullopt;
+    }
+
+    std::string const providerId {radioId.substr(0, separatorIndex)};
+    std::string const providerRadioId {radioId.substr(separatorIndex + 1)};
+
+    auto const providerIt = std::find_if(m_providers.begin(), m_providers.end(), [&providerId](std::shared_ptr<RadioSourceProviderIfc> const& provider) {
+        return provider && provider->providerId() == providerId;
+    });
+    if (providerIt == m_providers.end()) {
+        co_return std::nullopt;
+    }
+
+    co_return co_await(*providerIt)->findRadioByProviderId(providerRadioId);
+}

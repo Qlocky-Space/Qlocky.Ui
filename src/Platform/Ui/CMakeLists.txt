@@ -40,6 +40,7 @@ set(MODULE_SRC
 
 set(MODULE_QML_SRC
     qml/internal/AutoScroller.qml
+    qml/QBottomNavigation.qml
     qml/QButton.qml
     qml/QMenuItem.qml
     qml/QMenu.qml

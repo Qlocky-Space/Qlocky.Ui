@@ -66,6 +66,11 @@ public:
      */
     std::optional<RadioEntity> selectedRadio() const final;
 
+    /**
+     * @see RadioServiceIfc::resolveRadioById
+     */
+    Task<std::optional<RadioEntity>> resolveRadioById(RadioId const& radioId) final;
+
 private:
 
     RadioRepositoryIfc& m_repository;

@@ -197,15 +197,18 @@ void AudioOutputMixer::volumeWatchLoop() {
 }
 
 bool AudioOutputMixer::setOutputVolume(uint8_t volumePercent) {
-    std::lock_guard<std::mutex> lock {m_mutex};
-
     uint8_t actualPercent {0};
-    bool const success = writeVolumeLocked(volumePercent, actualPercent);
-    if (!success) {
-        return false;
+    {
+        std::lock_guard<std::mutex> lock {m_mutex};
+
+        bool const success = writeVolumeLocked(volumePercent, actualPercent);
+        if (!success) {
+            return false;
+        }
+
+        m_cachedVolume.store(actualPercent);
     }
 
-    m_cachedVolume.store(actualPercent);
     notify(&AudioMixerListenerIfc::onVolumeChanged, static_cast<uint8_t>(actualPercent));
     return true;
 }

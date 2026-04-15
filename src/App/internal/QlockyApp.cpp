@@ -4,7 +4,9 @@
 #include <events/ApplicationStartedEvent.h>
 #include <Mediator.h>
 #include <QCoreApplication>
+#include <QMetaObject>
 #include <QQmlApplicationEngine>
+#include <QThread>
 
 #include "Navigation/InteractiveNavigatorIfc.h"
 #include "UiEngineIfc.h"
@@ -20,6 +22,18 @@ void QlockyApp::start(Injector& container) {
     for (std::unique_ptr<ModuleBase>& module : m_modules) {
         module->registers(container);
     }
+
+    auto mediator = resolve<Mediator>();
+    mediator->setSynchronousDispatcher([](Mediator::WorkItem task) {
+        QCoreApplication* application {QCoreApplication::instance()};
+        if (application == nullptr || QThread::currentThread() == application->thread()) {
+            task();
+            return;
+        }
+
+        QMetaObject::invokeMethod(application, [task = std::move(task)]() mutable { task(); }, Qt::BlockingQueuedConnection);
+    });
+
     for (std::unique_ptr<ModuleBase>& module : m_modules) {
         module->registerQml();
     }
@@ -29,7 +43,7 @@ void QlockyApp::start(Injector& container) {
 
     QUrl const url("qrc:/qt/qml/AppShell/qml/Main.qml");
     auto& engine {resolve<UiEngineIfc>()->getAppEngine()};
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, qApp, [this, url](QObject* obj, QUrl const& objUrl) {
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, qApp, [this, url, mediator](QObject* obj, QUrl const& objUrl) {
         if (!obj && url == objUrl) {
             QCoreApplication::exit(-1);
             return;
@@ -38,7 +52,6 @@ void QlockyApp::start(Injector& container) {
         auto navigator = resolve<InteractiveNavigatorIfc>();
         navigator->navigateTo(UriQuery {"qlocky://main"});
 
-        auto mediator = resolve<Mediator>();
         mediator->notify(ApplicationStartedEvent {});
     });
 

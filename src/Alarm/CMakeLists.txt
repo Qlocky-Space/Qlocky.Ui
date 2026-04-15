@@ -34,6 +34,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDialogViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmActiveDialogViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmActiveDialogViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmMusicSourceViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/AlarmMusicSourceViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/TimeConverter.h
     ${CMAKE_CURRENT_LIST_DIR}/view/AlarmDayUtils.cpp
@@ -50,6 +52,8 @@ set(MODULE_QML_SRC
     qml/internal/AlarmListItem.qml
     qml/internal/AlarmSwipeButton.qml
     qml/internal/AlarmDialogRepeated.qml
+    qml/internal/AlarmDialogMusicSource.qml
+    qml/internal/AlarmDialogNavigateTrailing.qml
     qml/internal/AlarmDialogMain.qml
     qml/internal/AlarmDialogProperty.qml
     qml/AlarmListCard.qml
@@ -65,6 +69,7 @@ set(MODULE_LINK
     qlocky::Widget
     qlocky::Os
     qlocky::Device
+    qlocky::Radio
 
     nlohmann_json::nlohmann_json
 )

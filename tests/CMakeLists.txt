@@ -18,11 +18,16 @@ add_executable(${TARGET_NAME}Test
     TestTimeConverter.cpp
     TestPskEncryption.cpp
     TestUuid.cpp
+    TestSubjectThreadSafety.cpp
+    TestNetworkDriverStubConcurrency.cpp
 )
 
 target_include_directories(${TARGET_NAME}Test PRIVATE
     .
     ../src/Alarm
+    ../src/Platform/Global/api
+    ../src/Platform/Os/api
+    ../src/Platform/Os/internal/mock
     ../src/Platform/Network
     ../src/Platform/Device
 )

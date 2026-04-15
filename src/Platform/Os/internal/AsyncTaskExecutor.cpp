@@ -1,7 +1,7 @@
 #include "AsyncTaskExecutor.h"
 
 AsyncTaskExecutor::AsyncTaskExecutor() {
-    std::size_t const suggestedWorkerCount {static_cast<std::size_t>(std::thread::hardware_concurrency())};
+    std::size_t const suggestedWorkerCount {2U};
     std::size_t const workerCount {suggestedWorkerCount == 0 ? 1 : suggestedWorkerCount};
     m_workers.reserve(workerCount);
 

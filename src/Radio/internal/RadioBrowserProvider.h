@@ -38,6 +38,11 @@ public:
      */
     Stream<RadioSearchResult> searchRadios(RadioSearchFilter const& filter) final;
 
+    /**
+     * @see RadioSourceProviderIfc::findRadioByProviderId
+     */
+    Task<std::optional<RadioEntity>> findRadioByProviderId(std::string const& providerRadioId) final;
+
 private:
 
     void handleSearchResponse(

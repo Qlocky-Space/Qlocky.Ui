@@ -25,10 +25,12 @@ struct AlarmEntity {
     uint32_t dueTimeUtc;  // Due time since 00:00 in UTC (seconds since start of day)
     DayOfWeek daysOfWeek; // Days of the week when the alarm is active
 
-    uint32_t snoozeTime;    // Snooze time in minutes
-    uint8_t maxSnoozeCount; // Maximum number of snoozes allowed
+    uint32_t snoozeTime;         // Snooze time in minutes
+    uint8_t maxSnoozeCount;      // Maximum number of snoozes allowed
+    std::string musicSourceId;   // Radio source identifier for the alarm music
+    std::string musicSourceName; // Display name of the selected music source. Used to display name without music service lookup.
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(AlarmEntity, id, name, isActive, dueTimeUtc, daysOfWeek, maxSnoozeCount, snoozeTime)
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(AlarmEntity, id, name, isActive, dueTimeUtc, daysOfWeek, maxSnoozeCount, snoozeTime, musicSourceId, musicSourceName)
 
     uint8_t snoozeCount; // Current snooze count. Only temporary, not stored in the database.
 };

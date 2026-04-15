@@ -26,6 +26,8 @@ class AlarmItemViewModel : public QObject {
     Q_PROPERTY(uint8_t maxSnoozeCount READ getMaxSnoozeCount WRITE setMaxSnoozeCount NOTIFY maxSnoozeCountChanged)
     Q_PROPERTY(uint8_t snoozeCount READ getSnoozeCount WRITE setSnoozeCount NOTIFY snoozeCountChanged)
     Q_PROPERTY(DayOfWeekViewModel::Days daysOfWeek READ getDaysOfWeek WRITE setDaysOfWeek NOTIFY daysOfWeekChanged)
+    Q_PROPERTY(QString musicSourceId READ getMusicSourceId WRITE setMusicSourceId NOTIFY musicSourceIdChanged)
+    Q_PROPERTY(QString musicSourceName READ getMusicSourceName WRITE setMusicSourceName NOTIFY musicSourceNameChanged)
 
 public:
 
@@ -150,6 +152,34 @@ public:
     void setDaysOfWeek(DayOfWeekViewModel::Days daysOfWeek);
 
     /**
+     * Gets the music source identifier.
+     * @return The music source ID string.
+     */
+    QString getMusicSourceId() const {
+        return m_musicSourceId;
+    }
+
+    /**
+     * Sets the music source identifier.
+     * @param musicSourceId The new music source ID.
+     */
+    void setMusicSourceId(QString const& musicSourceId);
+
+    /**
+     * Gets the music source display name.
+     * @return The music source name string.
+     */
+    QString getMusicSourceName() const {
+        return m_musicSourceName;
+    }
+
+    /**
+     * Sets the music source display name.
+     * @param musicSourceName The new music source name.
+     */
+    void setMusicSourceName(QString const& musicSourceName);
+
+    /**
      * Updates this view model from another instance.
      * @param other The source view model to copy data from.
      */
@@ -163,6 +193,8 @@ signals:
     void maxSnoozeCountChanged();
     void snoozeCountChanged();
     void daysOfWeekChanged();
+    void musicSourceIdChanged();
+    void musicSourceNameChanged();
 
 private:
 
@@ -174,6 +206,8 @@ private:
     uint8_t m_maxSnoozeCount;
     uint8_t m_snoozeCount;
     DayOfWeekViewModel::Days m_daysOfWeek;
+    QString m_musicSourceId;
+    QString m_musicSourceName;
 };
 
 #endif

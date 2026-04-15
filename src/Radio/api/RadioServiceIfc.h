@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <optional>
+#include <Task.h>
 #include <vector>
 
 #include "RadioEntity.h"
@@ -70,6 +71,17 @@ public:
      * @return The currently selected radio, if available.
      */
     virtual std::optional<RadioEntity> selectedRadio() const = 0;
+
+    /**
+     * Resolve a radio entity by its stable ID.
+     *
+     * The implementation may use local state (selection/favorites) and
+     * provider lookups when needed.
+     *
+     * @param radioId The radio identifier to resolve.
+     * @return Task resolving to the radio or empty if not found.
+     */
+    virtual Task<std::optional<RadioEntity>> resolveRadioById(RadioId const& radioId) = 0;
 };
 
 #endif // SRC_RADIO_API_RADIO_SERVICE_IFC_H

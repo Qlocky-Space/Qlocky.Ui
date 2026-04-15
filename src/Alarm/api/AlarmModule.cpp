@@ -16,6 +16,7 @@
 #include "view/AlarmDialogViewModel.h"
 #include "view/AlarmListCardViewModel.h"
 #include "view/AlarmListModel.h"
+#include "view/AlarmMusicSourceViewModel.h"
 #include "view/ClockCardViewModel.h"
 #include "view/DayOfWeekViewModel.h"
 #include "view/TimeConverter.h"
@@ -31,6 +32,7 @@ void AlarmModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<AlarmListCardViewModel>(*this, "AlarmListCardViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<AlarmDialogViewModel>(*this, "AlarmDialogViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<AlarmActiveDialogViewModel>(*this, "AlarmActiveDialogViewModel");
+    QmlRegistryUtil::qmlRegisterViewModel<AlarmMusicSourceViewModel>(*this, "AlarmMusicSourceViewModel");
 
     qmlRegisterSingletonInstance<TimeConverter>("Alarm", 1, 0, "TimeConverter", resolve<TimeConverter>().get());
     qmlRegisterSingletonInstance<AlarmDayUtils>("Alarm", 1, 0, "AlarmDayUtils", resolve<AlarmDayUtils>().get());
