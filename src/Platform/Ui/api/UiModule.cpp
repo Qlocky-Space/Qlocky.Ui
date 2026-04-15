@@ -10,6 +10,8 @@
 #include "internal/QrGenerator.h"
 #include "internal/QrQuickImageProvider.h"
 #include "internal/UiEngine.h"
+#include "internal/Widget/WidgetLoader.h"
+#include "internal/Widget/WidgetRegistrator.h"
 #include "Navigation/NavigateToCommand.h"
 #include "QmlRegistryUtil.h"
 
@@ -20,6 +22,8 @@ void UiModule::registerExports(Injector& container) {
     container.install(boost::di::bind<CommandExecutor>().to<CommandExecutor>());
     container.install(boost::di::bind<InteractiveProvider>().to<InteractiveProvider>());
     container.install(boost::di::bind<InteractiveUriRegistryIfc>().to<InteractiveUriRegistry>());
+    container.install(boost::di::bind<WidgetLoaderIfc>().to<WidgetLoader>());
+    container.install(boost::di::bind<WidgetRegistratorIfc>().to<WidgetRegistrator>());
 }
 
 void UiModule::registerQmlTypes() {

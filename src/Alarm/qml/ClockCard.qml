@@ -2,11 +2,10 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import Widget
 import Ui
 import Alarm
 
-Widget {
+QWidget {
     FontLoader {
         id: digiFont
         source: "/Alarm/resources/fonts/cour.ttf"

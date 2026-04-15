@@ -1,6 +1,6 @@
 #include "RadioModule.h"
 
-#include <WidgetRegistratorIfc.h>
+#include <Widget/WidgetRegistratorIfc.h>
 
 #include "ConfigurationRegistryIfc.h"
 #include "internal/RadioBrowserProvider.h"

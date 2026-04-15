@@ -28,8 +28,8 @@ target_include_directories(${TARGET_NAME}Test PRIVATE
     ../src/Platform/Global/api
     ../src/Platform/Os/api
     ../src/Platform/Os/internal/mock
-    ../src/Platform/Network
-    ../src/Platform/Device
+    ../src/Network
+    ../src/Device
 )
 
 target_link_libraries(${TARGET_NAME}Test PRIVATE

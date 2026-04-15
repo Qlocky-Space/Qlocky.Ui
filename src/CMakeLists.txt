@@ -3,18 +3,17 @@ set(QLOCKY_MODULES_PLATFORM
     Global
     Os
     RestAPI
-    Device
-    Network
     Persistence
-    Configuration
     Languages
     Ui
-    Widget
 )
 
 # A list of all used modules
 set(QLOCKY_MODULES
     AppShell
+    Configuration
+    Device
+    Network
     Alarm
     Radio
 )

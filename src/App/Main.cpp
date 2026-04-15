@@ -19,7 +19,6 @@
 #include "RadioModule.h"
 #include "RestApiModule.h"
 #include "UiModule.h"
-#include "WidgetModule.h"
 
 // required for boost container creation at compile time
 namespace di = boost::di;
@@ -68,7 +67,6 @@ int main(int argc, char* argv[]) {
     app->addModule<RestApiModule>();
     app->addModule<DeviceModule>();
     app->addModule<NetworkModule>();
-    app->addModule<WidgetModule>();
     app->addModule<UiModule>();
     app->addModule<LanguageModule>();
     // Register modules

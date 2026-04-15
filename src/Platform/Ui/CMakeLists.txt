@@ -14,6 +14,11 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/CommandRegistryUtil.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/CommandArgs.h
     ${CMAKE_CURRENT_LIST_DIR}/api/QmlRegistryUtil.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/Widget/WidgetLoadedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/Widget/Widget.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/Widget/WidgetLoadedEvent.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/Widget/WidgetMetadata.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/Widget/WidgetRegistratorIfc.h
 
     ${CMAKE_CURRENT_LIST_DIR}/internal/UiEngine.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/UiEngine.cpp
@@ -36,6 +41,11 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/QrQuickImageProvider.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/QrImage.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/QrImage.cpp
+
+    ${CMAKE_CURRENT_LIST_DIR}/internal/Widget/WidgetRegistrator.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/Widget/WidgetRegistrator.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/Widget/WidgetLoader.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/Widget/WidgetLoader.cpp
 )
 
 set(MODULE_QML_SRC
@@ -57,6 +67,8 @@ set(MODULE_QML_SRC
     qml/QKeyboard.qml
     qml/QTextField.qml
     qml/QConfirmationSlider.qml
+    qml/QWidget.qml
+    qml/QWidgetLayout.qml
     qml/QDialogProvider.qml
     qml/FontStyle.qml
     qml/ThemeManager.qml

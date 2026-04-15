@@ -46,17 +46,10 @@ set(MODULE_QML_SRC
     qml/internal/RadioSourceSearch.qml
 )
 
-set(MODULE_QML_RESOURCES
-    resources/play.png
-    resources/skip.png
-    resources/previous.png
-)
-
 set(MODULE_LINK
     qlocky::Os
     qlocky::RestAPI
     qlocky::Ui
-    qlocky::Widget
     qlocky::Persistence
     qlocky::Configuration
 )

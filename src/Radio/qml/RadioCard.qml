@@ -2,10 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import Widget
 import Ui
 
-Widget {
+QWidget {
     id: card
     color: "transparent"
     radius: 34
