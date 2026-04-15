@@ -103,18 +103,16 @@ ColumnLayout {
 
         title: qsTr("Legal and regulatory")
 
-        SettingKeyValueItem {
+        SettingKeyButtonItem {
             title: qsTr("Third-party licences")
-            value: "Qlocky Wiki"
-            clickable: true
+            text: qsTr("Qlocky Wiki")
             onClicked: {
                 CommandExecutor.dispatch("show-qr-code", { "content": "https://qlocky.notion.site/Qlocky-Wiki-b2c1fdab6b84481caad0c45b414d6cd8" })
             }
         }
-        SettingKeyValueItem {
+        SettingKeyButtonItem {
             title: qsTr("Source code")
-            value: "Qlocky GitHub"
-            clickable: true
+            text: qsTr("Qlocky GitHub")
             onClicked: {
                 CommandExecutor.dispatch("show-qr-code", { "content": "https://www.github.com/Qlocky-Space" })
             }

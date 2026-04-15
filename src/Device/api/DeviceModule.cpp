@@ -7,6 +7,8 @@
 #include "internal/SystemPreferencesRepository.h"
 #include "QmlRegistryUtil.h"
 #include "view/AboutViewModel.h"
+#include "view/DevelopViewModel.h"
+#include "view/LifecycleStateType.h"
 
 void DeviceModule::registerExports(Injector& container) {
     container.install(boost::di::bind<DeviceInfoProviderIfc>().to<DeviceInfoProvider>());
@@ -15,6 +17,9 @@ void DeviceModule::registerExports(Injector& container) {
 
 void DeviceModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<AboutViewModel>(*this, "AboutViewModel");
+    QmlRegistryUtil::qmlRegisterViewModel<DevelopViewModel>(*this, "DevelopViewModel");
+
+    qmlRegisterUncreatableType<LifecycleStateType>("Device", 1, 0, "LifecycleStateType", "Cannot create LifecycleStateType in QML");
 }
 
 void DeviceModule::onInitialize() {

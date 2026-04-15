@@ -15,6 +15,9 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/DevelopViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/DevelopViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/LifecycleStateType.h
 )
 
 set(MODULE_QML_SRC
