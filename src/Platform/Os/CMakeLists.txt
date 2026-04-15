@@ -1,17 +1,21 @@
 declare_module(Os)
 
 set(MODULE_SRC
+    ${CMAKE_CURRENT_LIST_DIR}/api/ApplicationLifecycleIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AudioOutputErrorCode.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AudioMixerIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AudioMixerListenerIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AudioOutputIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AudioOutputListenerIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/events/ApplicationLifecycleStateChangedEvent.h
     ${CMAKE_CURRENT_LIST_DIR}/api/events/AudioOutputVolumeEvent.h
     ${CMAKE_CURRENT_LIST_DIR}/api/OsModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/OsModule.h
     ${CMAKE_CURRENT_LIST_DIR}/api/TimeProviderIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/NetworkDriverIfc.h
 
+    ${CMAKE_CURRENT_LIST_DIR}/internal/ApplicationLifecycle.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/ApplicationLifecycle.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/AsyncTaskExecutor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/AsyncTaskExecutor.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/TimeProvider.cpp

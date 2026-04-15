@@ -1,5 +1,7 @@
 #include "DeviceModule.h"
 
+#include "Command/CommandRegistryUtil.h"
+#include "Command/LifecycleChangeRequestCommand.h"
 #include "ConfigurationRegistryIfc.h"
 #include "internal/DeviceInfoProvider.h"
 #include "internal/SystemPreferencesRepository.h"
@@ -23,4 +25,6 @@ void DeviceModule::onInitialize() {
     auto configRegistry = resolve<ConfigurationRegistryIfc>();
     configRegistry->registerProvider("about", ConfigurationMeta {"System", "About", "/qt/qml/Device/qml/About.qml"});
     configRegistry->registerProvider("develop", ConfigurationMeta {"System", "Develop", "/qt/qml/Device/qml/Develop.qml"});
+
+    CommandRegistryUtil::registerCommand<LifecycleChangeRequestCommand>(*this, "lifecycleChangeRequest");
 }

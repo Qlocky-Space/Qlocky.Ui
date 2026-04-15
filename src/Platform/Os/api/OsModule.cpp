@@ -1,7 +1,9 @@
 #include "OsModule.h"
 
+#include "ApplicationLifecycleIfc.h"
 #include "AudioMixerIfc.h"
 #include "AudioOutputIfc.h"
+#include "internal/ApplicationLifecycle.h"
 #include "internal/AsyncTaskExecutor.h"
 #include "internal/TimeProvider.h"
 #include "NetworkDriverIfc.h"
@@ -21,6 +23,7 @@
 void OsModule::registerExports(Injector& container) {
     container.install(boost::di::bind<TimeProviderIfc>().to<TimeProvider>());
     container.install(boost::di::bind<TaskExecutorIfc>().to<AsyncTaskExecutor>().in(boost::di::singleton));
+    container.install(boost::di::bind<ApplicationLifecycleIfc>().to<ApplicationLifecycle>().in(boost::di::singleton));
 
 #ifdef OS_IS_QLOCKY
     container.install(boost::di::bind<AudioMixerIfc>().to<AudioOutputMixer>().in(boost::di::singleton));
@@ -31,4 +34,9 @@ void OsModule::registerExports(Injector& container) {
     container.install(boost::di::bind<AudioOutputIfc>().to<AudioOutputStub>());
     container.install(boost::di::bind<NetworkDriverIfc>().to<NetworkDriverStub>());
 #endif
+}
+
+void OsModule::onInitialize() {
+    auto lifecycle = resolve<ApplicationLifecycleIfc>();
+    lifecycle->initialize();
 }

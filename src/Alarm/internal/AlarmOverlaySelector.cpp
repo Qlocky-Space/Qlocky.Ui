@@ -1,9 +1,10 @@
 #include "AlarmOverlaySelector.h"
 
-AlarmOverlaySelector::AlarmOverlaySelector(Mediator& mediator, InteractiveNavigatorIfc& navigator, RadioServiceIfc& radioService, RadioPlayerIfc& radioPlayer) :
+AlarmOverlaySelector::AlarmOverlaySelector(Mediator& mediator, InteractiveNavigatorIfc& navigator, RadioServiceIfc& radioService, RadioPlayerIfc& radioPlayer, ApplicationLifecycleIfc& lifecycle) :
     m_navigator {navigator},
     m_radioService {radioService},
     m_radioPlayer {radioPlayer},
+    m_lifecycle {lifecycle},
     m_activeAlarmId {} {
     mediator.subscribe<AlarmActivatedEvent>(this, &AlarmOverlaySelector::onAlarmActivated);
     mediator.subscribe<AlarmUpdatedEvent>(this, &AlarmOverlaySelector::onAlarmUpdated);
@@ -40,8 +41,7 @@ void AlarmOverlaySelector::onAlarmUpdated(AlarmUpdatedEvent const& event) {
 }
 
 bool AlarmOverlaySelector::isDeviceInSleepMode() const {
-    // TODO
-    return false;
+    return m_lifecycle.state() == ApplicationLifecycleState::Inactive;
 }
 
 Task<void> AlarmOverlaySelector::startRadioForAlarm(AlarmEntity const& alarm) {
@@ -64,6 +64,8 @@ Task<void> AlarmOverlaySelector::startRadioForAlarm(AlarmEntity const& alarm) {
 }
 
 void AlarmOverlaySelector::showLockscreenOverlay(AlarmActivatedEvent const& event) {
+    m_lifecycle.requestWakeup();
+
     // TODO: Implement the logic to show the lockscreen overlay
 }
 
