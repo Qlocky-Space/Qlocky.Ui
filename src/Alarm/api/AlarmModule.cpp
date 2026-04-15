@@ -1,6 +1,6 @@
 #include "AlarmModule.h"
 
-#include <WidgetRegistratorIfc.h>
+#include <Widget/WidgetRegistratorIfc.h>
 
 #include "Command/CommandRegistryUtil.h"
 #include "commands/AlarmEditCommand.h"

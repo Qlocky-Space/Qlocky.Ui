@@ -5,7 +5,7 @@
 #include <QAbstractListModel>
 #include <QString>
 #include <QVector>
-#include <WidgetMetadata.h>
+#include <Widget/WidgetMetadata.h>
 
 #include "WidgetModel.h"
 

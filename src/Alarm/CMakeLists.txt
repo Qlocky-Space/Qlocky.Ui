@@ -66,7 +66,6 @@ set(MODULE_QML_RESOURCES
 set(MODULE_LINK
     qlocky::Ui
     qlocky::Persistence
-    qlocky::Widget
     qlocky::Os
     qlocky::Device
     qlocky::Radio

@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import QtQuick.Effects
 
 import Ui
-import Widget
 
 Item {
     property var viewModel: MainPageViewModel
@@ -27,7 +26,7 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
-        WidgetLayout {
+        QWidgetLayout {
             id: window
 
             anchors.horizontalCenter: parent.horizontalCenter

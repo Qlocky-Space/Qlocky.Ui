@@ -4,9 +4,9 @@
 #include <map>
 #include <string>
 
+#include "Widget/WidgetMetadata.h"
+#include "Widget/WidgetRegistratorIfc.h"
 #include "WidgetLoader.h"
-#include "WidgetMetadata.h"
-#include "WidgetRegistratorIfc.h"
 
 /**
  * @see WidgetRegistratorIfc

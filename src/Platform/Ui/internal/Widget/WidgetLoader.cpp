@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "Widget.h"
-#include "WidgetLoadedEvent.h"
+#include "Widget/Widget.h"
+#include "Widget/WidgetLoadedEvent.h"
 
 WidgetLoader::WidgetLoader(Mediator& mediator) :
     m_mediator(mediator) {

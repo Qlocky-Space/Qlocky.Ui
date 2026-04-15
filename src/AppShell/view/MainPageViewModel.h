@@ -8,9 +8,9 @@
 
 #include "api/Mediator.h"
 #include "Navigation/InteractiveNavigatorIfc.h"
-#include "Widget.h"
+#include "Widget/Widget.h"
+#include "Widget/WidgetLoadedEvent.h"
 #include "WidgetListModel.h"
-#include "WidgetLoadedEvent.h"
 
 /**
  * MainPageViewModel is responsible for managing the main page view model.

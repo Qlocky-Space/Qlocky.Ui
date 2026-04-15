@@ -2,8 +2,8 @@
 #define WIDGET_LOADER_H
 
 #include "api/Mediator.h"
-#include "WidgetLoaderIfc.h"
-#include "WidgetMetadata.h"
+#include "Widget/WidgetLoaderIfc.h"
+#include "Widget/WidgetMetadata.h"
 
 /**
  * @see WidgetLoaderIfc
