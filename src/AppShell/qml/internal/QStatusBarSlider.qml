@@ -77,6 +77,9 @@ Item {
 
 
     onValueChanged: {
+        if (dragArea.pressed) {
+            return;
+        }
         var value = Math.max(0, Math.min(1, root.value / 100));
         sliderTrack.width = value * sliderBackground.width;
     }
