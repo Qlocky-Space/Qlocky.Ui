@@ -7,6 +7,7 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/AudioMixerListenerIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AudioOutputIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/AudioOutputListenerIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/DisplayControlIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/events/ApplicationLifecycleStateChangedEvent.h
     ${CMAKE_CURRENT_LIST_DIR}/api/events/AudioOutputVolumeEvent.h
     ${CMAKE_CURRENT_LIST_DIR}/api/OsModule.cpp
@@ -36,6 +37,8 @@ if (OS_IS_QLOCKY)
         ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/WpaSupplicantHelper.cpp
         ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/WpaSupplicantDBusDriver.cpp
         ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/WpaSupplicantDBusDriver.h
+        ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/DisplayControl.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/internal/qlocky/DisplayControl.h
     )
 else()
     list(APPEND MODULE_SRC
@@ -45,6 +48,8 @@ else()
         ${CMAKE_CURRENT_LIST_DIR}/internal/mock/AudioOutputStub.h
         ${CMAKE_CURRENT_LIST_DIR}/internal/mock/NetworkDriverStub.cpp
         ${CMAKE_CURRENT_LIST_DIR}/internal/mock/NetworkDriverStub.h
+        ${CMAKE_CURRENT_LIST_DIR}/internal/mock/DisplayControlStub.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/internal/mock/DisplayControlStub.h
     )
     list(APPEND _links
         Qt6::Multimedia

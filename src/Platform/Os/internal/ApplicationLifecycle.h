@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "ApplicationLifecycleIfc.h"
+#include "DisplayControlIfc.h"
 #include "Mediator.h"
 #include "StateMachineBase.h"
 
@@ -20,7 +21,11 @@ class ApplicationStartedEvent;
 class ApplicationLifecycle final : public ApplicationLifecycleIfc, private StateMachineBase<ApplicationLifecycleState> {
 public:
 
-    explicit ApplicationLifecycle(Mediator& mediator);
+    /**
+     * @param mediator The mediator for event dispatching.
+     * @param displayControl Display control for turning display on/off during state transitions.
+     */
+    ApplicationLifecycle(Mediator& mediator, DisplayControlIfc& displayControl);
     ~ApplicationLifecycle() final;
 
     /**
@@ -82,6 +87,7 @@ private:
     void onApplicationClosed(ApplicationClosedEvent const&);
 
     Mediator& m_mediator;
+    DisplayControlIfc& m_displayControl;
     mutable std::mutex m_mutex {};
     std::thread m_inputWatcher {};
     std::atomic<bool> m_isStopping {false};

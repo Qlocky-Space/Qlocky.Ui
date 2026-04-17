@@ -7,6 +7,7 @@
 
 #include "api/Mediator.h"
 #include "AudioMixerIfc.h"
+#include "DisplayControlIfc.h"
 #include "events/AudioOutputVolumeEvent.h"
 #include "events/CommunicationStatusEvent.h"
 #include "events/ConnectionStatusEvent.h"
@@ -34,7 +35,7 @@ class StatusBarViewModel : public QObject {
 
 public:
 
-    explicit StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository, AudioMixerIfc& audioMixer);
+    explicit StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository, AudioMixerIfc& audioMixer, DisplayControlIfc& displayControl);
 
     /**
      * Returns the current network state.
@@ -163,6 +164,7 @@ private:
     NetworkServiceIfc& m_networkService;
     NetworkRepositoryIfc& m_networkRepository;
     AudioMixerIfc& m_audioMixer;
+    DisplayControlIfc& m_displayControl;
 
     QString m_title;
     QString m_ssid;

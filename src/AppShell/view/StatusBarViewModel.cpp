@@ -3,11 +3,12 @@
 #include <algorithm>
 #include <cmath>
 
-StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository, AudioMixerIfc& audioMixer) :
+StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository, AudioMixerIfc& audioMixer, DisplayControlIfc& displayControl) :
     QObject {nullptr},
     m_networkService {networkService},
     m_networkRepository {networkRepository},
     m_audioMixer {audioMixer},
+    m_displayControl {displayControl},
     m_title {"Qlocky"},
     m_ssid {""},
     m_networkStrength {-1},
@@ -55,10 +56,12 @@ void StatusBarViewModel::setLightMode(bool enabled) {
 }
 
 void StatusBarViewModel::setBrightness(float value) {
-    // TODO forward to service
+    float const clamped = std::clamp(value, 0.0F, 100.0F);
+    uint8_t const dimLevel = static_cast<uint8_t>(std::lround(100.0F - clamped));
+    m_displayControl.dim(dimLevel);
 
-    if (m_brightness != value) {
-        m_brightness = value;
+    if (m_brightness != clamped) {
+        m_brightness = clamped;
         emit brightnessChanged();
     }
 }

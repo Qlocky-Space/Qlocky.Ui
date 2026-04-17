@@ -35,8 +35,9 @@ char const* stateToString(ApplicationLifecycleState state) {
 
 } // namespace
 
-ApplicationLifecycle::ApplicationLifecycle(Mediator& mediator) :
-    m_mediator {mediator} {
+ApplicationLifecycle::ApplicationLifecycle(Mediator& mediator, DisplayControlIfc& displayControl) :
+    m_mediator {mediator},
+    m_displayControl {displayControl} {
     m_mediator.subscribe<ApplicationStartedEvent>(this, &ApplicationLifecycle::onApplicationStarted);
     m_mediator.subscribe<ApplicationClosedEvent>(this, &ApplicationLifecycle::onApplicationClosed);
 }
@@ -143,6 +144,14 @@ void ApplicationLifecycle::onTransition(ApplicationLifecycleState state) {
 
 void ApplicationLifecycle::onEnterState(ApplicationLifecycleState state) {
     LOG(INFO) << "ApplicationLifecycle: " << stateToString(m_previousState) << " -> " << stateToString(state);
+
+    if (state == ApplicationLifecycleState::Inactive) {
+        m_displayControl.turnOff();
+    }
+    else {
+        m_displayControl.turnOn();
+    }
+
     m_pendingEvents.emplace_back(m_previousState, state);
 }
 
