@@ -1,0 +1,23 @@
+name: Build Host
+
+on:
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+concurrency:
+  group: build-host-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-host:
+    name: Build Host
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      # TODO: Replace this step with actual host build steps once the
+      #       host toolchain and CMake preset are available.
+      - name: Host build not yet supported
+        run: echo "Not supported"

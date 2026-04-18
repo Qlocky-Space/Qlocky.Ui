@@ -3,9 +3,14 @@ Qlocky is more than just an alarm clock — it’s a powerful, open-source smart
 
 **Qlocky.UI** itself is the user interface which provides interaction with Qlocky.Device.
 
-![2025-07-05 11_25_44-Qlocky – Figma – Mozilla Firefox](https://github.com/user-attachments/assets/5c7ed52d-8732-4e7a-bacf-877efbc8e432)
+![Qlocky Device](https://github.com/user-attachments/assets/5c7ed52d-8732-4e7a-bacf-877efbc8e432)
 
 See full [Figma Prototype](https://www.figma.com/proto/fMljSB0JU1cUZSpCAkyOLV/Qlocky?node-id=1-1470&p=f&t=ozbyZAbaOVzi85sy-1&scaling=contain&content-scaling=fixed&page-id=1%3A1469&starting-point-node-id=34%3A1478)
+
+## CI Status
+| UnitTests | Host Build | Target Build |
+| --- | --- | --- |
+| [![GTests](https://github.com/Qlocky-Space/Qlocky.Ui/actions/workflows/ci-gtests.yml/badge.svg?branch=develop)](https://github.com/Qlocky-Space/Qlocky.Ui/actions/workflows/ci-gtests.yml) | [![Build Host](https://github.com/Qlocky-Space/Qlocky.Ui/actions/workflows/ci-build-host.yml/badge.svg?branch=develop)](https://github.com/Qlocky-Space/Qlocky.Ui/actions/workflows/ci-build-host.yml) | [![Build Target](https://github.com/Qlocky-Space/Qlocky.Ui/actions/workflows/ci-build-target.yml/badge.svg?branch=develop)](https://github.com/Qlocky-Space/Qlocky.Ui/actions/workflows/ci-build-target.yml) |
 
 ## 🔧 Tech Stack
 - **Framework:** Qt 6 / QML  

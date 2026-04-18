@@ -1,4 +1,4 @@
-name: PR GTests
+name: GTests
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: gtests-${{ github.workflow }}-${{ github.ref }}
+  group: gtests-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   gtests:
+    name: GTests
     runs-on: ubuntu-24.04
     timeout-minutes: 30
 
@@ -40,7 +41,7 @@ jobs:
         with:
           context: .
           file: .devcontainer/Dockerfile
-          tags: qlocky-ci:pr-gtests
+          tags: qlocky-ci:gtests
           load: true
           cache-from: |
             type=gha,scope=qlocky-devcontainer
@@ -55,7 +56,7 @@ jobs:
         with:
           context: .
           file: .devcontainer/Dockerfile
-          tags: qlocky-ci:pr-gtests
+          tags: qlocky-ci:gtests
           load: true
           cache-from: type=gha,scope=qlocky-devcontainer
           cache-to: type=gha,mode=max,scope=qlocky-devcontainer
@@ -65,5 +66,22 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}:/workspaces" \
             -w /workspaces \
-            qlocky-ci:pr-gtests \
-            bash -lc "set -e; for i in 1 2 3; do echo \"CI attempt $i/3\"; if cmake -S . -B build-ci -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DQLOCKY_ENABLE_QT_VIRTUALKEYBOARD=OFF && cmake --build build-ci --target QlockyAppTest --parallel && ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest; then exit 0; fi; if [[ \"$i\" -lt 3 ]]; then echo \"Retrying in 20s after transient failure...\"; rm -rf build-ci/_deps; sleep 20; fi; done; exit 1"
+            qlocky-ci:gtests \
+            bash -lc "set -e
+              for i in 1 2 3; do
+                echo \"CI attempt \$i/3\"
+                if cmake -S . -B build-ci -G Ninja \
+                      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                      -DQLOCKY_ENABLE_QT_VIRTUALKEYBOARD=OFF \
+                    && cmake --build build-ci --target QlockyAppTest --parallel \
+                    && ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest
+                then
+                  exit 0
+                fi
+                if [[ \"\$i\" -lt 3 ]]; then
+                  echo \"Retrying in 20s after transient failure...\"
+                  rm -rf build-ci/_deps
+                  sleep 20
+                fi
+              done
+              exit 1"
