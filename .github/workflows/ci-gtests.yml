@@ -72,7 +72,7 @@ jobs:
                 echo \"CI attempt \$i/3\"
                 if cmake -S . -B build-ci -G Ninja \
                       -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-                      -DQLOCKY_ENABLE_QT_VIRTUALKEYBOARD=OFF \
+                      -DIS_GITHUB_RUNNER=ON \
                     && cmake --build build-ci --target QlockyAppTest --parallel \
                     && ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest
                 then

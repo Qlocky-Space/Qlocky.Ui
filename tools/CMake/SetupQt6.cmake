@@ -4,7 +4,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-option(QLOCKY_ENABLE_QT_VIRTUALKEYBOARD "Enable Qt Virtual Keyboard integration" ON)
+option(IS_GITHUB_RUNNER "Enable GitHub Actions runner specific settings" OFF)
 
 set(_components
     Core
@@ -14,11 +14,12 @@ set(_components
     Qml
     Quick
     ShaderTools
-    VirtualKeyboard
 )
 
-if (QLOCKY_ENABLE_QT_VIRTUALKEYBOARD)
+# Because github does not support virtual keyboard, we need to disable it on github runner to avoid build failure due to missing dependencies.
+if (NOT IS_GITHUB_RUNNER)
     list(APPEND _components
+        VirtualKeyboard
     )
 endif()
 
