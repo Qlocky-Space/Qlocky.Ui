@@ -14,11 +14,11 @@ set(_components
     Qml
     Quick
     ShaderTools
+    VirtualKeyboard
 )
 
 if (QLOCKY_ENABLE_QT_VIRTUALKEYBOARD)
     list(APPEND _components
-        VirtualKeyboard
     )
 endif()
 
