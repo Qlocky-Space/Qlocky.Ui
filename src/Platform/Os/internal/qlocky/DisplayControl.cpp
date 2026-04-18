@@ -48,6 +48,7 @@ DisplayControl::DisplayControl() {
     m_powerProxy = sdbus::createProxy(*m_connection,
         sdbus::ServiceName {DISPLAY_POWER_DBUS_SERVICE},
         sdbus::ObjectPath {DISPLAY_POWER_DBUS_OBJECT_PATH});
+    m_dimValue = 0;
 
     if (!detectDrmConnector()) {
         LOG(WARNING) << "DisplayControl: No connected DRM connector found in /sys/class/drm";
@@ -203,6 +204,7 @@ void DisplayControl::turnOn() {
     }
 
     requestPowerState("TurnOn", "on");
+    requestDim(m_dimValue);
 }
 
 void DisplayControl::turnOff() {
@@ -211,7 +213,11 @@ void DisplayControl::turnOff() {
         return;
     }
 
-    requestPowerState("TurnOff", "off");
+    // As long HDMI is used, turning off the display requires ~2..3s until power is established again
+    // so to improve responsiveness, dim the display immediately by SW overlay. Because of OLED
+    // technology it looks identical
+    requestDim(100);
+    // requestPowerState("TurnOff", "off");
 }
 
 void DisplayControl::dim(uint8_t level) {
@@ -224,6 +230,8 @@ void DisplayControl::dim(uint8_t level) {
     if (level > MAX_DIM_LEVEL) {
         level = MAX_DIM_LEVEL;
     }
+
+    m_dimValue = level;
 
     requestDim(level);
 }

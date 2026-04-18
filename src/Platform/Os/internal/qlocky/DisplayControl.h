@@ -52,6 +52,7 @@ private:
     std::unique_ptr<sdbus::IConnection> m_connection;
     std::unique_ptr<sdbus::IProxy> m_dbusProxy;
     std::unique_ptr<sdbus::IProxy> m_powerProxy;
+    uint8_t m_dimValue;
 };
 
 #endif // SRC_PLATFORM_OS_INTERNAL_QLOCKY_DISPLAY_CONTROL_H
