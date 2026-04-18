@@ -10,6 +10,10 @@ concurrency:
   group: gtests-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   gtests:
     runs-on: ubuntu-24.04
@@ -19,23 +23,47 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build pkg-config libgl1-mesa-dev libxkbcommon-x11-0 libssl-dev
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Install Qt 6
-        uses: jurplel/install-qt-action@v4
+      - name: Log in to GHCR for shared cache
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: docker/login-action@v3
         with:
-          version: "6.8.3"
-          cache: "true"
-          modules: "qtmultimedia qtshadertools qtvirtualkeyboard"
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure (CMake)
-        run: cmake -S . -B build-ci -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - name: Build CI container image (shared cache)
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .devcontainer/Dockerfile
+          tags: qlocky-ci:pr-gtests
+          load: true
+          cache-from: |
+            type=gha,scope=qlocky-devcontainer
+            type=registry,ref=ghcr.io/qlocky-space/qlocky-ui-devcontainer:buildcache
+          cache-to: |
+            type=gha,mode=max,scope=qlocky-devcontainer
+            type=registry,ref=ghcr.io/qlocky-space/qlocky-ui-devcontainer:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
 
-      - name: Build gtests
-        run: cmake --build build-ci --target QlockyAppTest --parallel
+      - name: Build CI container image (fork-safe cache)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .devcontainer/Dockerfile
+          tags: qlocky-ci:pr-gtests
+          load: true
+          cache-from: type=gha,scope=qlocky-devcontainer
+          cache-to: type=gha,mode=max,scope=qlocky-devcontainer
 
-      - name: Run gtests
-        run: ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest
+      - name: Configure, build and run gtests in container
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspaces" \
+            -w /workspaces \
+            qlocky-ci:pr-gtests \
+            bash -lc "cmake -S . -B build-ci -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build build-ci --target QlockyAppTest --parallel && ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest"
