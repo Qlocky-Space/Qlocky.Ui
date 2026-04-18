@@ -19,6 +19,7 @@ RUN apt update && apt -y install \
     qt6-multimedia-dev qt6-shadertools-dev \
     qt6-virtualkeyboard-dev \
     qt6-tools-dev qt6-tools-dev-tools \
+    libxkbcommon-dev libxkbcommon-x11-dev \
     libgl1-mesa-dev libboost-all-dev \
     librocksdb-dev libssl-dev \
     libpulse-dev \

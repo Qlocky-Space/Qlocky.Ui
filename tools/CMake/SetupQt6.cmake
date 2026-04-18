@@ -4,6 +4,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+option(QLOCKY_ENABLE_QT_VIRTUALKEYBOARD "Enable Qt Virtual Keyboard integration" ON)
+
 set(_components
     Core
     Gui
@@ -12,8 +14,13 @@ set(_components
     Qml
     Quick
     ShaderTools
-    VirtualKeyboard
 )
+
+if (QLOCKY_ENABLE_QT_VIRTUALKEYBOARD)
+    list(APPEND _components
+        VirtualKeyboard
+    )
+endif()
 
 # TODO environment configuration issue, where LinguistTools is not found
 # on Linux, but it is available in the Qt installation.

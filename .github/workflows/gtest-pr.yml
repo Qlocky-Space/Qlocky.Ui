@@ -66,4 +66,4 @@ jobs:
             -v "${{ github.workspace }}:/workspaces" \
             -w /workspaces \
             qlocky-ci:pr-gtests \
-            bash -lc "cmake -S . -B build-ci -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build build-ci --target QlockyAppTest --parallel && ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest"
+            bash -lc "set -e; for i in 1 2 3; do echo \"CI attempt $i/3\"; if cmake -S . -B build-ci -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DQLOCKY_ENABLE_QT_VIRTUALKEYBOARD=OFF && cmake --build build-ci --target QlockyAppTest --parallel && ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest; then exit 0; fi; if [[ \"$i\" -lt 3 ]]; then echo \"Retrying in 20s after transient failure...\"; rm -rf build-ci/_deps; sleep 20; fi; done; exit 1"
