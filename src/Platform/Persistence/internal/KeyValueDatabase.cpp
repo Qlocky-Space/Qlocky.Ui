@@ -2,6 +2,14 @@
 
 #include <iostream>
 
+namespace {
+
+rocksdb::Status dbUnavailableStatus() {
+    return rocksdb::Status::IOError("Database is not initialized");
+}
+
+} // namespace
+
 KeyValueDatabase::KeyValueDatabase(std::shared_ptr<rocksdb::DB> db, std::string const& ns) :
     m_db {db},
     m_ns {ns} {
@@ -51,11 +59,19 @@ ResultVoid KeyValueDatabase::setInt(PersistenceKey const& key, int32_t const val
 }
 
 ResultVoid KeyValueDatabase::remove(PersistenceKey const& key) {
+    if (!m_db) {
+        return toResult(dbUnavailableStatus());
+    }
+
     rocksdb::Status const status {m_db->Delete(rocksdb::WriteOptions(), getInternalKey(key))};
     return toResult(status);
 }
 
 Result<KeyValueList> KeyValueDatabase::getList(PersistenceKey const& item) {
+    if (!m_db) {
+        return toResult(KeyValueList {}, dbUnavailableStatus());
+    }
+
     std::vector<std::pair<std::string, std::string>> items;
 
     std::unique_ptr<rocksdb::Iterator> it(m_db->NewIterator(rocksdb::ReadOptions()));
@@ -79,10 +95,18 @@ ResultVoid KeyValueDatabase::removeListItem(PersistenceKey const& item, uint32_t
 }
 
 rocksdb::Status KeyValueDatabase::writeString(PersistenceKey const& key, std::string const& value) {
+    if (!m_db) {
+        return dbUnavailableStatus();
+    }
+
     return m_db->Put(rocksdb::WriteOptions(), getInternalKey(key), value);
 }
 
 rocksdb::Status KeyValueDatabase::readString(PersistenceKey const& key, std::string& value) {
+    if (!m_db) {
+        return dbUnavailableStatus();
+    }
+
     return m_db->Get(rocksdb::ReadOptions(), getInternalKey(key), &value);
 }
 
