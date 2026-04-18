@@ -1,0 +1,41 @@
+name: PR GTests
+
+on:
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+concurrency:
+  group: gtests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gtests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build pkg-config libgl1-mesa-dev libxkbcommon-x11-0 libssl-dev
+
+      - name: Install Qt 6
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.3"
+          cache: "true"
+          modules: "qtmultimedia qtshadertools qtvirtualkeyboard qttools"
+
+      - name: Configure (CMake)
+        run: cmake -S . -B build-ci -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+      - name: Build gtests
+        run: cmake --build build-ci --target QlockyAppTest --parallel
+
+      - name: Run gtests
+        run: ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest
