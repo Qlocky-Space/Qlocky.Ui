@@ -31,6 +31,12 @@ public:
      * @return True when playback is active.
      */
     virtual bool isPlaying() const = 0;
+
+    /**
+     * Set output volume percentage.
+     * @param volumePercent Requested volume in range 0..100.
+     */
+    virtual void setOutputVolume(uint8_t volumePercent) = 0;
 };
 
 #endif // SRC_RADIO_API_RADIO_PLAYER_IFC_H

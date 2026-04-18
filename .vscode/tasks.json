@@ -46,7 +46,7 @@
             "type": "shell",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "CMake: Build",
+                "CMake: build",
                 "Qlocky: Publish App"
             ]
         },

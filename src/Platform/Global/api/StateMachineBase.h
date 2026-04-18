@@ -37,28 +37,43 @@ protected:
      * Run the state machine.
      */
     void runStateMachine() {
-        bool stateChanged {true};
-
-        while (stateChanged) {
-            stateChanged = false;
-
-            onTransition(m_currentState);
-
-            if (m_currentState != m_nextState) {
-                onLeaveState(m_currentState);
-                stateChanged = true;
-
-                m_currentState = m_nextState;
-                onEnterState(m_currentState);
-            }
-
-            if (!stateChanged) {
-                // if state has not changed, run the current state
-                onRunState(m_currentState);
-            }
+        if (m_isRunning) {
+            m_runRequested = true;
+            return;
         }
 
-        clearFlags();
+        m_isRunning = true;
+
+        do {
+            m_runRequested = false;
+
+            bool stateChanged {true};
+
+            while (stateChanged) {
+                stateChanged = false;
+
+                onTransition(m_currentState);
+
+                if (m_currentState != m_nextState) {
+                    onLeaveState(m_currentState);
+                    stateChanged = true;
+
+                    m_currentState = m_nextState;
+                    onEnterState(m_currentState);
+                }
+
+                if (!stateChanged) {
+                    // if state has not changed, run the current state
+                    onRunState(m_currentState);
+                }
+            }
+
+            if (!m_runRequested) {
+                clearFlags();
+            }
+        } while (m_runRequested);
+
+        m_isRunning = false;
     }
 
     /**
@@ -137,6 +152,8 @@ private:
 
     State m_currentState {};
     State m_nextState {};
+    bool m_isRunning {false};
+    bool m_runRequested {false};
 };
 
 #endif

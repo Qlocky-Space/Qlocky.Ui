@@ -29,6 +29,30 @@ public:
      * @return The time zone as a string.
      */
     virtual std::string getTimeZone() = 0;
+
+    /**
+     * Gets persisted display brightness in range 0..100.
+     * @return Brightness percentage.
+     */
+    virtual uint8_t getDisplayBrightnessPercent() = 0;
+
+    /**
+     * Persists display brightness in range 0..100.
+     * @param brightnessPercent Brightness percentage.
+     */
+    virtual void setDisplayBrightnessPercent(uint8_t brightnessPercent) = 0;
+
+    /**
+     * Gets persisted output volume in range 0..100.
+     * @return Volume percentage.
+     */
+    virtual uint8_t getOutputVolumePercent() = 0;
+
+    /**
+     * Persists output volume in range 0..100.
+     * @param volumePercent Volume percentage.
+     */
+    virtual void setOutputVolumePercent(uint8_t volumePercent) = 0;
 };
 
 #endif

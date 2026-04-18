@@ -9,7 +9,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt -y install \
     clang-format clang-tidy \
     wget git-core build-essential ninja-build \
-    gdb cmake python3
+    gdb cmake python3 \
+    libstdc++-13-dev
 
 # tools for application
 RUN apt update && apt -y install \
@@ -25,6 +26,9 @@ RUN apt update && apt -y install \
 
 # Git configuration
 RUN git config --global --add safe.directory /workspaces/build/_deps/*
+
+# Ensure gdb has correct formatter for debugging c++ variables
+COPY .devcontainer/gdbinit /home/ubuntu/.gdbinit
 
 # Update Path for QT dev tool applications
 ENV PATH="$PATH:/opt/qt/6.8.1/gcc_64/bin"

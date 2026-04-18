@@ -34,6 +34,7 @@ set(MODULE_QML_SRC
     qml/internal/SettingKeyValueBase.qml
     qml/internal/SettingKeyValueItem.qml
     qml/internal/SettingKeySwitchItem.qml
+    qml/internal/SettingKeyButtonItem.qml
     qml/SettingPage.qml
 )
 

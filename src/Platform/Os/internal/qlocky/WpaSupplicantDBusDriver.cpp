@@ -29,14 +29,18 @@ NetworkResult WpaSupplicantDBusDriver::up(std::string const& interfaceName) {
     WpaSupplicantHelper::unblockRfkillDevice(WIFI_RFKILL_INDEX);
 
     if (!WpaSupplicantHelper::wpaSupplicantIsRunning()) {
-        LOG(FATAL) << "wpa_supplicant is not running correct. Cannot bring up interface " << interfaceName;
-        // Should never be reached
+        LOG(ERROR) << "wpa_supplicant is not running correctly. Cannot bring up interface " << interfaceName;
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_GENERIC);
     }
 
     m_interfaceName = interfaceName;
 
     m_proxy = createInterfaceProxy(interfaceName);
+    if (!m_proxy) {
+        LOG(ERROR) << "Failed to resolve wpa_supplicant interface proxy for " << interfaceName;
+        m_interfaceName.clear();
+        return NetworkResult::error(NetworkDriverErrorCode::ERROR_GENERIC);
+    }
 
     LOG(INFO) << "Interface " << interfaceName << " is up";
 

@@ -13,7 +13,7 @@ PersistenceService::PersistenceService() :
 }
 
 void PersistenceService::initialize() {
-    std::string const dbName {"/tmp/qlocky/db"};
+    std::string const dbName {"/usr/share/qlocky/db"};
 
     // ensure directory exists
     std::error_code ec;

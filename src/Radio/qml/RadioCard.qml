@@ -32,8 +32,14 @@ QWidget {
             Rectangle {
                 anchors.fill: parent
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.15) }
-                    GradientStop { position: 1.0; color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.55) }
+                    GradientStop {
+                        position: 0.0
+                        color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.15)
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.55)
+                    }
                 }
             }
 
@@ -45,11 +51,6 @@ QWidget {
                 asynchronous: true
                 cache: true
                 visible: source.toString().length > 0 && status === Image.Ready
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.32)
             }
 
             QIcon {
@@ -67,33 +68,26 @@ QWidget {
                 anchors.centerIn: parent
 
                 QButton {
-                    width: 80
-                    height: 80
-                    buttonStyle: QButton.ButtonStyle.Plain
-                    image: "\uf048"
-                    imageSize: 72
-                    visible: card.showTransportControls
-                    onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
-                }
-
-                QButton {
-                    width: 80
-                    height: 80
+                    width: 150
+                    height: 150
                     buttonStyle: QButton.ButtonStyle.Plain
                     image: viewModel.playing ? "\uf04c" : "\uf04b"
                     imageSize: 72
                     visible: card.showPlayPauseControl
                     onClicked: viewModel.togglePlayback()
-                }
 
-                QButton {
-                    width: 80
-                    height: 80
-                    buttonStyle: QButton.ButtonStyle.Plain
-                    image: "\uf051"
-                    imageSize: 72
-                    visible: card.showTransportControls
-                    onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
+                    Rectangle {
+                        id: backgroundOverlay
+
+                        width: 150
+                        height: 150
+                        radius: width / 2
+                        anchors.centerIn: parent
+                        color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.32)
+                        border.color: ThemeManager.theme.labelPrimary
+                        border.width: 4
+                        z: -1
+                    }
                 }
             }
 
@@ -101,7 +95,9 @@ QWidget {
                 enabled: !card.showPlayPauseControl
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
+                onClicked: CommandExecutor.dispatch("nav-to", {
+                    "uri": "qlocky://radioSourceSelectDialog"
+                })
             }
         }
 
@@ -112,8 +108,14 @@ QWidget {
             anchors.left: artworkPanel.right
             anchors.right: parent.right
             gradient: Gradient {
-                GradientStop { position: 0.0; color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.05) }
-                GradientStop { position: 1.0; color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.40) }
+                GradientStop {
+                    position: 0.0
+                    color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.05)
+                }
+                GradientStop {
+                    position: 1.0
+                    color: Qt.alpha(ThemeManager.theme.backgroundSecondary, 0.40)
+                }
             }
         }
 
@@ -157,7 +159,9 @@ QWidget {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://radioSourceSelectDialog" })
+                    onClicked: CommandExecutor.dispatch("nav-to", {
+                        "uri": "qlocky://radioSourceSelectDialog"
+                    })
                 }
             }
         }

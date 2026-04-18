@@ -3,11 +3,12 @@
 #include <algorithm>
 #include <cmath>
 
-StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository, AudioMixerIfc& audioMixer) :
+StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& networkService, NetworkRepositoryIfc& networkRepository, RadioPlayerIfc& radio, DisplayServiceIfc& displayService) :
     QObject {nullptr},
     m_networkService {networkService},
     m_networkRepository {networkRepository},
-    m_audioMixer {audioMixer},
+    m_radio {radio},
+    m_displayService {displayService},
     m_title {"Qlocky"},
     m_ssid {""},
     m_networkStrength {-1},
@@ -16,14 +17,13 @@ StatusBarViewModel::StatusBarViewModel(Mediator& mediator, NetworkServiceIfc& ne
     m_lightMode {false},
     m_brightness {100.F},
     m_volume {100.F},
-    m_volumeType {VolumeType::Level::Mute} {
+    m_volumeType {VolumeType::Level::Acoustic} {
 
     mediator.subscribe<WifiStatusEvent>(this, &StatusBarViewModel::updateWifiStatus);
     mediator.subscribe<ConnectionStatusEvent>(this, &StatusBarViewModel::updateConnectionStatus);
     mediator.subscribe<CommunicationStatusEvent>(this, &StatusBarViewModel::updateCommunicationStatus);
     mediator.subscribe<AudioOutputVolumeEvent>(this, &StatusBarViewModel::updateAudioOutputVolume);
-
-    // TODO register events for LightMode, Brightness, etc.
+    mediator.subscribe<DisplayBrightnessChangedEvent>(this, &StatusBarViewModel::updateDisplayBrightness);
 }
 
 void StatusBarViewModel::setNetworkState(bool enabled) {
@@ -55,22 +55,42 @@ void StatusBarViewModel::setLightMode(bool enabled) {
 }
 
 void StatusBarViewModel::setBrightness(float value) {
-    // TODO forward to service
-
-    if (m_brightness != value) {
-        m_brightness = value;
-        emit brightnessChanged();
-    }
+    float const clamped = std::clamp(value, 0.0F, 100.0F);
+    uint8_t const brightnessPercent = static_cast<uint8_t>(std::lround(clamped));
+    m_displayService.setBrightnessPercent(brightnessPercent);
 }
 
 void StatusBarViewModel::setVolume(float value) {
     float const clamped = std::clamp(value, 0.0F, 100.0F);
     uint8_t const requested = static_cast<uint8_t>(std::lround(clamped));
-    m_audioMixer.setOutputVolume(requested);
+    m_radio.setOutputVolume(requested);
 }
 
 void StatusBarViewModel::setVolumeType(VolumeType::Level type) {
-    // TODO forward to service
+    // TODO forward volume type to service, at the moment it is not clear which
+    // service should be responsible for applying the volume type and how it should be applied
+    // For now, just update the local state and notify the UI, without applying any actual changes to the system
+    //   -> Maybe this feature is not as useful for this system as for smartphones because there are no notifications...
+
+    // First proposal:
+    // switch (type) {
+    //     case VolumeType::Level::Mute:
+    //         // TODO disable vibration service
+    //         // TODO disable acoustic output
+    //         // Question: What should happen with alarms?
+    //         break;
+
+    //     case VolumeType::Level::Vibration:
+    //         // TODO enable vibration service
+    //         // TODO enable acoustic output to user defined volumne
+    //         break;
+
+    //     case VolumeType::Level::Acoustic:
+    //         // TODO disable vibration service
+    //         // TODO enable acoustic output to user defined volumne
+
+    //         break;
+    // }
 
     if (m_volumeType != type) {
         m_volumeType = type;
@@ -121,5 +141,13 @@ void StatusBarViewModel::updateAudioOutputVolume(AudioOutputVolumeEvent const& e
     if (m_volume != actualVolume) {
         m_volume = actualVolume;
         emit volumeChanged();
+    }
+}
+
+void StatusBarViewModel::updateDisplayBrightness(DisplayBrightnessChangedEvent const& event) {
+    float const actualBrightness = static_cast<float>(event.brightnessPercent());
+    if (m_brightness != actualBrightness) {
+        m_brightness = actualBrightness;
+        emit brightnessChanged();
     }
 }
