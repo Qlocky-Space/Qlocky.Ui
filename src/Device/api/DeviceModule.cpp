@@ -4,6 +4,7 @@
 #include "Command/LifecycleChangeRequestCommand.h"
 #include "ConfigurationRegistryIfc.h"
 #include "internal/DeviceInfoProvider.h"
+#include "internal/DisplayService.h"
 #include "internal/SystemPreferencesRepository.h"
 #include "QmlRegistryUtil.h"
 #include "view/AboutViewModel.h"
@@ -13,6 +14,7 @@
 void DeviceModule::registerExports(Injector& container) {
     container.install(boost::di::bind<DeviceInfoProviderIfc>().to<DeviceInfoProvider>());
     container.install(boost::di::bind<SystemPreferencesRepositoryIfc>().to<SystemPreferencesRepository>());
+    container.install(boost::di::bind<DisplayServiceIfc>().to<DisplayService>().in(boost::di::singleton));
 }
 
 void DeviceModule::registerQmlTypes() {
@@ -26,6 +28,9 @@ void DeviceModule::onInitialize() {
     // Initialize the device info provider
     auto deviceInfoProvider = resolve<DeviceInfoProviderIfc>();
     deviceInfoProvider->initialize();
+
+    auto displayService = resolve<DisplayServiceIfc>();
+    displayService->initialize();
 
     auto configRegistry = resolve<ConfigurationRegistryIfc>();
     configRegistry->registerProvider("about", ConfigurationMeta {"System", "About", "/qt/qml/Device/qml/About.qml"});

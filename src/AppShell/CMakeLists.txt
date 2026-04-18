@@ -50,5 +50,7 @@ set(MODULE_LINK
     qlocky::Ui
     qlocky::Network
     qlocky::Os
+    qlocky::Radio
+    qlocky::Device
 )
 setup_module()

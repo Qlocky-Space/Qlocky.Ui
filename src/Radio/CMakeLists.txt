@@ -48,6 +48,7 @@ set(MODULE_QML_SRC
 
 set(MODULE_LINK
     qlocky::Os
+    qlocky::Device
     qlocky::RestAPI
     qlocky::Ui
     qlocky::Persistence

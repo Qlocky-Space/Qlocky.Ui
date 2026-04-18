@@ -8,6 +8,9 @@
 #include "AudioOutputIfc.h"
 #include "AudioOutputListenerIfc.h"
 #include "RadioPlayerIfc.h"
+#include "SystemPreferencesRepositoryIfc.h"
+
+class ApplicationStartedEvent;
 
 /**
  * Default player implementation for radio playback commands.
@@ -21,7 +24,7 @@ public:
      * @param audioMixer Audio mixer used for output volume changes.
      * @param mediator Event mediator used to publish playback state changes.
      */
-    RadioPlayer(AudioOutputIfc& audioPlayer, AudioMixerIfc& audioMixer, Mediator& mediator);
+    RadioPlayer(AudioOutputIfc& audioPlayer, AudioMixerIfc& audioMixer, Mediator& mediator, SystemPreferencesRepositoryIfc& systemPreferences);
 
     /**
      * Destroy the player.
@@ -49,6 +52,11 @@ public:
     bool isPlaying() const final;
 
     /**
+    * @see RadioPlayerIfc::setOutputVolume
+    */
+    void setOutputVolume(uint8_t volumePercent) final;
+
+    /**
      * @see AudioOutputListenerIfc::onPlaybackStarted
      */
     void onPlaybackStarted(std::string const& source) final;
@@ -70,11 +78,15 @@ public:
 
 private:
 
+    void onApplicationStarted(ApplicationStartedEvent const&);
+    void persistVolume(uint8_t volumePercent);
+
     void setPlaying(bool playing);
 
     AudioOutputIfc& m_audioPlayer;
     AudioMixerIfc& m_audioMixer;
     Mediator& m_mediator;
+    SystemPreferencesRepositoryIfc& m_systemPreferences;
     bool m_playing {false};
 };
 

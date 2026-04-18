@@ -1,6 +1,8 @@
 #ifndef SRC_PLATFORM_OS_API_DISPLAY_CONTROL_IFC_H
 #define SRC_PLATFORM_OS_API_DISPLAY_CONTROL_IFC_H
 
+#include <cstdint>
+
 /**
  * Controls display power state and brightness. Touch screen remains functional even when display is off.
  */

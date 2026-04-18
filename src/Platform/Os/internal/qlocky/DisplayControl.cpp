@@ -1,5 +1,6 @@
 #include "DisplayControl.h"
 
+#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <ng-log/logging.h>
@@ -17,6 +18,7 @@ constexpr char DBUS_INTERFACE[] {"org.freedesktop.DBus"};
 constexpr char DBUS_ERROR_SERVICE_UNKNOWN[] {"org.freedesktop.DBus.Error.ServiceUnknown"};
 constexpr char DBUS_ERROR_NAME_HAS_NO_OWNER[] {"org.freedesktop.DBus.Error.NameHasNoOwner"};
 
+constexpr uint8_t MAX_DIM_LEVEL {90U};
 constexpr std::size_t DISPLAY_POWER_MAX_RETRIES {25};
 constexpr auto DISPLAY_POWER_RETRY_DELAY {std::chrono::milliseconds(200)};
 
@@ -200,7 +202,6 @@ void DisplayControl::turnOn() {
         return;
     }
 
-    LOG(INFO) << "DisplayControl: Turning display on";
     requestPowerState("TurnOn", "on");
 }
 
@@ -210,7 +211,6 @@ void DisplayControl::turnOff() {
         return;
     }
 
-    LOG(INFO) << "DisplayControl: Turning display off";
     requestPowerState("TurnOff", "off");
 }
 
@@ -220,6 +220,10 @@ void DisplayControl::dim(uint8_t level) {
         return;
     }
 
-    LOG(INFO) << "DisplayControl: Dimming display to level " << static_cast<int>(level);
+    // limit level to avoid fully black display which may be hard to recover from without external intervention
+    if (level > MAX_DIM_LEVEL) {
+        level = MAX_DIM_LEVEL;
+    }
+
     requestDim(level);
 }

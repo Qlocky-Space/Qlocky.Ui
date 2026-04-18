@@ -1,16 +1,20 @@
 #include "RadioPlayer.h"
 
+#include <algorithm>
 #include <ng-log/logging.h>
 
+#include "events/ApplicationStartedEvent.h"
 #include "events/AudioOutputVolumeEvent.h"
 #include "events/RadioPlaybackStateChangedEvent.h"
 
-RadioPlayer::RadioPlayer(AudioOutputIfc& audioPlayer, AudioMixerIfc& audioMixer, Mediator& mediator) :
+RadioPlayer::RadioPlayer(AudioOutputIfc& audioPlayer, AudioMixerIfc& audioMixer, Mediator& mediator, SystemPreferencesRepositoryIfc& systemPreferences) :
     m_audioPlayer {audioPlayer},
     m_audioMixer {audioMixer},
-    m_mediator {mediator} {
+    m_mediator {mediator},
+    m_systemPreferences {systemPreferences} {
     m_audioPlayer.attach(this);
     m_audioMixer.attach(this);
+    m_mediator.subscribe<ApplicationStartedEvent>(this, &RadioPlayer::onApplicationStarted);
 }
 
 RadioPlayer::~RadioPlayer() {
@@ -19,10 +23,7 @@ RadioPlayer::~RadioPlayer() {
 }
 
 void RadioPlayer::initialize() {
-    // TODO this must be loaded from settings, set to 50% for now to avoid blasting users with full volume when they start playback for the first time
-    m_audioMixer.setOutputVolume(50);
-
-    m_mediator.notify(AudioOutputVolumeEvent {m_audioMixer.outputVolume()});
+    // Nothing to do
 }
 
 void RadioPlayer::play(RadioEntity const& radio) {
@@ -52,6 +53,11 @@ bool RadioPlayer::isPlaying() const {
     return m_playing;
 }
 
+void RadioPlayer::setOutputVolume(uint8_t volumePercent) {
+    persistVolume(volumePercent);
+    m_audioMixer.setOutputVolume(volumePercent);
+}
+
 void RadioPlayer::onPlaybackStarted(std::string const& source) {
     setPlaying(true);
 }
@@ -66,6 +72,17 @@ void RadioPlayer::onPlaybackFailed(AudioOutputErrorCode errorCode) {
 
 void RadioPlayer::onVolumeChanged(uint8_t volumePercent) {
     m_mediator.notify(AudioOutputVolumeEvent {volumePercent});
+}
+
+void RadioPlayer::onApplicationStarted(ApplicationStartedEvent const&) {
+    uint8_t const clamped = static_cast<uint8_t>(std::clamp(static_cast<int32_t>(m_systemPreferences.getOutputVolumePercent()), 0, 100));
+    m_audioMixer.setOutputVolume(clamped);
+
+    m_mediator.notify(AudioOutputVolumeEvent {clamped});
+}
+
+void RadioPlayer::persistVolume(uint8_t volumePercent) {
+    m_systemPreferences.setOutputVolumePercent(volumePercent);
 }
 
 void RadioPlayer::setPlaying(bool playing) {

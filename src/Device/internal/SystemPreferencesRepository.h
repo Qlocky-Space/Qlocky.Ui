@@ -1,6 +1,8 @@
 #ifndef SYSTEM_PREFERENCES_REPOSITORY_H
 #define SYSTEM_PREFERENCES_REPOSITORY_H
 
+#include <cstdint>
+
 #include "Mediator.h"
 #include "PersistenceServiceIfc.h"
 #include "SystemPreferencesRepositoryIfc.h"
@@ -28,6 +30,26 @@ public:
      */
     std::string getTimeZone() final;
 
+    /**
+     * @see SystemPreferencesRepositoryIfc::getDisplayBrightnessPercent
+     */
+    uint8_t getDisplayBrightnessPercent() final;
+
+    /**
+     * @see SystemPreferencesRepositoryIfc::setDisplayBrightnessPercent
+     */
+    void setDisplayBrightnessPercent(uint8_t brightnessPercent) final;
+
+    /**
+     * @see SystemPreferencesRepositoryIfc::getOutputVolumePercent
+     */
+    uint8_t getOutputVolumePercent() final;
+
+    /**
+     * @see SystemPreferencesRepositoryIfc::setOutputVolumePercent
+     */
+    void setOutputVolumePercent(uint8_t volumePercent) final;
+
 private:
 
     static std::string const SYSTEM_PREFERENCES_NAMESPACE;
@@ -35,6 +57,8 @@ private:
     struct Preferences final {
         inline static std::string const PROP_TIMEZONE_KEY {"TimeZone"};
         inline static std::string const PROP_24H_FORMAT_KEY {"24HFormat"};
+        inline static std::string const PROP_DISPLAY_BRIGHTNESS_PERCENT_KEY {"DisplayBrightnessPercent"};
+        inline static std::string const PROP_OUTPUT_VOLUME_PERCENT_KEY {"OutputVolumePercent"};
     };
 
     KeyValueDatabaseIfc& getContext() {
