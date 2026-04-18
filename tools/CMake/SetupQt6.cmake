@@ -4,6 +4,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+option(IS_GITHUB_RUNNER "Enable GitHub Actions runner specific settings" OFF)
+
 set(_components
     Core
     Gui
@@ -12,8 +14,14 @@ set(_components
     Qml
     Quick
     ShaderTools
-    VirtualKeyboard
 )
+
+# Because github does not support virtual keyboard, we need to disable it on github runner to avoid build failure due to missing dependencies.
+if (NOT IS_GITHUB_RUNNER)
+    list(APPEND _components
+        VirtualKeyboard
+    )
+endif()
 
 # TODO environment configuration issue, where LinguistTools is not found
 # on Linux, but it is available in the Qt installation.

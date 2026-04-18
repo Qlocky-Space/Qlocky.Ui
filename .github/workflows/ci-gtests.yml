@@ -1,0 +1,87 @@
+name: GTests
+
+on:
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+concurrency:
+  group: gtests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  gtests:
+    name: GTests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR for shared cache
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build CI container image (shared cache)
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .devcontainer/Dockerfile
+          tags: qlocky-ci:gtests
+          load: true
+          cache-from: |
+            type=gha,scope=qlocky-devcontainer
+            type=registry,ref=ghcr.io/qlocky-space/qlocky-ui-devcontainer:buildcache
+          cache-to: |
+            type=gha,mode=max,scope=qlocky-devcontainer
+            type=registry,ref=ghcr.io/qlocky-space/qlocky-ui-devcontainer:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
+
+      - name: Build CI container image (fork-safe cache)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .devcontainer/Dockerfile
+          tags: qlocky-ci:gtests
+          load: true
+          cache-from: type=gha,scope=qlocky-devcontainer
+          cache-to: type=gha,mode=max,scope=qlocky-devcontainer
+
+      - name: Configure, build and run gtests in container
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspaces" \
+            -w /workspaces \
+            qlocky-ci:gtests \
+            bash -lc "set -e
+              for i in 1 2 3; do
+                echo \"CI attempt \$i/3\"
+                if cmake -S . -B build-ci -G Ninja \
+                      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                      -DIS_GITHUB_RUNNER=ON \
+                    && cmake --build build-ci --target QlockyAppTest --parallel \
+                    && ctest --test-dir build-ci --output-on-failure --verbose -R QlockyAppTest
+                then
+                  exit 0
+                fi
+                if [[ \"\$i\" -lt 3 ]]; then
+                  echo \"Retrying in 20s after transient failure...\"
+                  rm -rf build-ci/_deps
+                  sleep 20
+                fi
+              done
+              exit 1"

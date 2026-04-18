@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <iostream>
 #include <ng-log/logging.h>
+#include <vector>
 
 #include "KeyValueDatabase.h"
 
@@ -13,25 +14,24 @@ PersistenceService::PersistenceService() :
 }
 
 void PersistenceService::initialize() {
-    std::string const dbName {"/usr/share/qlocky/db"};
+    std::string const dbPath {"~/.qlocky/db"};
 
-    // ensure directory exists
-    std::error_code ec;
-    std::filesystem::create_directories(std::filesystem::path {dbName}.parent_path(), ec);
-
-    rocksdb::DB* pDb {nullptr};
     rocksdb::Options options {};
     options.create_if_missing = true;
 
-    rocksdb::Status const status {rocksdb::DB::Open(options, dbName, &pDb)};
+    std::error_code ec;
+    std::filesystem::create_directories(std::filesystem::path {dbPath}.parent_path(), ec);
+
+    rocksdb::DB* pDb {nullptr};
+    rocksdb::Status const status {rocksdb::DB::Open(options, dbPath, &pDb)};
     if (!status.ok()) {
-        LOG(ERROR) << "Failed to open database: " << status.ToString();
+        LOG(ERROR) << "Failed to open database at " << dbPath << ": " << status.ToString();
         return;
     }
 
-    m_db = std::shared_ptr<rocksdb::DB>(pDb, [&](auto p) {
-        delete p;
-    });
+    m_db = std::shared_ptr<rocksdb::DB>(pDb);
+
+    LOG(INFO) << "Persistence database opened at: " << dbPath;
 }
 
 KeyValueDatabaseIfc& PersistenceService::getContext(std::string const& ns) {

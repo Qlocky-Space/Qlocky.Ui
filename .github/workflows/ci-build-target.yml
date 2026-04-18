@@ -1,0 +1,23 @@
+name: Build Target
+
+on:
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+concurrency:
+  group: build-target-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-target:
+    name: Build Target
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      # TODO: Replace this step with actual cross-compilation steps once
+      #       the Yocto SDK / cross-toolchain is available in CI.
+      - name: Target build not yet supported
+        run: echo "Not supported"

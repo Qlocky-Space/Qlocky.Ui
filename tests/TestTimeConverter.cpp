@@ -11,6 +11,10 @@ public:
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(std::string, getTimeFormat, (), (override));
     MOCK_METHOD(std::string, getTimeZone, (), (override));
+    MOCK_METHOD(uint8_t, getDisplayBrightnessPercent, (), (override));
+    MOCK_METHOD(void, setDisplayBrightnessPercent, (uint8_t brightnessPercent), (override));
+    MOCK_METHOD(uint8_t, getOutputVolumePercent, (), (override));
+    MOCK_METHOD(void, setOutputVolumePercent, (uint8_t volumePercent), (override));
 };
 
 TEST(TimeConverter, relativeTimeToUtc) {
