@@ -2,6 +2,9 @@
 #define DEVICE_INFO_PROVIDER_IFC_H
 
 #include <string>
+#include <vector>
+
+#include "NetInterfaceInfo.h"
 
 /**
  * Interface for device information retrieval.
@@ -53,6 +56,11 @@ public:
      * @return A string representing the hostname of the device.
      */
     virtual std::string getHostname() const = 0;
+
+    /**
+     * Returns a list of network interfaces and their information.
+     */
+    virtual std::vector<NetInterfaceInfo> getNetInterfaceInfos() const = 0;
 
     /**
      * Sets the hostname of the device.

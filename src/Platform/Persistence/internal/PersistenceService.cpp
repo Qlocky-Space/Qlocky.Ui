@@ -14,7 +14,7 @@ PersistenceService::PersistenceService() :
 }
 
 void PersistenceService::initialize() {
-    std::string const dbPath {"~/.qlocky/db"};
+    std::string const dbPath {"/opt/data/qlocky_db"};
 
     rocksdb::Options options {};
     options.create_if_missing = true;

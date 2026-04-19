@@ -54,6 +54,11 @@ public:
     void requestShutdown() final;
 
     /**
+     * @see ApplicationLifecycleIfc::requestRestart
+     */
+    void requestRestart() final;
+
+    /**
      * @see ApplicationLifecycleIfc::state
      */
     ApplicationLifecycleState state() const final;
@@ -85,6 +90,8 @@ private:
     void processStateMachine();
     void onApplicationStarted(ApplicationStartedEvent const&);
     void onApplicationClosed(ApplicationClosedEvent const&);
+    void performRestart();
+    void performShutdown();
 
     Mediator& m_mediator;
     DisplayControlIfc& m_displayControl;
@@ -93,12 +100,15 @@ private:
     std::atomic<bool> m_isStopping {false};
 
     std::chrono::steady_clock::time_point m_lastInputAt {std::chrono::steady_clock::now()};
+    std::chrono::steady_clock::time_point m_ignoreWakeInputUntil {std::chrono::steady_clock::time_point::min()};
+    std::chrono::milliseconds m_forceInactiveWakeSuppression {std::chrono::milliseconds {500}};
     std::chrono::seconds m_inactivityTimeout {std::chrono::seconds {30}};
     bool m_applicationReady {false};
     bool m_inputDetected {false};
     bool m_inactivityDetected {false};
     bool m_suspendRequested {false};
     bool m_shutdownRequested {false};
+    bool m_restartRequested {false};
 
     ApplicationLifecycleState m_previousState {ApplicationLifecycleState::Startup};
     std::vector<std::pair<ApplicationLifecycleState, ApplicationLifecycleState>> m_pendingEvents {};

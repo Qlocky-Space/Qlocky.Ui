@@ -6,7 +6,6 @@ import QtQuick.Shapes
 import Ui
 import Configuration
 
-
 ColumnLayout {
     property var viewModel: AboutViewModel
 
@@ -18,7 +17,7 @@ ColumnLayout {
         hostname: viewModel.hostname
         Layout.fillWidth: true
 
-        onChangeHostname: function(hostname) {
+        onChangeHostname: function (hostname) {
             viewModel.changeHostname(hostname);
         }
     }
@@ -47,7 +46,7 @@ ColumnLayout {
         id: appIdentificationGroup
         Layout.fillWidth: true
 
-        title: qsTr("App identifiers")
+        title: qsTr("Device Identifiers")
 
         SettingKeyValueItem {
             function formatUptime(seconds) {
@@ -59,16 +58,30 @@ ColumnLayout {
                 var m = Math.floor((seconds % 3600) / 60);
                 var s = seconds % 60;
 
-                var result = ""
-                result += (h > 0 ? h + ":" : "")
-                result += (m < 10 ? "0" : "") + m + ":"
-                result += (s < 10 ? "0" : "") + s
+                var result = "";
+                result += (h > 0 ? h + ":" : "");
+                result += (m < 10 ? "0" : "") + m + ":";
+                result += (s < 10 ? "0" : "") + s;
 
                 return result;
             }
 
             title: qsTr("Uptime")
             value: formatUptime(viewModel.upTime)
+        }
+        Repeater {
+            model: viewModel.netInterfaceInfos
+
+            delegate: SettingKeyValueItem {
+                required property var modelData
+
+                title: modelData.interfaceName + qsTr(" Interface")
+                value: qsTr("IP: %1\nMAC: %2\nState: %3").arg(modelData.ipAddresses).arg(modelData.macAddress).arg(modelData.isUp ? qsTr("Up") : qsTr("Down"))
+
+                valueLabel.font.pixelSize: 24
+                valueLabel.wrapMode: Text.WordWrap
+                valueLabel.horizontalAlignment: Text.AlignRight
+            }
         }
         SettingKeyValueItem {
             title: qsTr("App Version")
@@ -107,14 +120,18 @@ ColumnLayout {
             title: qsTr("Third-party licences")
             text: qsTr("Qlocky Wiki")
             onClicked: {
-                CommandExecutor.dispatch("show-qr-code", { "content": "https://qlocky.notion.site/Qlocky-Wiki-b2c1fdab6b84481caad0c45b414d6cd8" })
+                CommandExecutor.dispatch("show-qr-code", {
+                    "content": "https://qlocky.notion.site/Qlocky-Wiki-b2c1fdab6b84481caad0c45b414d6cd8"
+                });
             }
         }
         SettingKeyButtonItem {
             title: qsTr("Source code")
             text: qsTr("Qlocky GitHub")
             onClicked: {
-                CommandExecutor.dispatch("show-qr-code", { "content": "https://www.github.com/Qlocky-Space" })
+                CommandExecutor.dispatch("show-qr-code", {
+                    "content": "https://www.github.com/Qlocky-Space"
+                });
             }
         }
     }

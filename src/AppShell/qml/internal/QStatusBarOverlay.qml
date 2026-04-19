@@ -23,17 +23,23 @@ Item {
 
             QStatusBarAction {
                 image: "\uf023"
-                onClicked: console.log("Lock clicked")
+                onClicked: CommandExecutor.dispatch("lifecycleChangeRequest", {
+                    state: "Inactive"
+                })
             }
 
             QStatusBarAction {
                 image: "\uf011"
-                onClicked: console.log("Shutdown clicked")
+                onClicked: CommandExecutor.dispatch("nav-to", {
+                    "uri": "qlocky://powerDialog"
+                })
             }
 
             QStatusBarAction {
                 image: "\uf013"
-                onClicked: CommandExecutor.dispatch("nav-to", { "uri": "qlocky://settings" })
+                onClicked: CommandExecutor.dispatch("nav-to", {
+                    "uri": "qlocky://settings"
+                })
             }
         }
 
@@ -47,8 +53,8 @@ Item {
                     isActive: viewModel.networkState != NetworkStateType.Disabled
                     image: NetworkIconUtil.toNetwork(viewModel.networkState, viewModel.networkStrength)
                     imageInactive: "\uf6ac"
-                    onClicked: function(state) {
-                        viewModel.setNetworkState(state)
+                    onClicked: function (state) {
+                        viewModel.setNetworkState(state);
                     }
                     title: qsTr("WLAN")
                     description: viewModel.ssid
@@ -59,16 +65,16 @@ Item {
                 QStatusBarIcon {
                     image: "\uf072"
                     isActive: viewModel.isAirplaneModeEnabled
-                    onClicked: function(state) {
-                        viewModel.isAirplaneModeEnabled = state
+                    onClicked: function (state) {
+                        viewModel.isAirplaneModeEnabled = state;
                     }
                 }
 
                 QStatusBarIcon {
                     image: "\uf0eb"
                     isActive: viewModel.lightMode
-                    onClicked: function(state) {
-                        viewModel.lightMode = state
+                    onClicked: function (state) {
+                        viewModel.lightMode = state;
                     }
                 }
             }
@@ -80,25 +86,25 @@ Item {
             spacing: 32
 
             QStatusBarSliderWithButton {
-                sliderImage:  IconUtil.toVolume(viewModel.volume)
+                sliderImage: IconUtil.toVolume(viewModel.volume)
                 image: IconUtil.toVolumeType(viewModel.volumeType, viewModel.volume)
                 status: IconUtil.toVolumeTypeStatus(viewModel.volumeType)
                 value: viewModel.volume
 
                 onClicked: {
                     switch (viewModel.volumeType) {
-                        case VolumeType.Mute:
-                            viewModel.volumeType = VolumeType.Vibration;
-                            break;
-                        case VolumeType.Vibration:
-                            viewModel.volumeType = VolumeType.Acoustic;
-                            break;
-                        case VolumeType.Acoustic:
-                            viewModel.volumeType = VolumeType.Mute;
-                            break;
+                    case VolumeType.Mute:
+                        viewModel.volumeType = VolumeType.Vibration;
+                        break;
+                    case VolumeType.Vibration:
+                        viewModel.volumeType = VolumeType.Acoustic;
+                        break;
+                    case VolumeType.Acoustic:
+                        viewModel.volumeType = VolumeType.Mute;
+                        break;
                     }
                 }
-                onValueUpdated: function(value) {
+                onValueUpdated: function (value) {
                     viewModel.volume = value;
                 }
             }
@@ -111,12 +117,13 @@ Item {
                 status: ThemeManager.isLightMode()
                 value: viewModel.brightness
                 onClicked: {
-                    ThemeManager.toggleTheme()
+                    ThemeManager.toggleTheme();
                 }
-                onValueUpdated: function(value) {
+                onValueUpdated: function (value) {
                     viewModel.brightness = value;
                 }
             }
         }
     }
+
 }
