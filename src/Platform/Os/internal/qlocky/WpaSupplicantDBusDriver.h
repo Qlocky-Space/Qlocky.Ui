@@ -1,5 +1,8 @@
+
 #ifndef WPA_SUPPLICANT_DBUS_DRIVER_H
 #define WPA_SUPPLICANT_DBUS_DRIVER_H
+
+#include <mutex>
 
 #include <sdbus-c++/sdbus-c++.h>
 
@@ -100,6 +103,7 @@ private:
 
     std::map<std::string, sdbus::ObjectPath> m_networks;
     std::string m_interfaceName;
+    mutable std::recursive_mutex m_mutex;
 };
 
 #endif

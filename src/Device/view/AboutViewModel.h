@@ -4,12 +4,14 @@
 #include <DeviceInfoProviderIfc.h>
 #include <QDateTime>
 #include <QElapsedTimer>
+#include <QList>
 #include <QlockyConfig.h>
 #include <QObject>
 #include <QString>
 #include <QTimer>
 
 #include "Mediator.h"
+#include "NetInterfaceInfoViewModel.h"
 
 class AboutViewModel : public QObject {
     Q_OBJECT
@@ -24,6 +26,7 @@ class AboutViewModel : public QObject {
 
     Q_PROPERTY(QString hostname READ getHostname NOTIFY hostnameChanged)
     Q_PROPERTY(uint64_t upTime READ getUpTime NOTIFY upTimeChanged)
+    Q_PROPERTY(QList<NetInterfaceInfoViewModel*> netInterfaceInfos READ getNetInterfaceInfos NOTIFY netInterfaceInfosChanged)
 
 public:
 
@@ -101,6 +104,13 @@ public:
     }
 
     /**
+     * Returns network interface information view models.
+     */
+    QList<NetInterfaceInfoViewModel*> getNetInterfaceInfos() const {
+        return m_netInterfaceInfos;
+    }
+
+    /**
      * Changes the hostname of the device.
      * @param hostname The new hostname to set.
      */
@@ -110,12 +120,16 @@ signals:
 
     void upTimeChanged();
     void hostnameChanged();
+    void netInterfaceInfosChanged();
 
 private:
+
+    void refreshNetInterfaceInfos();
 
     DeviceInfoProviderIfc& m_deviceInfoProvider;
     QTimer m_upTimer;
     QElapsedTimer m_upElapsedTimer;
+    QList<NetInterfaceInfoViewModel*> m_netInterfaceInfos;
 };
 
 #endif

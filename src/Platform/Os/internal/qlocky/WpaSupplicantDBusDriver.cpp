@@ -2,6 +2,7 @@
 
 #include <sdbus-c++/sdbus-c++.h>
 
+#include <mutex>
 #include <ng-log/logging.h>
 
 #include "WpaSupplicantHelper.h"
@@ -17,6 +18,7 @@ WpaSupplicantDBusDriver::~WpaSupplicantDBusDriver() {
 }
 
 NetworkResult WpaSupplicantDBusDriver::up(std::string const& interfaceName) {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
@@ -60,6 +62,7 @@ NetworkResult WpaSupplicantDBusDriver::up(std::string const& interfaceName) {
 }
 
 NetworkResult WpaSupplicantDBusDriver::down() {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
@@ -75,6 +78,7 @@ NetworkResult WpaSupplicantDBusDriver::down() {
 }
 
 NetworkResult WpaSupplicantDBusDriver::registerNetwork(NetworkInfo const& network) {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
@@ -104,6 +108,7 @@ NetworkResult WpaSupplicantDBusDriver::registerNetwork(NetworkInfo const& networ
 }
 
 NetworkResult WpaSupplicantDBusDriver::unregisterAll() {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
@@ -117,6 +122,7 @@ NetworkResult WpaSupplicantDBusDriver::unregisterAll() {
 }
 
 NetworkResult WpaSupplicantDBusDriver::triggerScan() {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
@@ -136,6 +142,7 @@ NetworkResult WpaSupplicantDBusDriver::triggerScan() {
 }
 
 NetworkResult WpaSupplicantDBusDriver::fetchScanResults() {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
@@ -163,11 +170,18 @@ NetworkResult WpaSupplicantDBusDriver::fetchScanResults() {
 }
 
 NetworkResult WpaSupplicantDBusDriver::abortScan() {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     // It seems RPI driver doesn not support scan abort
     return NetworkResult::error(NetworkDriverErrorCode::ERROR_NOT_SUPPORTED);
 }
 
 NetworkResult WpaSupplicantDBusDriver::connectTo(std::string const& ssid) {
+    std::unique_lock<std::recursive_mutex> lock(m_mutex, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        // Avoid deadlock on re-entrant calls from DBus signal callbacks.
+        return NetworkResult::success(true);
+    }
+
     if (ssid.empty() || m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
@@ -179,14 +193,26 @@ NetworkResult WpaSupplicantDBusDriver::connectTo(std::string const& ssid) {
 
     LOG(INFO) << "Connecting to network: " << ssid;
 
-    networkProxy->setProperty("Enabled")
-        .onInterface("fi.w1.wpa_supplicant1.Network")
-        .toValue(sdbus::Variant(true));
+    try {
+        networkProxy->setProperty("Enabled")
+            .onInterface("fi.w1.wpa_supplicant1.Network")
+            .toValue(sdbus::Variant(true));
+    }
+    catch (std::exception const& e) {
+        LOG(ERROR) << "Failed to enable network " << ssid << ": " << e.what();
+        return NetworkResult::error(NetworkDriverErrorCode::ERROR_GENERIC);
+    }
 
     return NetworkResult::success(true);
 }
 
 NetworkResult WpaSupplicantDBusDriver::disconnect() {
+    std::unique_lock<std::recursive_mutex> lock(m_mutex, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        // Avoid deadlock on re-entrant calls from DBus signal callbacks.
+        return NetworkResult::success(true);
+    }
+
     if (m_interfaceName.empty()) {
         return NetworkResult::error(NetworkDriverErrorCode::ERROR_INVALID_ARGUMENT);
     }
@@ -206,32 +232,71 @@ NetworkResult WpaSupplicantDBusDriver::disconnect() {
 }
 
 std::unique_ptr<sdbus::IProxy> WpaSupplicantDBusDriver::createInterfaceProxy(std::string const& interfaceName) {
-    std::unique_ptr<sdbus::IProxy> supplicant {sdbus::createProxy(*m_connection, DEFAULT_DBUS_SUPPLICANT_NAME, DEFAULT_DBUS_SUPPLICANT_PATH)};
-
-    sdbus::ObjectPath ifacePath {};
-    supplicant->callMethod("GetInterface")
-        .onInterface(DEFAULT_DBUS_SUPPLICANT_NAME)
-        .withArguments(interfaceName)
-        .storeResultsTo(ifacePath);
-
-    if (ifacePath.empty()) {
+    std::unique_ptr<sdbus::IProxy> supplicant;
+    try {
+        supplicant = sdbus::createProxy(*m_connection, DEFAULT_DBUS_SUPPLICANT_NAME, DEFAULT_DBUS_SUPPLICANT_PATH);
+    }
+    catch (std::exception const& e) {
+        LOG(ERROR) << "Failed to create supplicant proxy: " << e.what();
         return {};
     }
 
-    return sdbus::createProxy(*m_connection, DEFAULT_DBUS_SUPPLICANT_NAME, ifacePath);
+    sdbus::ObjectPath ifacePath {};
+    try {
+        supplicant->callMethod("GetInterface")
+            .onInterface(DEFAULT_DBUS_SUPPLICANT_NAME)
+            .withArguments(interfaceName)
+            .storeResultsTo(ifacePath);
+    }
+    catch (std::exception const& e) {
+        LOG(ERROR) << "Failed to resolve interface " << interfaceName << ": " << e.what();
+        return {};
+    }
+
+    if (ifacePath.empty()) {
+        LOG(ERROR) << "Empty interface path for interface " << interfaceName;
+        return {};
+    }
+
+    try {
+        auto proxy = sdbus::createProxy(*m_connection, DEFAULT_DBUS_SUPPLICANT_NAME, ifacePath);
+        return proxy;
+    }
+    catch (std::exception const& e) {
+        LOG(ERROR) << "Failed to create interface proxy: " << e.what();
+        return {};
+    }
 }
 
 std::unique_ptr<sdbus::IProxy> WpaSupplicantDBusDriver::createNetworkProxy(std::string const& ssid) {
     auto proxy = createInterfaceProxy(m_interfaceName);
-    sdbus::ObjectPath networkObj {m_networks.find(ssid)->second};
-
-    proxy->callMethod("SelectNetwork")
-        .onInterface("fi.w1.wpa_supplicant1.Interface")
-        .withArguments(networkObj);
-
-    auto networkProxy = sdbus::createProxy(*m_connection, DEFAULT_DBUS_SUPPLICANT_NAME, networkObj);
-
-    return networkProxy;
+    if (!proxy) {
+        LOG(ERROR) << "Failed to create interface proxy for " << m_interfaceName;
+        return {};
+    }
+    auto it = m_networks.find(ssid);
+    if (it == m_networks.end()) {
+        LOG(ERROR) << "Unknown SSID: " << ssid;
+        return {};
+    }
+    sdbus::ObjectPath networkObj {it->second};
+    try {
+        proxy->callMethod("SelectNetwork")
+            .onInterface("fi.w1.wpa_supplicant1.Interface")
+            .withArguments(networkObj);
+    }
+    catch (std::exception const& e) {
+        LOG(ERROR) << "Failed to select network " << ssid << ": " << e.what();
+        return {};
+    }
+    try {
+        auto networkProxy = sdbus::createProxy(*m_connection, DEFAULT_DBUS_SUPPLICANT_NAME, networkObj);
+        return networkProxy;
+    }
+    catch (std::exception const& e) {
+        LOG(ERROR) << "Failed to create network proxy: " << e.what();
+        return {};
+    }
 }
 
 void WpaSupplicantDBusDriver::parseNetworkState(std::string const& state) {

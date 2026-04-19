@@ -64,6 +64,11 @@ public:
      */
     void setHostname(std::string const& hostname) final;
 
+    /**
+     * @see DeviceInfoProviderIfc::getNetInterfaceInfos
+     */
+    std::vector<NetInterfaceInfo> getNetInterfaceInfos() const final;
+
 private:
 
     std::string m_modelName {"QL-A100"};
