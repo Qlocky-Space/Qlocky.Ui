@@ -35,5 +35,10 @@ void LifecycleChangeRequestCommand::doExecute(CommandArgs const& data) {
         return;
     }
 
+    if (requestedState == "Restart") {
+        m_lifecycle.requestRestart();
+        return;
+    }
+
     LOG(WARNING) << "LifecycleChangeRequestCommand: unsupported state request '" << requestedState << "'.";
 }

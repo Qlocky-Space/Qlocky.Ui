@@ -68,9 +68,13 @@ public:
 
     /**
      * Request transition to Shutdown state.
-     * @note The shutdown trigger path is not implemented yet.
      */
     virtual void requestShutdown() = 0;
+
+    /**
+     * Request a system restart.
+     */
+    virtual void requestRestart() = 0;
 
     /**
      * Configure timeout before transitioning from Active to Inactive.

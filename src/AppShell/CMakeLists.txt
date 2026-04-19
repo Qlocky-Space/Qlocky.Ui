@@ -37,6 +37,7 @@ set(MODULE_QML_SRC
     qml/MainPage.qml
     qml/StatusBar.qml
     qml/QrDialog.qml
+    qml/PowerDialog.qml
 )
 
 set_source_files_properties(qml/internal/IconUtil.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)

@@ -26,6 +26,7 @@ void AppShellModule::onInitialize() {
     auto irRegistry = resolve<InteractiveUriRegistryIfc>();
     irRegistry->registerUri(Uri {"qlocky://main"}, InteractiveMeta {InteractiveMeta::Type::Page, "/qt/qml/AppShell/qml/MainPage.qml"});
     irRegistry->registerUri(Uri {"qlocky://qr"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/AppShell/qml/QrDialog.qml"});
+    irRegistry->registerUri(Uri {"qlocky://powerDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/AppShell/qml/PowerDialog.qml"});
 
     CommandRegistryUtil::registerCommand<ShowQrCodeCommand>(*this, "show-qr-code");
 }

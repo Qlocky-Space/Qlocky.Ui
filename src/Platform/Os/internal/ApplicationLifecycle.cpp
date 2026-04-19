@@ -2,6 +2,7 @@
 
 #include <array>
 #include <chrono>
+#include <cstdlib>
 #include <fcntl.h>
 #include <filesystem>
 #include <linux/input.h>
@@ -73,19 +74,33 @@ uint32_t ApplicationLifecycle::inactivityTimeoutSeconds() const {
 }
 
 void ApplicationLifecycle::notifyUserInput() {
+    bool shouldRunStateMachine {false};
+
     {
         std::lock_guard<std::mutex> const lock {m_mutex};
-        m_lastInputAt = std::chrono::steady_clock::now();
-        m_inputDetected = true;
+        auto const now {std::chrono::steady_clock::now()};
+        m_lastInputAt = now;
+
+        bool const suppressWakeInput {
+            currentState() == ApplicationLifecycleState::Inactive && now < m_ignoreWakeInputUntil};
+
+        if (!suppressWakeInput) {
+            m_inputDetected = true;
+            shouldRunStateMachine = true;
+        }
     }
 
-    processStateMachine();
+    if (shouldRunStateMachine) {
+        processStateMachine();
+    }
 }
 
 void ApplicationLifecycle::forceInactive() {
     {
         std::lock_guard<std::mutex> const lock {m_mutex};
+        m_inputDetected = false;
         m_inactivityDetected = true;
+        m_ignoreWakeInputUntil = std::chrono::steady_clock::now() + m_forceInactiveWakeSuppression;
     }
 
     processStateMachine();
@@ -113,6 +128,16 @@ void ApplicationLifecycle::requestShutdown() {
     {
         std::lock_guard<std::mutex> const lock {m_mutex};
         m_shutdownRequested = true;
+    }
+
+    processStateMachine();
+}
+
+void ApplicationLifecycle::requestRestart() {
+    {
+        std::lock_guard<std::mutex> const lock {m_mutex};
+        m_shutdownRequested = true;
+        m_restartRequested = true;
     }
 
     processStateMachine();
@@ -152,6 +177,15 @@ void ApplicationLifecycle::onEnterState(ApplicationLifecycleState state) {
         m_displayControl.turnOn();
     }
 
+    if (state == ApplicationLifecycleState::Shutdown) {
+        if (m_restartRequested) {
+            performRestart();
+        }
+        else {
+            performShutdown();
+        }
+    }
+
     m_pendingEvents.emplace_back(m_previousState, state);
 }
 
@@ -163,6 +197,7 @@ void ApplicationLifecycle::clearFlags() {
     m_inputDetected = false;
     m_inactivityDetected = false;
     m_suspendRequested = false;
+    m_restartRequested = false;
 }
 
 void ApplicationLifecycle::runInputWatcherLoop() {
@@ -322,4 +357,24 @@ void ApplicationLifecycle::onApplicationStarted(ApplicationStartedEvent const&) 
 
 void ApplicationLifecycle::onApplicationClosed(ApplicationClosedEvent const&) {
     requestShutdown();
+}
+
+void ApplicationLifecycle::performRestart() {
+    int const exitCode {std::system("shutdown -r now")};
+    if (exitCode != 0) {
+        LOG(WARNING) << "ApplicationLifecycle: failed to execute restart command, exitCode=" << exitCode;
+    }
+
+    // Ensure process termination even when restart command is unavailable.
+    std::exit(0);
+}
+
+void ApplicationLifecycle::performShutdown() {
+    int const exitCode {std::system("shutdown -h now")};
+    if (exitCode != 0) {
+        LOG(WARNING) << "ApplicationLifecycle: failed to execute shutdown command, exitCode=" << exitCode;
+    }
+
+    // Ensure process termination even when shutdown command is unavailable.
+    std::exit(0);
 }
