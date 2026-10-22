@@ -36,4 +36,4 @@ RUN git config --global --add safe.directory /workspaces/build/_deps/*
 COPY .devcontainer/gdbinit /home/ubuntu/.gdbinit
 
 # Update Path for QT dev tool applications
-ENV PATH="$PATH:/opt/qt/6.8.1/gcc_64/bin"
+ENV PATH="$PATH:/opt/qt/6.8.3/gcc_64/bin"

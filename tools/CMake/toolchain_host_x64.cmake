@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS "-std=c++17 -Wpedantic -Werror -DQT_QML_DEBUG")
 set(CMAKE_C_FLAGS "-Wpedantic -Werror")
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections")
 
-set(QT_INST_DIR "/opt/qt/6.8.1/gcc_64")
+set(QT_INST_DIR "/opt/qt/6.8.3/gcc_64" CACHE PATH "Qt host kit installation directory")
 set(CMAKE_PREFIX_PATH ${QT_INST_DIR})
 set(QT_HOST_PATH ${QT_INST_DIR})
 set(QT_QMAKE_EXECUTABLE ${QT_INST_DIR}/bin/qmake)
