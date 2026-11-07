@@ -8,6 +8,7 @@
 #include "internal/SystemPreferencesRepository.h"
 #include "QmlRegistryUtil.h"
 #include "view/AboutViewModel.h"
+#include "view/AppearanceViewModel.h"
 #include "view/DevelopViewModel.h"
 #include "view/LifecycleStateType.h"
 
@@ -20,6 +21,7 @@ void DeviceModule::registerExports(Injector& container) {
 void DeviceModule::registerQmlTypes() {
     QmlRegistryUtil::qmlRegisterViewModel<AboutViewModel>(*this, "AboutViewModel");
     QmlRegistryUtil::qmlRegisterViewModel<DevelopViewModel>(*this, "DevelopViewModel");
+    QmlRegistryUtil::qmlRegisterViewModel<AppearanceViewModel>(*this, "AppearanceViewModel");
 
     qmlRegisterUncreatableType<LifecycleStateType>("Device", 1, 0, "LifecycleStateType", "Cannot create LifecycleStateType in QML");
 }
@@ -35,6 +37,7 @@ void DeviceModule::onInitialize() {
     auto configRegistry = resolve<ConfigurationRegistryIfc>();
     configRegistry->registerProvider("about", ConfigurationMeta {"System", "About", "/qt/qml/Device/qml/About.qml"});
     configRegistry->registerProvider("develop", ConfigurationMeta {"System", "Develop", "/qt/qml/Device/qml/Develop.qml"});
+    configRegistry->registerProvider("appearance", ConfigurationMeta {"System", "Appearance", "/qt/qml/Device/qml/Appearance.qml"});
 
     CommandRegistryUtil::registerCommand<LifecycleChangeRequestCommand>(*this, "lifecycleChangeRequest");
 }

@@ -18,6 +18,8 @@ set(MODULE_SRC
 
     ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/AppearanceViewModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/AppearanceViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/NetInterfaceInfoViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/DevelopViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/DevelopViewModel.h
@@ -28,6 +30,7 @@ set(MODULE_QML_SRC
     qml/internal/SettingHostnameItem.qml
     qml/About.qml
     qml/Develop.qml
+    qml/Appearance.qml
 )
 
 set(MODULE_QML_RESOURCES
