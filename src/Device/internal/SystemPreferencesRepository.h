@@ -21,9 +21,19 @@ public:
     void initialize() final;
 
     /**
+     * @see SystemPreferencesRepositoryIfc::isTimeFormat24Hour
+     */
+    bool isTimeFormat24Hour() final;
+
+    /**
      * @see SystemPreferencesRepositoryIfc::getTimeFormat
      */
     std::string getTimeFormat() final;
+
+    /**
+     * @see SystemPreferencesRepositoryIfc::setTimeFormat
+     */
+    void setTimeFormat(bool is24HourFormat) final;
 
     /**
      * @see SystemPreferencesRepositoryIfc::getTimeZone

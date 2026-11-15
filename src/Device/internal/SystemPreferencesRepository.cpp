@@ -14,14 +14,26 @@ void SystemPreferencesRepository::initialize() {
     // Nothing to do
 }
 
-std::string SystemPreferencesRepository::getTimeFormat() {
+bool SystemPreferencesRepository::isTimeFormat24Hour() {
     auto result {getContext().getBool(Preferences::PROP_24H_FORMAT_KEY)};
     if (result.isError()) {
-        DLOG_FIRST_N(WARNING, 1) << "Failed to get time format: " << result.error();
+        DLOG_FIRST_N(WARNING, 1) << "Failed to get Time Format: " << result.error();
     }
+    return result.valueOr(true);
+}
 
-    bool is24HourFormat {result.valueOr(true)};
-    return is24HourFormat ? "HH:mm" : "hh:mm AP";
+std::string SystemPreferencesRepository::getTimeFormat() {
+    return isTimeFormat24Hour() ? "HH:mm" : "hh:mm AP";
+}
+
+void SystemPreferencesRepository::setTimeFormat(bool is24HourFormat) {
+    auto result {getContext().setBool(Preferences::PROP_24H_FORMAT_KEY, is24HourFormat)};
+    if (result.isError()) {
+        DLOG_FIRST_N(WARNING, 1) << "Failed to set time format: " << result.error();
+    }
+    else {
+        // TODO (ALJ): Publish TimeFormatChanged Event
+    }
 }
 
 std::string SystemPreferencesRepository::getTimeZone() {

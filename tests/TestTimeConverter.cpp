@@ -10,6 +10,8 @@ public:
 
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(std::string, getTimeFormat, (), (override));
+    MOCK_METHOD(void, setTimeFormat, (bool is24HourFormat), (override));
+    MOCK_METHOD(bool, isTimeFormat24Hour, (), (override));
     MOCK_METHOD(std::string, getTimeZone, (), (override));
     MOCK_METHOD(uint8_t, getDisplayBrightnessPercent, (), (override));
     MOCK_METHOD(void, setDisplayBrightnessPercent, (uint8_t brightnessPercent), (override));

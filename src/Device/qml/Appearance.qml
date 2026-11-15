@@ -15,6 +15,14 @@ ColumnLayout {
         Layout.fillWidth: true
 
         title: qsTr("International")
+
+        SettingKeySwitchItem {
+            title: qsTr("24-Hours")
+            value: AppearanceViewModel.timeFormatBoolean
+            onToggled: function (checked) {
+                AppearanceViewModel.changeTimeFormat(checked);
+            }
+        }
     }
 
     SettingGroup {

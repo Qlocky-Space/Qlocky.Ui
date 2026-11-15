@@ -19,10 +19,22 @@ public:
     virtual void initialize() = 0;
 
     /**
+     * Gets the time format used for displaying time
+     * @return The time format as a string
+     */
+    virtual bool isTimeFormat24Hour() = 0;
+
+    /**
      * Gets the time format used for displaying time.
      * @return The time format as a string.
      */
     virtual std::string getTimeFormat() = 0;
+
+    /**
+     * Sets the time format used for displaying time.
+     * @param is24HourFormat Timeformat as boolean. True for 24Hours and False for 12Hours
+     */
+    virtual void setTimeFormat(bool is24HourFormat) = 0;
 
     /**
      * Gets the time zone used for displaying time.

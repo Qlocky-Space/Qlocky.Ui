@@ -12,8 +12,8 @@ SettingKeyValueBase {
 
     QToggleButton {
         checked: root.value
-        onToggled: function(checked) {
-            root.toggled(checked)
+        onToggled: function (checked) {
+            root.toggled(checked);
         }
     }
 }
