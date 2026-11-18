@@ -80,6 +80,7 @@ QDialog {
         AlarmDialogMain {
             anchors.fill: parent
             alarm: root.alarm
+            use24HourFormat: root.viewModel.is24HourFormat
         }
     }
 

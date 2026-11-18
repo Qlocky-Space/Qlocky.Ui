@@ -6,6 +6,7 @@
 
 #include "AlarmItemViewModel.h"
 #include "internal/AlarmRepositoryIfc.h"
+#include "SystemPreferencesRepositoryIfc.h"
 #include "TimeConverter.h"
 
 /**
@@ -15,14 +16,16 @@ class AlarmDialogViewModel : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(AlarmItemViewModel* item READ getItem CONSTANT)
+    Q_PROPERTY(bool is24HourFormat READ is24HourFormat NOTIFY timeFormatChanged)
 
 public:
 
     /**
      * Constructor
      * @param alarmRepository Reference to the alarm repository interface.
+     * @param preferences Reference to the system preferences, used for the time format.
      */
-    AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository);
+    AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository, SystemPreferencesRepositoryIfc& preferences);
 
     /**
      * Loads the alarm data for the given alarm ID.
@@ -44,9 +47,20 @@ public:
         return &m_item;
     }
 
+    /**
+     * @return True if the time picker shows 24 hours, false for 12 hours with AM/PM.
+     */
+    bool is24HourFormat() const {
+        return m_preferences.isTimeFormat24Hour();
+    }
+
+signals:
+    void timeFormatChanged();
+
 private:
 
     AlarmRepositoryIfc& m_alarmRepository;
+    SystemPreferencesRepositoryIfc& m_preferences;
     AlarmItemViewModel m_item;
 };
 

@@ -14,12 +14,17 @@ static uint64_t defaultDueTime() {
 
 } // namespace
 
-AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository) :
+AlarmDialogViewModel::AlarmDialogViewModel(AlarmRepositoryIfc& alarmRepository, SystemPreferencesRepositoryIfc& preferences) :
     m_alarmRepository {alarmRepository},
+    m_preferences {preferences},
     m_item {0U} {
 }
 
 void AlarmDialogViewModel::loadAlarm(uint32_t const alarmId) {
+    // The format may have changed in the settings since the dialog was last opened.
+    // TODO: replace with a subscription once TimeFormatChangedEvent is published.
+    emit timeFormatChanged();
+
     std::unique_ptr<AlarmItemViewModel> pItem {std::make_unique<AlarmItemViewModel>(alarmId)};
     pItem->setDisplayName("Alarm");
     pItem->setState(true);

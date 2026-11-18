@@ -5,7 +5,10 @@ import QtQuick.Controls
 import Ui
 
 Item {
+    id: dialogMain
+
     required property var alarm
+    property bool use24HourFormat: true
 
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth
@@ -21,6 +24,7 @@ Item {
         QTimePicker {
             id: timePicker
             time: TimeConverter.utcToRelativeTime(alarm.dueTime)
+            use24HourFormat: dialogMain.use24HourFormat
             width: root.implicitWidth
 
             anchors.topMargin: 50
