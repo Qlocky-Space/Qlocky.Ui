@@ -3,115 +3,73 @@ import QtQuick
 import Ui
 
 /**
- * https://www.ics.com/blog/creating-qml-controls-scratch-timepicker
+ * Time picker consisting of an hour and a minute QPicker wheel.
+ * time is given in seconds since midnight.
  */
 Item {
     id: root
 
-    signal clicked(int time);
+    signal clicked(int time)
 
     property int interval: 1 // 30 20 15 10 5 2 1 minutes
     property int time
+    property int rows: 5
+
+    readonly property var hours: Array.from({ length: 24 }, (_, i) => i)
+    readonly property var minutes: Array.from({ length: Math.floor(60 / interval) }, (_, i) => ('0' + i * interval).slice(-2))
 
     width: 200
     height: 300
 
     clip: true
 
-    onTimeChanged: function() {
-        delayTimer.start()
+    function syncFromTime() {
+        hourPicker.currentIndex = Math.floor(root.time / 3600) % 24;
+        minutePicker.currentIndex = Math.floor((root.time % 3600) / 60 / root.interval);
     }
 
-    Timer {id: delayTimer;  interval: 20;  onTriggered: set(time)}
+    function get() {
+        return hourPicker.currentIndex * 3600 + minutePicker.currentIndex * root.interval * 60;
+    }
 
-    property int rows:        5
-    property int repetitions: 5
+    onTimeChanged: syncFromTime()
+    Component.onCompleted: syncFromTime()
 
     Row {
-        Repeater {
-            id: repeater
+        anchors.fill: parent
 
-            model: [ 24 * repetitions, 60 / interval * repetitions ]
+        QPicker {
+            id: hourPicker
+            width: root.width / 2
+            height: root.height
 
-            delegate: ListView {
-                id: view
+            model: root.hours
+            cyclic: true
+            visibleRows: root.rows
+            horizontalAlignment: Text.AlignRight
+            textMargin: 50
 
-                property int column: index
+            onSelected: root.clicked(root.get())
+        }
 
-                width: root.width / 2
-                height: root.height
-                snapMode: ListView.SnapToItem
+        QPicker {
+            id: minutePicker
+            width: root.width / 2
+            height: root.height
 
-                model: modelData
+            model: root.minutes
+            cyclic: true
+            visibleRows: root.rows
+            horizontalAlignment: Text.AlignLeft
 
-                delegate: Item {
-                    width: root.width / 2
-                    height: root.height / rows
-
-                    QLabel {
-                        text: view.get(index)
-
-                        font.pixelSize: Math.min(0.5 * parent.width, parent.height)
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: column == 0 ? parent.right : undefined
-                        anchors.left:  column == 1 ? parent.left  : undefined
-                        anchors.rightMargin: 50
-
-                        opacity: {
-                            if (view.currentIndex === index) {
-                                return 1;
-                            }
-
-                            var diff = Math.abs(view.currentIndex - index)
-                            return diff < 2 ? 0.4 : 0.2;
-                        }
-                    }
-                }
-
-                onMovementEnded: {select(view);  timer.restart()}
-                onFlickEnded:    {select(view);  timer.restart()}
-                Timer {id: timer;  interval: 1;  onTriggered: clicked(root.get())}
-
-                function get(index) {
-                         if(column == 0)  return index % 24                            // hour
-                    else if(column == 1)  return ('0' + (index * interval) % 60).slice(-2) // minute
-                }
-            }
+            onSelected: root.clicked(root.get())
         }
     }
 
     QLabel {
         text: ':'
-        font.pixelSize: Math.min(0.5 * root.width / 2, root.height / rows)
+        font.pixelSize: Math.min(0.5 * root.width / 2, root.height / root.rows)
         anchors.verticalCenter: parent.verticalCenter
         x: root.width / 2 - 25
-    }
-
-    function set(time) {
-        if (repeater.count < 2 || !repeater.itemAt(0) || !repeater.itemAt(1)) {
-            console.warn("QTimePicker: Not enough items in repeater to set time");
-            return;
-        }
-
-        var hours = Math.floor(root.time / 3600);
-        var minutes = Math.floor((root.time - (hours * 3600)) / 60);
-
-        repeater.itemAt(0).positionViewAtIndex(24            * (repetitions - 1) / 2 + hours, ListView.Center)
-        repeater.itemAt(1).positionViewAtIndex(60 / interval * (repetitions - 1) / 2 + minutes / interval, ListView.Center)
-
-        for(var column = 0; column < repeater.count; column++) {
-            select(repeater.itemAt(column))
-        }
-    }
-
-    function select(view) {
-        view.currentIndex = view.indexAt(0, view.contentY + 0.5 * view.height)
-    }
-
-    function get() {
-        var hours = repeater.itemAt(0).get(repeater.itemAt(0).currentIndex)
-        var minutes = repeater.itemAt(1).get(repeater.itemAt(1).currentIndex)
-
-        return hours * 3600 + minutes * 60
     }
 }

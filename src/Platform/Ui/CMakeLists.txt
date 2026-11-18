@@ -63,6 +63,7 @@ set(MODULE_QML_SRC
     qml/QLabel.qml
     qml/QRoundedRectangle.qml
     qml/QToggleButton.qml
+    qml/QPicker.qml
     qml/QTimePicker.qml
     qml/QKeyboard.qml
     qml/QTextField.qml

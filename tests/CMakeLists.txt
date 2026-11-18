@@ -16,6 +16,7 @@ endif()
 add_executable(${TARGET_NAME}Test
     #
     TestTimeConverter.cpp
+    TestTimeZoneProvider.cpp
     TestPskEncryption.cpp
     TestUuid.cpp
     TestSubjectThreadSafety.cpp

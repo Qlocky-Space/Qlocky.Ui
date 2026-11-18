@@ -41,6 +41,11 @@ public:
     std::string getTimeZone() final;
 
     /**
+     * @see SystemPreferencesRepositoryIfc::setTimeZone
+     */
+    void setTimeZone(std::string const& timeZone) final;
+
+    /**
      * @see SystemPreferencesRepositoryIfc::getDisplayBrightnessPercent
      */
     uint8_t getDisplayBrightnessPercent() final;
@@ -63,6 +68,7 @@ public:
 private:
 
     static std::string const SYSTEM_PREFERENCES_NAMESPACE;
+    static std::string const DEFAULT_TIME_ZONE;
 
     struct Preferences final {
         inline static std::string const PROP_TIMEZONE_KEY {"TimeZone"};

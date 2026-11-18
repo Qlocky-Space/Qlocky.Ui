@@ -38,9 +38,15 @@ public:
 
     /**
      * Gets the time zone used for displaying time.
-     * @return The time zone as a string.
+     * @return The time zone as IANA zone identifier (e.g. "Europe/Zurich").
      */
     virtual std::string getTimeZone() = 0;
+
+    /**
+     * Sets the time zone used for displaying time.
+     * @param timeZone IANA zone identifier (e.g. "Europe/Zurich").
+     */
+    virtual void setTimeZone(std::string const& timeZone) = 0;
 
     /**
      * Gets persisted display brightness in range 0..100.

@@ -23,6 +23,15 @@ ColumnLayout {
                 AppearanceViewModel.changeTimeFormat(checked);
             }
         }
+
+        SettingKeyValueItem {
+            title: qsTr("Time Zone")
+            value: AppearanceViewModel.timeZoneLabel
+            clickable: true
+            onClicked: CommandExecutor.dispatch("nav-to", {
+                "uri": "qlocky://timeZoneSelectDialog"
+            })
+        }
     }
 
     SettingGroup {

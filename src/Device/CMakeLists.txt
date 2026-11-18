@@ -6,6 +6,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/api/DeviceInfoProviderIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/DisplayServiceIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/SystemPreferencesRepositoryIfc.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/TimeZoneGroup.h
+    ${CMAKE_CURRENT_LIST_DIR}/api/TimeZoneProviderIfc.h
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/LifecycleChangeRequestCommand.cpp
     ${CMAKE_CURRENT_LIST_DIR}/api/Command/LifecycleChangeRequestCommand.h
 
@@ -15,6 +17,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/DisplayService.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/SystemPreferencesRepository.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/SystemPreferencesRepository.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/TimeZoneProvider.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/TimeZoneProvider.h
 
     ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/AboutViewModel.h
@@ -31,6 +35,7 @@ set(MODULE_QML_SRC
     qml/About.qml
     qml/Develop.qml
     qml/Appearance.qml
+    qml/TimeZoneSelectDialog.qml
 )
 
 set(MODULE_QML_RESOURCES

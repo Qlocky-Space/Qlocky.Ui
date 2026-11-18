@@ -4,6 +4,7 @@
 #include <ng-log/logging.h>
 
 std::string const SystemPreferencesRepository::SYSTEM_PREFERENCES_NAMESPACE {"SystemPreferences"};
+std::string const SystemPreferencesRepository::DEFAULT_TIME_ZONE {"Europe/Zurich"};
 
 SystemPreferencesRepository::SystemPreferencesRepository(Mediator& mediator, PersistenceServiceIfc& persistency) :
     m_mediator {mediator},
@@ -41,10 +42,17 @@ std::string SystemPreferencesRepository::getTimeZone() {
     if (result.isError()) {
         DLOG_FIRST_N(WARNING, 1) << "Failed to get time zone: " << result.error();
     }
-    // Default to UTC+02:00 if not set
-    std::string const prefTimeZone {result.valueOr("UTC+02:00")};
+    return result.valueOr(DEFAULT_TIME_ZONE);
+}
 
-    return prefTimeZone;
+void SystemPreferencesRepository::setTimeZone(std::string const& timeZone) {
+    auto result {getContext().setString(Preferences::PROP_TIMEZONE_KEY, timeZone)};
+    if (result.isError()) {
+        DLOG_FIRST_N(WARNING, 1) << "Failed to set time zone: " << result.error();
+    }
+    else {
+        // TODO (ALJ): Publish TimeZoneChanged Event
+    }
 }
 
 uint8_t SystemPreferencesRepository::getDisplayBrightnessPercent() {

@@ -6,6 +6,8 @@
 #include "internal/DeviceInfoProvider.h"
 #include "internal/DisplayService.h"
 #include "internal/SystemPreferencesRepository.h"
+#include "internal/TimeZoneProvider.h"
+#include "Navigation/InteractiveUriRegistryIfc.h"
 #include "QmlRegistryUtil.h"
 #include "view/AboutViewModel.h"
 #include "view/AppearanceViewModel.h"
@@ -16,6 +18,7 @@ void DeviceModule::registerExports(Injector& container) {
     container.install(boost::di::bind<DeviceInfoProviderIfc>().to<DeviceInfoProvider>());
     container.install(boost::di::bind<SystemPreferencesRepositoryIfc>().to<SystemPreferencesRepository>());
     container.install(boost::di::bind<DisplayServiceIfc>().to<DisplayService>().in(boost::di::singleton));
+    container.install(boost::di::bind<TimeZoneProviderIfc>().to<TimeZoneProvider>().in(boost::di::singleton));
 }
 
 void DeviceModule::registerQmlTypes() {
@@ -38,6 +41,9 @@ void DeviceModule::onInitialize() {
     configRegistry->registerProvider("about", ConfigurationMeta {"System", "About", "/qt/qml/Device/qml/About.qml"});
     configRegistry->registerProvider("develop", ConfigurationMeta {"System", "Develop", "/qt/qml/Device/qml/Develop.qml"});
     configRegistry->registerProvider("appearance", ConfigurationMeta {"System", "Appearance", "/qt/qml/Device/qml/Appearance.qml"});
+
+    auto irRegistry = resolve<InteractiveUriRegistryIfc>();
+    irRegistry->registerUri(Uri {"qlocky://timeZoneSelectDialog"}, InteractiveMeta {InteractiveMeta::Type::Dialog, "/qt/qml/Device/qml/TimeZoneSelectDialog.qml"});
 
     CommandRegistryUtil::registerCommand<LifecycleChangeRequestCommand>(*this, "lifecycleChangeRequest");
 }
